@@ -289,20 +289,20 @@ const CONFIG = {
     gravity: 0.6, friction: 0.8, maxFall: 15,
     races: {
         sayan: {
-            title: 'Sayan', maxHp: 250, maxMp: 70, baseDamage: 30, defense: 10, speed: 5.5, jumpForce: -12, maxExp: 110,
-            levelGrowth: { hp: 35, mp: 8, damage: 8, defense: 3, expFactor: 1.35 },
+            title: 'Sayan', maxHp: 500, maxMp: 70, baseDamage: 30, defense: 10, speed: 5.5, jumpForce: -12, maxExp: 110,
+            levelGrowth: { hp: 85, mp: 8, damage: 8, defense: 3, expFactor: 1.35 },
             colors: { aura: 'rgba(255,235,59,0.4)', body: '#f47b16', hair: '#111111', skin: '#fcdcb6', outfit: '#f47b16', accent: '#0074c7', proj: '#ffeb3b' },
             skill: { name: 'Thịnh nộ Sayan', cost: 20, cd: 8000, duration: 3000 }
         },
         namek: {
-            title: 'Namek', maxHp: 180, maxMp: 200, baseDamage: 20, defense: 8, speed: 4.8, jumpForce: -11, maxExp: 100,
-            levelGrowth: { hp: 25, mp: 25, damage: 5, defense: 2, expFactor: 1.25 },
+            title: 'Namek', maxHp: 400, maxMp: 200, baseDamage: 20, defense: 8, speed: 4.8, jumpForce: -11, maxExp: 100,
+            levelGrowth: { hp: 65, mp: 25, damage: 5, defense: 2, expFactor: 1.25 },
             colors: { aura: 'rgba(0,255,128,0.3)', body: '#4a148c', hair: '#2e7d32', skin: '#81c784', outfit: '#4a148c', accent: '#ff1744', proj: '#00e5ff' },
             skill: { name: 'Hồi phục & Khiên', cost: 30, cd: 10000, duration: 4000 }
         },
         earth: {
-            title: 'Trái Đất', maxHp: 160, maxMp: 80, baseDamage: 24, defense: 5, speed: 6.5, jumpForce: -13, maxExp: 95,
-            levelGrowth: { hp: 22, mp: 10, damage: 6, defense: 1, expFactor: 1.15 },
+            title: 'Trái Đất', maxHp: 350, maxMp: 80, baseDamage: 24, defense: 5, speed: 6.5, jumpForce: -13, maxExp: 95,
+            levelGrowth: { hp: 82, mp: 10, damage: 6, defense: 1, expFactor: 1.15 },
             colors: { aura: 'rgba(0,150,255,0.3)', body: '#d32f2f', hair: '#000000', skin: '#ffe0b2', outfit: '#d32f2f', accent: '#111111', proj: '#80d8ff' },
             skill: { name: 'Bước Nhanh', cost: 15, cd: 7000, duration: 3000 }
         }
@@ -932,10 +932,10 @@ class Player extends Entity {
         let item = this.inventory.find(i => i.id === itemId);
         if (item && item.count > 0 && !this.isDead) {
             if (itemId === 'hp_potion') {
-                this.hp = Math.min(this.maxHp, this.hp + 50);
+                this.hp = Math.min(this.maxHp, this.hp + 100);
                 item.count--;
                 Utils.spawnParticles(this.x + this.width / 2, this.y + this.height, '#4caf50', 10);
-                Utils.spawnText(this.x + this.width / 2, this.y - 10, '+50 HP', '#4caf50');
+                Utils.spawnText(this.x + this.width / 2, this.y - 10, '+100 HP', '#4caf50');
             }
             UI.updateInventoryUI(); UI.updateHUD();
         }
@@ -991,19 +991,37 @@ class Monster extends Entity {
 
             case 'CHASE':
                 if(!GLOBALS.player || GLOBALS.player.isDead) { this.aiState = 'RETURN'; break; }
-                let dist = Math.abs(this.x - GLOBALS.player.x);
+                
+                let dx = Math.abs(this.x - GLOBALS.player.x);
+                let dy = Math.abs(this.y - GLOBALS.player.y);
                 this.dir = this.x < GLOBALS.player.x ? 1 : -1;
                 
-                if (dist > this.aggroRange * 1.5) this.aiState = 'RETURN'; 
-                else if (dist > this.attackRange) this.vx = this.dir * 2.5; 
-                else { this.vx = 0; this.aiState = 'ATTACK'; } 
+                if (dx > this.aggroRange * 1.5) {
+                    this.aiState = 'RETURN'; 
+                } else if (dx > this.attackRange) {
+                    this.vx = this.dir * 2.5; 
+                } else if (dy > 40) {
+                    this.vx = 0;
+                } else { 
+                    this.vx = 0; this.aiState = 'ATTACK'; 
+                } 
                 break;
 
             case 'ATTACK':
                 if(this.attackCooldown <= 0 && GLOBALS.player && !GLOBALS.player.isDead) {
                     this.state = 'attack'; this.animFrame = 0; this.attackCooldown = 1500;
-                    CombatSystem.handleAttack(this, GLOBALS.player, 1);
-                    UI.updateHUD();
+                    
+                    let hitbox = {
+                        x: this.dir === 1 ? this.x + this.width : this.x - 35,
+                        y: this.y + 5,
+                        width: 35,
+                        height: this.height - 10
+                    };
+                    
+                    if (Utils.checkAABB(hitbox, GLOBALS.player)) {
+                        CombatSystem.handleAttack(this, GLOBALS.player, 1);
+                        UI.updateHUD();
+                    }
                 }
                 if(this.state !== 'attack') this.aiState = 'CHASE'; 
                 break;
