@@ -255,19 +255,22 @@ const CONFIG = {
         sayan: {
             title: 'Sayan', maxHp: 180, maxMp: 70, baseDamage: 22, speed: 5.5, jumpForce: -12, maxExp: 110,
             levelGrowth: { hp: 28, mp: 8, damage: 6, expFactor: 1.35 },
-            colors: { aura: 'rgba(255,152,0,0.3)', body: '#ff8a65', hair: '#ffe500', skin: '#ffccaa', outfit: '#d84315', proj: '#ffeb3b' },
+            // Bảng màu chuẩn theo ảnh Pixel Art Goku
+            colors: { aura: 'rgba(255,235,59,0.4)', body: '#f47b16', hair: '#111111', skin: '#fcdcb6', outfit: '#f47b16', accent: '#0074c7', proj: '#ffeb3b' },
             skill: { name: 'Thịnh nộ Sayan', cost: 20, cd: 8000, duration: 3000 }
         },
         namek: {
             title: 'Namek', maxHp: 140, maxMp: 120, baseDamage: 16, speed: 4.8, jumpForce: -11, maxExp: 100,
             levelGrowth: { hp: 18, mp: 18, damage: 4, expFactor: 1.25 },
-            colors: { aura: 'rgba(0,255,128,0.3)', body: '#81c784', hair: '#2e7d32', skin: '#a5d6a7', outfit: '#2e7d32', proj: '#00e5ff' },
+            // Bảng màu chuẩn Piccolo
+            colors: { aura: 'rgba(0,255,128,0.3)', body: '#4a148c', hair: '#2e7d32', skin: '#81c784', outfit: '#4a148c', accent: '#ff1744', proj: '#00e5ff' },
             skill: { name: 'Hồi phục & Khiên', cost: 30, cd: 10000, duration: 4000 }
         },
         earth: {
             title: 'Trái Đất', maxHp: 150, maxMp: 80, baseDamage: 18, speed: 6.5, jumpForce: -13, maxExp: 95,
             levelGrowth: { hp: 20, mp: 10, damage: 5, expFactor: 1.15 },
-            colors: { aura: 'rgba(0,150,255,0.3)', body: '#90caf9', hair: '#212121', skin: '#ffe0b2', outfit: '#1976d2', proj: '#80d8ff' },
+            // Bảng màu chuẩn Võ sư
+            colors: { aura: 'rgba(0,150,255,0.3)', body: '#d32f2f', hair: '#000000', skin: '#ffe0b2', outfit: '#d32f2f', accent: '#111111', proj: '#80d8ff' },
             skill: { name: 'Bước Nhanh', cost: 15, cd: 9000, duration: 3000 }
         }
     },
@@ -445,78 +448,169 @@ const AnimationManager = {
 };
 
 const CharacterRenderer = {
+    // Helper vẽ khối vuông có viền (Phong cách Pixel/Lego)
+    drawBlock: function(ctx, x, y, w, h, fill, noStroke = false) {
+        ctx.fillStyle = fill;
+        ctx.fillRect(x, y, w, h);
+        if (!noStroke) ctx.strokeRect(x, y, w, h);
+    },
+
+    // Helper vẽ tứ chi (Tay, Chân) có khớp và băng đeo
+    drawLimb: function(ctx, x, y, w, h, rot, color, accentColor, isLeg = false) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rot);
+        this.drawBlock(ctx, -w/2, 0, w, h, color); // Cánh tay/Đùi
+        
+        // Vẽ băng cổ tay hoặc đôi giày mập mạp
+        if (accentColor) {
+            if (isLeg) {
+                // Giày to hơn ống chân
+                this.drawBlock(ctx, -w/2 - 2, h - 8, w + 4, 8, accentColor);
+                this.drawBlock(ctx, -w/2 - 2, h, w + 6, 4, '#ffeb3b'); // Mũi giày vàng
+            } else {
+                // Băng cổ tay
+                this.drawBlock(ctx, -w/2 - 1, h - 6, w + 2, 6, accentColor);
+                this.drawBlock(ctx, -w/2, h, w, 4, color); // Bàn tay
+            }
+        }
+        ctx.restore();
+    },
+
     draw: function(ctx, char) {
         ctx.save();
         ctx.translate(char.x + char.width / 2, char.y + char.height);
-        ctx.scale(char.dir, 1);
+        ctx.scale(char.dir, 1); // Lật theo hướng
+
+        // Setup nét vẽ đậm chất Pixel Art
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#000';
+        ctx.lineJoin = 'miter'; // Nét gập góc cạnh
+        ctx.lineCap = 'square';
 
         if (char.hurtTimer > 0) ctx.globalAlpha = (Math.floor(Date.now() / 50) % 2 === 0) ? 0.5 : 1;
 
-        // Mô phỏng Sprite Logic bằng Code (Phase 1)
+        // Tính toán dao động Animation
         let time = Date.now(); let bobY = 0, legRot = 0, armRot = 0;
-        
-        if (char.state === 'idle') bobY = Math.sin(time / 200) * 2;
-        else if (char.state === 'run') { bobY = Math.abs(Math.sin(time / 100)) * 4; legRot = Math.sin(time / 80) * 0.6; armRot = -legRot; }
-        else if (char.state === 'jump') { legRot = 0.3; armRot = -0.5; }
+        if (char.state === 'idle') bobY = Math.floor(Math.sin(time / 200) * 2);
+        else if (char.state === 'run') { bobY = Math.floor(Math.abs(Math.sin(time / 100)) * 4); legRot = Math.sin(time / 80) * 0.8; armRot = -legRot; }
+        else if (char.state === 'jump') { legRot = 0.5; armRot = -0.8; }
         else if (char.state === 'dead') { ctx.rotate(Math.PI / 2); ctx.translate(-char.height / 2 + 10, -char.width / 2); }
 
-        const headRadius = 16, bodyW = 18, bodyH = 22, limbW = 6, limbH = 12;
+        // Kích thước chuẩn Pixel (Tỷ lệ y như ảnh mẫu)
+        const headS = 20, bodyW = 18, bodyH = 16, limbW = 8, limbH = 14;
+        let waistY = -24; // Vị trí eo
+        
+        let cSkin = char.colors.skin;
+        let cPants = char.colors.outfit;
+        let cAccent = char.colors.accent || '#000';
+        let isSuper = char.skillActive && char.raceKey === 'sayan';
+        let cHair = isSuper ? '#ffeb3b' : char.colors.hair;
 
+        // Vẽ Aura bùng nổ xung quanh
         if (char instanceof Player && !char.isDead && (char.state === 'attack' || char.state === 'shoot' || char.skillActive)) {
             ctx.beginPath();
-            let auraSize = char.skillActive ? 45 : 35; let pulse = Math.sin(time / 50) * 5;
-            ctx.moveTo(0, -bodyH - 30 - pulse); ctx.quadraticCurveTo(auraSize, -bodyH, 0, 10); ctx.quadraticCurveTo(-auraSize, -bodyH, 0, -bodyH - 30 - pulse);
+            let auraSize = char.skillActive ? 50 : 35; let pulse = Math.floor(Math.sin(time / 50) * 5);
+            ctx.moveTo(0, waistY - bodyH - headS - 10 - pulse);
+            ctx.quadraticCurveTo(auraSize, waistY - bodyH, 0, 10);
+            ctx.quadraticCurveTo(-auraSize, waistY - bodyH, 0, waistY - bodyH - headS - 10 - pulse);
             ctx.fillStyle = char.colors.aura; ctx.fill();
         }
 
-        // Chân tay, thân
-        this.drawLimb(ctx, -bodyW/2 + 2, -15 + bobY, armRot, limbW, limbH, char.colors.skin);
-        this.drawLimb(ctx, -6, -10 + bobY, legRot, limbW, limbH, '#222');
-        this.drawLimb(ctx, 2, -10 + bobY, -legRot, limbW, limbH, '#222');
+        // --- 1. TAY TRONG (Tay khuất phía sau) ---
+        this.drawLimb(ctx, -bodyW/2 + 2, waistY - bodyH + 2 + bobY, limbW, limbH, armRot, cSkin, cAccent, false);
 
-        ctx.fillStyle = char.colors.outfit || char.colors.body;
-        if (char.raceKey === 'earth') { ctx.fillRect(-bodyW/2, -bodyH - 10 + bobY, bodyW, bodyH); ctx.fillStyle='#f57c00'; ctx.fillRect(-bodyW/2, -15 + bobY, bodyW, 4); } 
-        else { ctx.beginPath(); ctx.roundRect(-bodyW/2, -bodyH - 10 + bobY, bodyW, bodyH, 3); ctx.fill(); }
+        // --- 2. HAI CHÂN ---
+        this.drawLimb(ctx, -5, waistY + bobY, limbW+2, limbH, legRot, cPants, cAccent, true); // Quần phồng
+        this.drawLimb(ctx, 5, waistY + bobY, limbW+2, limbH, -legRot, cPants, cAccent, true);
 
+        // --- 3. THÂN (Ngực trần cho Sayan) ---
+        let chestColor = (char.raceKey === 'sayan') ? cSkin : cPants;
+        this.drawBlock(ctx, -bodyW/2, waistY - bodyH + bobY, bodyW, bodyH, chestColor);
+        // Vẽ cơ ngực cho Sayan
+        if (char.raceKey === 'sayan') {
+            ctx.beginPath(); ctx.moveTo(-bodyW/2 + 2, waistY - bodyH/2 + bobY); ctx.lineTo(bodyW/2 - 2, waistY - bodyH/2 + bobY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, waistY - bodyH + 2 + bobY); ctx.lineTo(0, waistY - bodyH/2 + bobY); ctx.stroke();
+        }
+
+        // --- 4. ĐAI LƯNG ---
+        this.drawBlock(ctx, -bodyW/2 - 2, waistY - 2 + bobY, bodyW + 4, 6, cAccent);
+        // Tà đai thòng xuống
+        this.drawBlock(ctx, -4, waistY + 4 + bobY, 6, 8, cAccent);
+
+        // --- 5. TAY NGOÀI ---
         let frontArmRot = -armRot;
-        if (char.state === 'attack' || char.state === 'shoot') frontArmRot = -Math.PI / 2;
-        this.drawLimb(ctx, bodyW/2 - 4, -15 + bobY, frontArmRot, limbW, limbH, char.colors.skin);
+        if (char.state === 'attack' || char.state === 'shoot') frontArmRot = -Math.PI / 1.5;
+        this.drawLimb(ctx, bodyW/2 - 2, waistY - bodyH + 2 + bobY, limbW, limbH, frontArmRot, cSkin, cAccent, false);
 
-        // Đầu
-        ctx.save(); ctx.translate(0, -bodyH - 10 - headRadius + bobY);
-        if (char.raceKey === 'namek') { ctx.fillStyle = '#1b5e20'; ctx.beginPath(); ctx.ellipse(-8, -12, 3, 8, -0.5, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(8, -12, 3, 8, 0.5, 0, Math.PI*2); ctx.fill(); }
-        ctx.fillStyle = char.colors.skin; ctx.beginPath(); ctx.arc(0, 0, headRadius, 0, Math.PI * 2); ctx.fill();
+        // --- 6. ĐẦU VÀ KHUÔN MẶT BLOCKY ---
+        let hy = waistY - bodyH - headS + bobY;
+        this.drawBlock(ctx, -headS/2, hy, headS, headS, cSkin); // Khuôn mặt vuông vức
         
-        ctx.fillStyle = '#000'; let eyeY = -2;
-        if (char.state === 'attack' || char.state === 'shoot') { ctx.beginPath(); ctx.moveTo(2, eyeY - 2); ctx.lineTo(6, eyeY + 2); ctx.lineTo(8, eyeY - 1); ctx.fill(); } 
-        else if (char.state === 'dead') { ctx.font = '10px Arial'; ctx.fillText('x', 5, eyeY + 3); } 
-        else { ctx.fillRect(4, eyeY, 3, 4); }
+        // Mắt Pixel
+        ctx.fillStyle = '#000';
+        if (char.state === 'attack' || char.state === 'shoot') {
+            // Mắt xếch giận dữ
+            ctx.beginPath(); ctx.moveTo(2, hy + 4); ctx.lineTo(8, hy + 8); ctx.lineTo(8, hy + 4); ctx.fill();
+        } else if (char.state === 'dead') {
+            ctx.fillRect(2, hy + 4, 2, 2); ctx.fillRect(6, hy + 8, 2, 2);
+        } else {
+            ctx.fillRect(4, hy + 6, 4, 4); // Mắt thường to
+        }
 
-        ctx.fillStyle = char.colors.hair;
-        if (char.raceKey === 'sayan') { ctx.beginPath(); ctx.moveTo(-headRadius, 0); ctx.lineTo(-headRadius-5, -10); ctx.lineTo(-headRadius/2, -headRadius+2); ctx.lineTo(0, -headRadius-15); ctx.lineTo(headRadius/2, -headRadius+2); ctx.lineTo(headRadius+5, -10); ctx.lineTo(headRadius, 0); ctx.fill(); } 
-        else if (char.raceKey === 'earth') { ctx.beginPath(); ctx.arc(0, -headRadius/2, headRadius+1, Math.PI, 0); ctx.fill(); } 
-        else if (char instanceof Monster) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(0, -headRadius); ctx.lineTo(10, -headRadius-15); ctx.lineTo(5, -headRadius); ctx.fill(); }
-        ctx.restore();
+        // Cằm/Râu Namek
+        if (char.raceKey === 'namek') {
+            ctx.fillStyle = '#1b5e20';
+            this.drawBlock(ctx, -headS/2 - 2, hy + 2, 4, 6, '#1b5e20');
+            this.drawBlock(ctx, headS/2 - 2, hy + 2, 4, 6, '#1b5e20');
+        }
 
-        // Vũ khí / Đánh
+        // --- 7. TÓC GAI GÓC CỰC LỚN (ĐẶC TRƯNG) ---
+        ctx.fillStyle = cHair;
+        if (char.raceKey === 'sayan' || char.raceKey === 'earth') {
+            // Tạo path vẽ tóc nhọn hoắt như lego block
+            ctx.beginPath();
+            ctx.moveTo(-headS/2 - 4, hy + headS); // Dưới tai trái
+            ctx.lineTo(-headS - 8, hy + 4);
+            ctx.lineTo(-headS/2 - 2, hy);
+            ctx.lineTo(-headS - 12, hy - 12);
+            ctx.lineTo(-headS/4, hy - 8);
+            ctx.lineTo(-headS/2, hy - 24); // Đỉnh nhọn cao nhất
+            ctx.lineTo(2, hy - 14);
+            ctx.lineTo(headS/2 + 6, hy - 28);
+            ctx.lineTo(headS/2, hy - 8);
+            ctx.lineTo(headS + 12, hy - 16);
+            ctx.lineTo(headS, hy);
+            ctx.lineTo(headS + 12, hy + 8);
+            ctx.lineTo(headS/2 + 4, hy + headS);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            
+            // Vẽ vài lọn tóc mái rũ xuống trán
+            ctx.beginPath();
+            ctx.moveTo(-headS/4, hy); ctx.lineTo(0, hy + 6); ctx.lineTo(headS/4, hy);
+            ctx.fill(); ctx.stroke();
+        } else if (char instanceof Monster) {
+            // Quái vật đầu trọc có sừng
+            this.drawBlock(ctx, -headS/4, hy - 10, 4, 10, '#fff');
+            this.drawBlock(ctx, headS/4 - 4, hy - 10, 4, 10, '#fff');
+        }
+
+        // --- 8. HIỆU ỨNG CHIẾN ĐẤU ---
         if (char.state === 'attack' && !char.isDead) {
-            ctx.beginPath(); ctx.arc(20, -char.height / 2, 25, -Math.PI / 3, Math.PI / 4); ctx.lineWidth = 3; ctx.strokeStyle = 'white'; ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(15, -char.height/2); ctx.lineTo(35, -char.height/2); ctx.strokeStyle = '#ffeb3b'; ctx.stroke();
+            ctx.beginPath(); ctx.arc(25, -char.height / 2, 20, -Math.PI / 2, Math.PI / 4); ctx.lineWidth = 4; ctx.strokeStyle = 'white'; ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(20, -char.height/2); ctx.lineTo(40, -char.height/2); ctx.strokeStyle = cHair; ctx.stroke();
         }
         ctx.restore();
 
-        // UI trên đầu (Ko quay theo nhân vật)
+        // UI trên đầu
         if (!char.isDead && GLOBALS.state === 'PLAYING') {
             ctx.fillStyle = 'white'; ctx.font = '10px "Press Start 2P", monospace'; ctx.textAlign = 'center';
-            let nameY = char.y - 10; ctx.fillText(char.name, char.x + char.width / 2, nameY - 5);
-            ctx.fillStyle = '#000'; ctx.fillRect(char.x, nameY, char.width, 4);
+            let nameY = char.y - 15; ctx.fillText(char.name, char.x + char.width / 2, nameY - 5);
+            ctx.fillStyle = '#000'; ctx.fillRect(char.x, nameY, char.width, 5);
             ctx.fillStyle = (char instanceof Monster) ? '#d32f2f' : '#4caf50';
-            ctx.fillRect(char.x, nameY, char.width * Math.max(0, char.hp / char.maxHp), 4);
+            ctx.fillRect(char.x, nameY, char.width * Math.max(0, char.hp / char.maxHp), 5);
         }
-    },
-    drawLimb: function(ctx, x, y, rot, w, h, color) {
-        ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.fillStyle = color;
-        ctx.beginPath(); ctx.roundRect(-w/2, 0, w, h, 3); ctx.fill(); ctx.restore();
     }
 };
 
