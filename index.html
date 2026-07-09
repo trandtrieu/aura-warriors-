@@ -356,6 +356,44 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 /* ==========================================
+   3.5 HELPER FUNCTIONS
+   ========================================== */
+function checkAABBCollision(rect1, rect2) {
+    return (rect1.x < rect2.x + rect2.width &&
+            rect1.x + rect1.width > rect2.x &&
+            rect1.y < rect2.y + rect2.height &&
+            rect1.y + rect1.height > rect2.y);
+}
+
+function addSystemMessage(text) {
+    const el = document.createElement('div');
+    el.className = 'msg-sys';
+    el.innerText = `[Hệ thống] ${text}`;
+    chatMessages.appendChild(el);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function spawnDamageText(x, y, damage, color = 'white') {
+    floatingTexts.push({
+        x: x, y: y, text: `-${damage}`,
+        color: color, life: 60, maxLife: 60, vy: -2
+    });
+}
+
+function createParticles(x, y, color, count = 5) {
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: x, y: y,
+            vx: (Math.random() - 0.5) * 10,
+            vy: (Math.random() - 0.5) * 10,
+            life: 20 + Math.random() * 20,
+            color: color,
+            size: 2 + Math.random() * 3
+        });
+    }
+}
+
+/* ==========================================
    4. HỆ THỐNG VẼ NHÂN VẬT (CHARACTER RENDERER)
    Tách logic vẽ ra khỏi Entity để dễ thay Sprite sau này
    ========================================== */
@@ -1002,7 +1040,10 @@ function updateHUD() {
     document.getElementById('hpBar').style.width = `${Math.max(0, (localPlayer.hp / localPlayer.maxHp) * 100)}%`;
     document.getElementById('hudMpText').innerText = `${Math.floor(localPlayer.mp)}/${localPlayer.maxMp}`;
     document.getElementById('mpBar').style.width = `${Math.max(0, (localPlayer.mp / localPlayer.maxMp) * 100)}%`;
-    document.getElementById('hudExpText').innerText = `${localPlayer.exp}/${localPlayer.maxExp}`;
+    
+    let hudExpText = document.getElementById('hudExpText');
+    if (hudExpText) hudExpText.innerText = `${localPlayer.exp}/${localPlayer.maxExp}`;
+    
     document.getElementById('expBar').style.width = `${(localPlayer.exp / localPlayer.maxExp) * 100}%`;
     document.getElementById('hudMoney').innerText = localPlayer.money;
 }
