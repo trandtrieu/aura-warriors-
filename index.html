@@ -8,7 +8,7 @@
         /* ==========================================
            [UI/CSS] STYLES
            ========================================== */
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700;900&display=swap');
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -36,7 +36,7 @@
             text-align: center; color: white; width: 380px;
             box-shadow: 0 0 30px rgba(106, 27, 154, 0.6), inset 0 0 20px rgba(0,0,0,0.8);
         }
-        .login-box h1 { font-family: 'Press Start 2P', cursive; font-size: 18px; margin-bottom: 25px; color: #ffeb3b; text-shadow: 2px 2px 0px #f44336; }
+        .login-box h1 { font-family: 'Press Start 2P', cursive; font-size: 18px; margin-bottom: 25px; color: #ffeb3b; text-shadow: 2px 2px 0px #f44336; line-height: 1.4; }
         
         .preview-container {
             width: 100%; height: 120px; background: rgba(0,0,0,0.5); border: 2px inset #555;
@@ -49,6 +49,7 @@
         .input-group input, .input-group select {
             width: 100%; padding: 12px; box-sizing: border-box; font-weight: bold;
             background: #111; border: 2px solid #555; color: white; border-radius: 6px; outline: none; transition: 0.2s;
+            font-family: 'Roboto', sans-serif;
         }
         
         .race-preview {
@@ -56,19 +57,19 @@
             margin-bottom: 16px; text-align: left; line-height: 1.4; font-size: 13px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
         .race-preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
-        .race-preview-label { font-size: 11px; color: #9e9e9e; text-transform: uppercase; letter-spacing: 1px; }
-        .race-preview-name { font-weight: bold; color: #ffeb3b; font-family: 'Press Start 2P', cursive; font-size: 10px;}
-        .race-preview-desc { color: #ddd; margin-bottom: 10px; font-size: 12px; font-style: italic;}
-        .race-preview-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; font-size: 12px;}
+        .race-preview-label { font-size: 11px; color: #9e9e9e; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .race-preview-name { font-weight: 900; color: #ffeb3b; font-family: 'Roboto', sans-serif; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .race-preview-desc { color: #ddd; margin-bottom: 10px; font-size: 13px; font-style: italic;}
+        .race-preview-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; font-size: 13px;}
         .race-preview-stats div { color: #eee; }
         .race-preview-stats strong { color: #4fc3f7; }
         .race-preview-skill { margin-top: 10px; border-top: 1px dashed #555; padding-top: 10px; }
-        .race-preview-skill-name { color: #b2ff59; font-weight: bold; margin-bottom: 4px; font-size: 12px;}
+        .race-preview-skill-name { color: #b2ff59; font-weight: bold; margin-bottom: 4px; font-size: 13px;}
 
         .btn-start, .btn-action {
             background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%); color: white; border: 2px solid #1b5e20;
-            padding: 15px 20px; font-weight: bold; width: 100%; border-radius: 6px; text-shadow: 1px 1px 2px black;
-            cursor: pointer; transition: 0.1s; font-family: 'Press Start 2P', cursive; font-size: 12px; box-shadow: 0 4px 0 #1b5e20; margin-bottom: 5px;
+            padding: 15px 20px; font-weight: 900; width: 100%; border-radius: 6px; text-shadow: 1px 1px 2px black;
+            cursor: pointer; transition: 0.1s; font-family: 'Roboto', sans-serif; font-size: 15px; box-shadow: 0 4px 0 #1b5e20; margin-bottom: 5px; letter-spacing: 0.5px;
         }
         .btn-start:active, .btn-action:active { transform: translateY(4px); box-shadow: 0 0 0 #1b5e20; }
         .btn-load { background: linear-gradient(180deg, #2196f3 0%, #1565c0 100%); border-color: #0d47a1; box-shadow: 0 4px 0 #0d47a1; }
@@ -81,10 +82,10 @@
             background: rgba(20,20,30,0.85); padding: 12px; border-radius: 4px;
             border: 2px solid #8d6e63; width: 260px; color: white; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
         }
-        .level-info { font-weight: bold; margin-bottom: 8px; text-shadow: 1px 1px 0px black; font-size: 14px; border-bottom: 1px solid #555; padding-bottom: 5px;}
-        .stat-bar-container { width: 100%; background: #222; height: 14px; margin: 2px 0 6px 0; border: 2px solid #111; position: relative;}
+        .level-info { font-weight: bold; margin-bottom: 8px; text-shadow: 1px 1px 0px black; font-size: 15px; border-bottom: 1px solid #555; padding-bottom: 5px;}
+        .stat-bar-container { width: 100%; background: #222; height: 14px; margin: 4px 0 6px 0; border: 2px solid #111; position: relative;}
         .stat-bar { height: 100%; transition: width 0.1s; }
-        .stat-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 10px; line-height: 14px; font-weight: bold; text-shadow: 1px 1px 1px black; z-index: 2;}
+        .stat-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 11px; line-height: 14px; font-weight: bold; text-shadow: 1px 1px 1px black; z-index: 2;}
         #hpBar { background: linear-gradient(90deg, #d32f2f, #f44336); width: 100%; }
         #mpBar { background: linear-gradient(90deg, #1976d2, #2196f3); width: 100%; }
         #expBar { background: linear-gradient(90deg, #fbc02d, #ffeb3b); width: 0%; }
@@ -92,16 +93,16 @@
         /* Map Info */
         #mapInfo {
             position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.6); border: 2px solid #555; padding: 5px 20px;
-            color: #fff; font-family: 'Press Start 2P', cursive; font-size: 12px; border-radius: 20px; text-shadow: 1px 1px 0 #000;
+            background: rgba(0,0,0,0.6); border: 2px solid #555; padding: 6px 20px;
+            color: #fff; font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: bold; letter-spacing: 0.5px; border-radius: 20px; text-shadow: 1px 1px 0 #000;
         }
 
-        /* Nút Sảnh chính (Mới) */
+        /* Nút Sảnh chính */
         #btnMainMenu {
             position: absolute; top: 15px; right: 230px;
             background: rgba(20,20,30,0.85); border: 2px solid #8d6e63; color: white;
             padding: 8px 12px; border-radius: 4px; cursor: pointer;
-            font-family: 'Roboto', sans-serif; font-weight: bold; font-size: 12px;
+            font-family: 'Roboto', sans-serif; font-weight: bold; font-size: 13px;
             box-shadow: 2px 2px 0px rgba(0,0,0,0.5); transition: 0.2s; pointer-events: auto; z-index: 10;
         }
         #btnMainMenu:hover { background: #8d6e63; color: #fff; }
@@ -110,8 +111,8 @@
             position: absolute; top: 15px; right: 15px; background: rgba(20,20,30,0.85); padding: 10px 15px; border-radius: 4px;
             border: 2px solid #8d6e63; width: 200px; color: white; text-align: right; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
         }
-        #questTracker h3 { margin: 0 0 5px 0; font-size: 14px; color: #ffca28; }
-        #questText { font-size: 12px; color: #fff; }
+        #questTracker h3 { margin: 0 0 5px 0; font-size: 14px; color: #ffca28; font-weight: 900;}
+        #questText { font-size: 13px; color: #fff; line-height: 1.4;}
 
         /* Skill Bar */
         #skillBar {
@@ -119,16 +120,16 @@
             display: flex; gap: 5px; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 8px; border: 2px solid #444; pointer-events: auto;
         }
         .skill-slot {
-            width: 40px; height: 40px; background: #333; border: 2px solid #777; border-radius: 4px;
-            display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; position: relative;
+            width: 44px; height: 44px; background: #333; border: 2px solid #777; border-radius: 4px;
+            display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; position: relative; font-size: 18px;
         }
-        .skill-key { position: absolute; top: -8px; right: -8px; background: #ffca28; color: black; font-size: 10px; padding: 2px 4px; border-radius: 4px; border: 1px solid #000;}
+        .skill-key { position: absolute; top: -8px; right: -8px; background: #ffca28; color: black; font-size: 11px; padding: 2px 5px; border-radius: 4px; border: 1px solid #000; font-family: 'Roboto', sans-serif; font-weight: 900;}
 
         #chatBox {
             position: absolute; bottom: 15px; left: 15px; width: 320px; background: rgba(0,0,0,0.6); border-radius: 4px; display: flex; flex-direction: column; border: 2px solid #555; pointer-events: auto;
         }
-        #chatMessages { height: 150px; overflow-y: auto; padding: 10px; color: white; font-size: 13px; text-shadow: 1px 1px 1px black; display: flex; flex-direction: column; gap: 6px; }
-        #chatInput { background: rgba(0,0,0,0.8); border: none; border-top: 2px solid #555; color: white; padding: 10px; outline: none;}
+        #chatMessages { height: 150px; overflow-y: auto; padding: 10px; color: white; font-size: 13px; text-shadow: 1px 1px 1px black; display: flex; flex-direction: column; gap: 6px; line-height: 1.4;}
+        #chatInput { background: rgba(0,0,0,0.8); border: none; border-top: 2px solid #555; color: white; padding: 10px; outline: none; font-family: 'Roboto', sans-serif; font-size: 13px;}
         .msg-sys { color: #ffeb3b; font-style: italic;}
         .msg-name { font-weight: bold; color: #4caf50; }
 
@@ -138,24 +139,26 @@
             width: 300px; color: white; pointer-events: auto; box-shadow: 0 0 30px rgba(0,0,0,0.8); z-index: 50;
         }
         .inv-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 2px solid #555; padding-bottom: 10px;}
+        .inv-header h2 { margin: 0; font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 18px; color: #ffca28;}
         .item-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .item-slot { width: 100%; aspect-ratio: 1; background: #222; border: 2px solid #555; cursor: pointer; position: relative;}
         .item-slot:hover { border-color: #ffeb3b; }
-        .item-count { position: absolute; bottom: 2px; right: 4px; font-size: 11px; font-weight: bold; }
-        .tooltip { visibility: hidden; width: 120px; background: rgba(0,0,0,0.9); color: #fff; text-align: center; border-radius: 6px; padding: 5px; position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); font-size: 11px; z-index: 10;}
+        .item-count { position: absolute; bottom: 2px; right: 4px; font-size: 12px; font-weight: bold; }
+        .tooltip { visibility: hidden; width: 130px; background: rgba(0,0,0,0.9); color: #fff; text-align: center; border-radius: 6px; padding: 6px; position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); font-size: 12px; z-index: 10; font-family: 'Roboto', sans-serif; line-height: 1.4;}
         .item-slot:hover .tooltip { visibility: visible; }
 
         #respawnScreen {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(100,0,0,0.8); flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 200;
         }
-        #respawnScreen h1 { font-family: 'Press Start 2P', cursive; color: #ff5252; text-shadow: 3px 3px 0 #000; margin-bottom: 20px;}
+        #respawnScreen h1 { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 32px; color: #ff5252; text-shadow: 3px 3px 0 #000; margin-bottom: 20px;}
 
-        /* --- Dialog Xác Nhận Về Sảnh (Mới) --- */
+        /* --- Dialog Xác Nhận Về Sảnh --- */
         #confirmMenuScreen {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 300;
         }
+        #confirmMenuScreen h2 { font-family: 'Roboto', sans-serif; font-weight: 900; color: #ff5252; font-size: 20px; margin-top:0; margin-bottom: 15px;}
 
         #systemMessage {
             position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
@@ -212,9 +215,8 @@
                         <div id="racePreviewSkillName" class="race-preview-skill-name">Thịnh nộ Sayan</div>
                     </div>
                 </div>
-                <!-- Nút Vào Game Đã Cập Nhật Tính Năng Load Tự Động -->
-                <button class="btn-start" onclick="GameCore.startNewGame()">VÀO GAME (TIẾP TỤC)</button>
-                <button class="btn-action btn-load" onclick="GameCore.startNewGame(true)">TẠO MỚI (XÓA SAVE)</button>
+                <button class="btn-start" onclick="GameCore.startNewGame()">VÀO GAME MỚI</button>
+                <button class="btn-action btn-load" onclick="GameCore.loadGame()">TIẾP TỤC (TẢI LẠI)</button>
             </div>
         </div>
 
@@ -230,8 +232,7 @@
 
             <div id="mapInfo">Làng Khởi Đầu</div>
 
-            <!-- Nút Quay Về Sảnh Chính -->
-            <button id="btnMainMenu" onclick="UI.showConfirmMenu()">🏠 Sảnh</button>
+            <button id="btnMainMenu" onclick="UI.showConfirmMenu()">🏠 Sảnh chính</button>
 
             <div id="questTracker">
                 <h3>Nhiệm vụ</h3>
@@ -269,8 +270,8 @@
         <!-- Confirm Menu Screen -->
         <div id="confirmMenuScreen">
             <div class="login-box" style="width: 320px;">
-                <h2 style="font-family: 'Press Start 2P', cursive; color: #ff5252; font-size: 14px; margin-top:0; margin-bottom: 15px;">VỀ SẢNH CHÍNH?</h2>
-                <p style="font-size: 12px; color: #ddd; margin-bottom: 25px; line-height: 1.5;">Tiến trình của bạn sẽ được lưu lại tự động.</p>
+                <h2>VỀ SẢNH CHÍNH?</h2>
+                <p style="font-size: 13px; color: #ddd; margin-bottom: 25px; line-height: 1.5;">Tiến trình của bạn sẽ được lưu lại tự động.</p>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn-action" style="background: #555; border-color: #333; box-shadow: 0 4px 0 #333;" onclick="UI.hideConfirmMenu()">HỦY</button>
                     <button class="btn-action" onclick="GameCore.backToMainMenu()">ĐỒNG Ý</button>
@@ -329,7 +330,7 @@ const GLOBALS = {
     groundY: window.innerHeight - 100,
     state: 'LOGIN', 
     lastTime: 0,
-    gameTime: 0, // Dùng cho môi trường
+    gameTime: 0, 
     camera: { x: 0, y: 0, shakeTime: 0, shakeIntensity: 0 },
     keys: {},
     isChatFocused: false,
@@ -378,17 +379,15 @@ const Utils = {
 const EnvironmentSystem = {
     clouds: [],
     leaves: [],
-    trees: [], // Procedural trees
+    trees: [], 
     mountains: [],
 
     init: function() {
-        // Sinh mây
         for(let i=0; i<20; i++) this.clouds.push({x: Utils.rand(0, 3000), y: Utils.rand(20, 250), speed: Utils.rand(0.2, 0.6), scale: Utils.rand(0.5, 1.5)});
     },
 
     initMapProps: function(mapWidth) {
         this.trees = [];
-        // Sinh cây cối ngẫu nhiên cho map
         for(let i=100; i<mapWidth; i+= Utils.rand(300, 600)) {
             this.trees.push({ x: i, scale: Utils.rand(0.8, 1.4), type: Math.random()>0.5?1:2 });
         }
@@ -396,18 +395,15 @@ const EnvironmentSystem = {
 
     update: function(dt, camX) {
         GLOBALS.gameTime += dt;
-        // Mây bay
         this.clouds.forEach(c => { c.x -= c.speed; if(c.x < -200) c.x = MapManager.maps[MapManager.currentId].width + 200; });
-        // Lá rơi
         if(Math.random() < 0.08) this.leaves.push({x: camX + Utils.rand(0, GLOBALS.width), y: -20, vx: Utils.rand(-3, -1), vy: Utils.rand(1, 3), rot: 0});
         this.leaves.forEach(l => { l.x += l.vx; l.y += l.vy; l.rot += 0.05; });
         this.leaves = this.leaves.filter(l => l.y < GLOBALS.groundY + 20);
     },
 
     drawBackground: function(ctx, camX, camY, mapData) {
-        // Chu kỳ ngày đêm (Day/Night cycle)
         let cycle = Math.sin(GLOBALS.gameTime / 10000); 
-        let skyColor1 = `rgb(${Math.max(10, 23 * cycle)}, ${Math.max(25, 42 * cycle)}, ${Math.max(47, 69 * cycle)})`; // Đêm/Ngày
+        let skyColor1 = `rgb(${Math.max(10, 23 * cycle)}, ${Math.max(25, 42 * cycle)}, ${Math.max(47, 69 * cycle)})`; 
         let skyColor2 = `rgb(${Math.max(23, 50 * cycle)}, ${Math.max(42, 100 * cycle)}, ${Math.max(69, 150 * cycle)})`;
 
         let grad = ctx.createLinearGradient(0, 0, 0, GLOBALS.height);
@@ -416,17 +412,15 @@ const EnvironmentSystem = {
         
         ctx.save(); ctx.translate(-camX, -camY);
         
-        // Vẽ Mây (Layer xa nhất)
         ctx.fillStyle = 'rgba(255,255,255,0.4)';
         this.clouds.forEach(c => {
-            if(c.x > camX - 200 && c.x < camX + GLOBALS.width + 200) { // Culling
+            if(c.x > camX - 200 && c.x < camX + GLOBALS.width + 200) { 
                 ctx.beginPath(); ctx.arc(c.x, c.y, 40*c.scale, 0, Math.PI*2);
                 ctx.arc(c.x+30*c.scale, c.y-10*c.scale, 50*c.scale, 0, Math.PI*2);
                 ctx.arc(c.x+60*c.scale, c.y, 40*c.scale, 0, Math.PI*2); ctx.fill();
             }
         });
 
-        // Vẽ Núi Parallax 
         ctx.fillStyle = '#1c2e4a';
         ctx.beginPath(); ctx.moveTo(camX, GLOBALS.groundY);
         for(let i=camX; i<camX+GLOBALS.width; i+=50) ctx.lineTo(i, GLOBALS.groundY - 150 - Math.sin(i*0.002)*100);
@@ -437,22 +431,19 @@ const EnvironmentSystem = {
         for(let i=camX; i<camX+GLOBALS.width; i+=40) ctx.lineTo(i, GLOBALS.groundY - 80 - Math.cos(i*0.005)*60);
         ctx.lineTo(camX+GLOBALS.width, GLOBALS.groundY); ctx.fill();
 
-        // Vẽ Đất
         ctx.fillStyle = mapData.groundColor; ctx.fillRect(0, GLOBALS.groundY, mapData.width, 25);
         ctx.fillStyle = mapData.dirtColor; ctx.fillRect(0, GLOBALS.groundY + 25, mapData.width, GLOBALS.height - GLOBALS.groundY);
         
-        // Vẽ Cây cối (Procedural)
         this.trees.forEach(t => {
-            if(t.x > camX - 300 && t.x < camX + GLOBALS.width + 300) { // Culling
+            if(t.x > camX - 300 && t.x < camX + GLOBALS.width + 300) { 
                 this.drawDragonBallTree(ctx, t.x, GLOBALS.groundY, t.scale, t.type);
             }
         });
 
-        // Cổng Portal
         mapData.portals.forEach(p => {
             ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
             ctx.fillRect(p.x, GLOBALS.groundY - 80, 60, 80);
-            ctx.fillStyle = 'white'; ctx.font = '10px Roboto'; ctx.fillText(p.label, p.x, GLOBALS.groundY - 90);
+            ctx.fillStyle = 'white'; ctx.font = 'bold 12px "Roboto", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(p.label, p.x + 30, GLOBALS.groundY - 90);
         });
 
         ctx.restore();
@@ -460,13 +451,12 @@ const EnvironmentSystem = {
 
     drawDragonBallTree: function(ctx, x, y, scale, type) {
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
-        let sway = Math.sin(GLOBALS.gameTime/500 + x)*0.05; // Gió thổi
+        let sway = Math.sin(GLOBALS.gameTime/500 + x)*0.05; 
         ctx.rotate(sway);
 
-        ctx.fillStyle = '#4e342e'; // Thân
+        ctx.fillStyle = '#4e342e'; 
         ctx.fillRect(-10, -80, 20, 80);
         
-        // Tán lá đặc trưng DBZ (Nhiều quả cầu lồng vào nhau)
         ctx.fillStyle = type===1 ? '#2e7d32' : '#00695c';
         ctx.beginPath();
         ctx.arc(0, -90, 45, 0, Math.PI*2);
@@ -474,7 +464,6 @@ const EnvironmentSystem = {
         ctx.arc(25, -70, 30, 0, Math.PI*2);
         ctx.fill();
         
-        // Highlight lá
         ctx.fillStyle = type===1 ? '#4caf50' : '#26a69a';
         ctx.beginPath(); ctx.arc(-10, -100, 20, 0, Math.PI*2); ctx.fill();
         
@@ -531,7 +520,7 @@ const MapManager = {
             if(s.type === 'monster') GLOBALS.entities.push(new Monster(s.x, GLOBALS.groundY - 50, s.lvl));
         });
 
-        EnvironmentSystem.initMapProps(mapData.width); // Tạo cây cối cho map mới
+        EnvironmentSystem.initMapProps(mapData.width); 
         UI.showCenterMessage(`Khu vực: ${mapData.name}`);
     },
 
@@ -600,7 +589,7 @@ const CharacterRenderer = {
         if (char.hurtTimer > 0) ctx.globalAlpha = (Math.floor(Date.now() / 50) % 2 === 0) ? 0.5 : 1;
 
         if (char.isChargingKame || char.isChargingPower) {
-            ctx.translate(Utils.rand(-1,1), Utils.rand(-1,1)); // Rung lắc khi gồng
+            ctx.translate(Utils.rand(-1,1), Utils.rand(-1,1)); 
         }
 
         let time = Date.now(); let bobY = 0, legRot = 0, armRot = 0;
@@ -617,7 +606,6 @@ const CharacterRenderer = {
         let isSuper = (char.skillActive && char.raceKey === 'sayan') || (char.powerUpActive && char.raceKey === 'sayan');
         let cHair = isSuper ? '#ffeb3b' : char.colors.hair;
 
-        // Vẽ Aura lớn cho Kame & Power Up
         if ((char.raceKey !== undefined && !char.isDead && (char.state === 'attack' || char.state === 'shoot' || char.skillActive || char.powerUpActive || char.isChargingKame || char.isChargingPower)) && char.state !== 'dummy') {
             ctx.beginPath();
             let auraSize = (char.skillActive || char.powerUpActive || char.isChargingKame || char.isChargingPower) ? (char.raceKey === 'sayan' ? 70 : 50) : 35;
@@ -627,8 +615,8 @@ const CharacterRenderer = {
             ctx.quadraticCurveTo(-auraSize, waistY - bodyH, 0, waistY - bodyH - headS - 10 - pulse);
             
             let auraColor = char.colors.aura;
-            if (char.isChargingKame) auraColor = 'rgba(0, 188, 212, 0.4)'; // Cyan
-            else if (char.isChargingPower) auraColor = 'rgba(156, 39, 176, 0.4)'; // Purple
+            if (char.isChargingKame) auraColor = 'rgba(0, 188, 212, 0.4)';
+            else if (char.isChargingPower) auraColor = 'rgba(156, 39, 176, 0.4)'; 
             
             ctx.fillStyle = auraColor; ctx.fill();
         }
@@ -691,7 +679,6 @@ const CharacterRenderer = {
             ctx.beginPath(); ctx.moveTo(20, -char.height/2); ctx.lineTo(40, -char.height/2); ctx.strokeStyle = cHair; ctx.stroke();
         }
         
-        // Particle khi đang sạc Kame
         if (char.isChargingKame) {
             ctx.fillStyle = '#00bcd4';
             ctx.beginPath(); ctx.arc(20, -10, Utils.rand(5, 10), 0, Math.PI*2); ctx.fill();
@@ -700,7 +687,7 @@ const CharacterRenderer = {
         ctx.restore();
 
         if (char.name && !char.isDead && GLOBALS.state === 'PLAYING') {
-            ctx.fillStyle = 'white'; ctx.font = '10px "Press Start 2P", monospace'; ctx.textAlign = 'center';
+            ctx.fillStyle = 'white'; ctx.font = 'bold 12px "Roboto", sans-serif'; ctx.textAlign = 'center';
             let nameY = char.y - 15; ctx.fillText(char.name, char.x + char.width / 2, nameY - 5);
             ctx.fillStyle = '#000'; ctx.fillRect(char.x, nameY, char.width, 5);
             ctx.fillStyle = (char.name.includes("Quái Cấp")) ? '#d32f2f' : '#4caf50';
@@ -722,13 +709,13 @@ const CombatSystem = {
         if(isMiss) { Utils.spawnText(target.x + target.width/2, target.y, "MISS", "#9e9e9e"); return; }
 
         let dmgMultiplier = multiplier;
-        if (attacker.powerUpActive) dmgMultiplier *= 1.3; // +30% DMG Buff
+        if (attacker.powerUpActive) dmgMultiplier *= 1.3; 
 
         let rawDamage = attacker.baseDamage * dmgMultiplier + Math.floor(Math.random() * 5);
         if(isCrit) rawDamage = Math.floor(rawDamage * 1.5); 
 
         let def = target.defense || 0;
-        if (target.powerUpActive) def = Math.floor(def * 1.2); // +20% DEF Buff
+        if (target.powerUpActive) def = Math.floor(def * 1.2); 
 
         let finalDamage = Math.max(1, rawDamage - def);
         if(target.skillActive && target.raceKey === 'namek') finalDamage = Math.max(1, finalDamage - 20);
@@ -838,7 +825,6 @@ class Player extends Entity {
     update(dt) {
         if(this.isDead) return super.update(dt);
 
-        // --- SKILL KAME LOGIC ---
         if (this.isChargingKame) {
             this.vx = 0; this.kameTimer -= dt;
             if (this.kameTimer <= 0) {
@@ -848,7 +834,6 @@ class Player extends Entity {
             }
         }
         
-        // --- POWER UP LOGIC ---
         if (this.isChargingPower) {
             this.vx = 0; this.powerUpTimer -= dt;
             Utils.screenShake(2, 50);
@@ -859,7 +844,7 @@ class Player extends Entity {
             }
         } else if (this.powerUpActive) {
             this.powerUpTimer -= dt;
-            this.mp += 0.05; // Bonus MP Regen
+            this.mp += 0.05; 
             if (this.powerUpTimer <= 0) {
                 this.powerUpActive = false; UI.chatSys('Hết trạng thái Gồng.');
             }
@@ -1063,7 +1048,7 @@ class NPC extends Entity {
         CharacterRenderer.draw(ctx, this);
         if (this.dialogTimer > 0) {
             ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.beginPath(); ctx.roundRect(this.x - 50, this.y - 65, 140, 35, 4); ctx.fill();
-            ctx.fillStyle = 'black'; ctx.font = 'bold 10px Roboto'; ctx.textAlign = 'center'; ctx.fillText(this.dialogText.substring(0, 22), this.x + 20, this.y - 50);
+            ctx.fillStyle = 'black'; ctx.font = 'bold 11px "Roboto", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(this.dialogText.substring(0, 22), this.x + 20, this.y - 50);
         }
     }
 }
@@ -1112,7 +1097,7 @@ class KameBeam {
             if (ent !== this.owner && ent.hp !== undefined && !ent.isDead && !(ent instanceof NPC)) {
                 if (!this.hitTargets.has(ent.id) && Utils.checkAABB(this, ent)) {
                     this.hitTargets.add(ent.id);
-                    CombatSystem.handleAttack(this.owner, ent, 3.0); // 3.0x KAME DAMAGE
+                    CombatSystem.handleAttack(this.owner, ent, 3.0); 
                     Utils.spawnParticles(ent.x + ent.width/2, ent.y + ent.height/2, this.color, 20);
                     Utils.screenShake(4, 100);
                 }
@@ -1213,12 +1198,17 @@ class MockNetwork {
     constructor() { 
         this.bots = []; 
         setTimeout(() => { 
-            if (GLOBALS.state !== 'PLAYING') return; // Tránh tạo bot nếu đã thoát
+            if (GLOBALS.state !== 'PLAYING') return; 
             let b=new Player(600,300,'GokuFake','sayan'); b.isBot=true; GLOBALS.entities.push(b); this.bots.push(b); UI.chatSys('GokuFake online.'); 
         }, 3000); 
     }
     update(dt) { this.bots.forEach(b => { if(Math.random()<0.01) { b.dir = Math.random()>0.5?1:-1; b.vx=b.dir*b.speed; } else if(Math.random()<0.02) b.vx=0; if(Math.random()<0.005 && b.isGrounded) b.vy=b.jumpForce; }); }
-    sendChat(name, msg) { let box=document.getElementById('chatMessages'); let el=document.createElement('div'); el.className='msg-player'; let span=document.createElement('span'); span.className='msg-name'; span.textContent=name+': '; el.appendChild(span); el.appendChild(document.createTextNode(msg)); box.appendChild(el); box.scrollTop=box.scrollHeight; }
+    sendChat(name, msg) { 
+        let box=document.getElementById('chatMessages'); let el=document.createElement('div'); el.className='msg-player'; 
+        let span=document.createElement('span'); span.className='msg-name'; span.textContent=name+': '; 
+        let textNode=document.createTextNode(msg); el.appendChild(span); el.appendChild(textNode);
+        box.appendChild(el); box.scrollTop=box.scrollHeight; 
+    }
 }
 
 /* =========================================================================
@@ -1271,7 +1261,7 @@ const GameCore = {
 
         setInterval(() => { if(GLOBALS.state==='PLAYING') SaveSystem.save(); }, 60000); 
 
-        EnvironmentSystem.init(); // Initialize clouds
+        EnvironmentSystem.init(); 
         requestAnimationFrame(this.loop.bind(this));
     },
 
