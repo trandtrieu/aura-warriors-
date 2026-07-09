@@ -96,6 +96,16 @@
             color: #fff; font-family: 'Press Start 2P', cursive; font-size: 12px; border-radius: 20px; text-shadow: 1px 1px 0 #000;
         }
 
+        /* Nút Sảnh chính (Mới) */
+        #btnMainMenu {
+            position: absolute; top: 15px; right: 230px;
+            background: rgba(20,20,30,0.85); border: 2px solid #8d6e63; color: white;
+            padding: 8px 12px; border-radius: 4px; cursor: pointer;
+            font-family: 'Roboto', sans-serif; font-weight: bold; font-size: 12px;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.5); transition: 0.2s; pointer-events: auto; z-index: 10;
+        }
+        #btnMainMenu:hover { background: #8d6e63; color: #fff; }
+
         #questTracker {
             position: absolute; top: 15px; right: 15px; background: rgba(20,20,30,0.85); padding: 10px 15px; border-radius: 4px;
             border: 2px solid #8d6e63; width: 200px; color: white; text-align: right; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
@@ -140,6 +150,12 @@
             background: rgba(100,0,0,0.8); flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 200;
         }
         #respawnScreen h1 { font-family: 'Press Start 2P', cursive; color: #ff5252; text-shadow: 3px 3px 0 #000; margin-bottom: 20px;}
+
+        /* --- Dialog Xác Nhận Về Sảnh (Mới) --- */
+        #confirmMenuScreen {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 300;
+        }
 
         #systemMessage {
             position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
@@ -196,8 +212,9 @@
                         <div id="racePreviewSkillName" class="race-preview-skill-name">Thịnh nộ Sayan</div>
                     </div>
                 </div>
-                <button class="btn-start" onclick="GameCore.startNewGame()">VÀO GAME MỚI</button>
-                <button class="btn-action btn-load" onclick="GameCore.loadGame()">TIẾP TỤC (TẢI LẠI)</button>
+                <!-- Nút Vào Game Đã Cập Nhật Tính Năng Load Tự Động -->
+                <button class="btn-start" onclick="GameCore.startNewGame()">VÀO GAME (TIẾP TỤC)</button>
+                <button class="btn-action btn-load" onclick="GameCore.startNewGame(true)">TẠO MỚI (XÓA SAVE)</button>
             </div>
         </div>
 
@@ -213,12 +230,15 @@
 
             <div id="mapInfo">Làng Khởi Đầu</div>
 
+            <!-- Nút Quay Về Sảnh Chính -->
+            <button id="btnMainMenu" onclick="UI.showConfirmMenu()">🏠 Sảnh</button>
+
             <div id="questTracker">
                 <h3>Nhiệm vụ</h3>
                 <div id="questText">Nói chuyện Trưởng Làng</div>
             </div>
 
-            <!-- Skill Bar (Đã bổ sung L và O) -->
+            <!-- Skill Bar -->
             <div id="skillBar">
                 <div class="skill-slot">J<div class="skill-key">Đánh</div></div>
                 <div class="skill-slot" style="background:#1565c0">K<div class="skill-key">Khí</div></div>
@@ -244,6 +264,18 @@
         <div id="respawnScreen">
             <h1>BẠN ĐÃ BỊ HẠ GỤC</h1>
             <button class="btn-start" style="width: 200px;" onclick="GameCore.respawnPlayer()">HỒI SINH TẠI LÀNG</button>
+        </div>
+
+        <!-- Confirm Menu Screen -->
+        <div id="confirmMenuScreen">
+            <div class="login-box" style="width: 320px;">
+                <h2 style="font-family: 'Press Start 2P', cursive; color: #ff5252; font-size: 14px; margin-top:0; margin-bottom: 15px;">VỀ SẢNH CHÍNH?</h2>
+                <p style="font-size: 12px; color: #ddd; margin-bottom: 25px; line-height: 1.5;">Tiến trình của bạn sẽ được lưu lại tự động.</p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-action" style="background: #555; border-color: #333; box-shadow: 0 4px 0 #333;" onclick="UI.hideConfirmMenu()">HỦY</button>
+                    <button class="btn-action" onclick="GameCore.backToMainMenu()">ĐỒNG Ý</button>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -1165,6 +1197,12 @@ const UI = {
             inv.style.display = 'block'; 
             this.updateInventoryUI();
         }
+    },
+    showConfirmMenu: function() {
+        document.getElementById('confirmMenuScreen').style.display = 'flex';
+    },
+    hideConfirmMenu: function() {
+        document.getElementById('confirmMenuScreen').style.display = 'none';
     }
 };
 
@@ -1172,7 +1210,13 @@ const UI = {
    [SYSTEM] MẠNG GIẢ LẬP (network/MockNetwork.js)
    ========================================================================= */
 class MockNetwork {
-    constructor() { this.bots = []; setTimeout(() => { let b=new Player(600,300,'GokuFake','sayan'); b.isBot=true; GLOBALS.entities.push(b); this.bots.push(b); UI.chatSys('GokuFake online.'); }, 3000); }
+    constructor() { 
+        this.bots = []; 
+        setTimeout(() => { 
+            if (GLOBALS.state !== 'PLAYING') return; // Tránh tạo bot nếu đã thoát
+            let b=new Player(600,300,'GokuFake','sayan'); b.isBot=true; GLOBALS.entities.push(b); this.bots.push(b); UI.chatSys('GokuFake online.'); 
+        }, 3000); 
+    }
     update(dt) { this.bots.forEach(b => { if(Math.random()<0.01) { b.dir = Math.random()>0.5?1:-1; b.vx=b.dir*b.speed; } else if(Math.random()<0.02) b.vx=0; if(Math.random()<0.005 && b.isGrounded) b.vy=b.jumpForce; }); }
     sendChat(name, msg) { let box=document.getElementById('chatMessages'); let el=document.createElement('div'); el.className='msg-player'; let span=document.createElement('span'); span.className='msg-name'; span.textContent=name+': '; el.appendChild(span); el.appendChild(document.createTextNode(msg)); box.appendChild(el); box.scrollTop=box.scrollHeight; }
 }
@@ -1244,7 +1288,14 @@ const GameCore = {
         };
     },
 
-    startNewGame: function() {
+    startNewGame: function(forceNew = false) {
+        if (!forceNew) {
+            let data = SaveSystem.load();
+            if (data) {
+                this.loadGame();
+                return;
+            }
+        }
         let name = document.getElementById('playerNameInput').value || 'Gamer';
         GLOBALS.player = new Player(200, GLOBALS.groundY-100, name, document.getElementById('playerRaceInput').value);
         this.enterWorld('village', 200);
@@ -1263,7 +1314,9 @@ const GameCore = {
             GLOBALS.player.maxHp += GLOBALS.player.raceConfig.levelGrowth.hp; GLOBALS.player.maxMp += GLOBALS.player.raceConfig.levelGrowth.mp;
             GLOBALS.player.baseDamage += GLOBALS.player.raceConfig.levelGrowth.damage; GLOBALS.player.defense += GLOBALS.player.raceConfig.levelGrowth.defense; GLOBALS.player.maxExp = Math.floor(GLOBALS.player.maxExp * GLOBALS.player.raceConfig.levelGrowth.expFactor);
         }
-        GLOBALS.player.hp = data.hp; GLOBALS.player.mp = data.mp;
+        
+        GLOBALS.player.hp = data.hp > 0 ? data.hp : GLOBALS.player.maxHp;
+        GLOBALS.player.mp = data.mp;
         this.enterWorld(data.map, data.x);
         UI.chatSys('Đã tải lại game thành công!');
     },
@@ -1282,6 +1335,26 @@ const GameCore = {
         document.getElementById('respawnScreen').style.display = 'none';
         GLOBALS.player.hp = GLOBALS.player.maxHp; GLOBALS.player.mp = GLOBALS.player.maxMp; GLOBALS.player.isDead = false; GLOBALS.player.state = 'idle';
         this.enterWorld('village', 200); 
+    },
+
+    backToMainMenu: function() {
+        SaveSystem.save();
+        
+        GLOBALS.state = 'LOGIN';
+        GLOBALS.player = null;
+        GLOBALS.entities = [];
+        GLOBALS.projectiles = [];
+        GLOBALS.particles = [];
+        GLOBALS.texts = [];
+        GLOBALS.network = null;
+        
+        UI.hideConfirmMenu();
+        document.getElementById('hud').style.display = 'none';
+        document.getElementById('inventory').style.display = 'none';
+        document.getElementById('respawnScreen').style.display = 'none';
+        
+        this.updatePreview();
+        document.getElementById('loginScreen').style.display = 'flex';
     },
 
     loop: function(timestamp) {
@@ -1358,7 +1431,7 @@ const GameCore = {
         GLOBALS.ctx.restore();
         GLOBALS.ctx.restore(); 
         
-        if(GLOBALS.player.isDead) UI.updateHUD(); 
+        if(GLOBALS.player && GLOBALS.player.isDead) UI.updateHUD(); 
         requestAnimationFrame(this.loop.bind(this));
     }
 };
