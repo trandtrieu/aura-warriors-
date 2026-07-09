@@ -103,7 +103,7 @@
         #questTracker h3 { margin: 0 0 5px 0; font-size: 14px; color: #ffca28; }
         #questText { font-size: 12px; color: #fff; }
 
-        /* Skill Bar (Mới) */
+        /* Skill Bar */
         #skillBar {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
             display: flex; gap: 5px; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 8px; border: 2px solid #444; pointer-events: auto;
@@ -144,7 +144,7 @@
         #systemMessage {
             position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
             color: #ffeb3b; font-size: 16px; font-weight: bold; text-shadow: 2px 2px 2px #000;
-            opacity: 0; transition: opacity 0.5s; pointer-events: none;
+            opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: 60;
         }
 
         .screen-flash {
@@ -186,9 +186,10 @@
                         <div id="racePreviewName" class="race-preview-name">Sayan</div>
                     </div>
                     <div class="race-preview-stats">
-                        <div><strong>HP:</strong> <span id="raceHp">180</span></div>
+                        <div><strong>HP:</strong> <span id="raceHp">250</span></div>
                         <div><strong>MP:</strong> <span id="raceMp">70</span></div>
-                        <div><strong>DMG:</strong> <span id="raceDamage">22</span></div>
+                        <div><strong>DMG:</strong> <span id="raceDamage">30</span></div>
+                        <div><strong>DEF:</strong> <span id="raceDef">10</span></div>
                         <div><strong>SPD:</strong> <span id="raceSpeed">5.5</span></div>
                     </div>
                     <div class="race-preview-skill">
@@ -217,11 +218,13 @@
                 <div id="questText">Nói chuyện Trưởng Làng</div>
             </div>
 
-            <!-- Skill Bar (Mới) -->
+            <!-- Skill Bar (Đã bổ sung L và O) -->
             <div id="skillBar">
                 <div class="skill-slot">J<div class="skill-key">Đánh</div></div>
                 <div class="skill-slot" style="background:#1565c0">K<div class="skill-key">Khí</div></div>
                 <div class="skill-slot" style="background:#ff8f00">Q<div class="skill-key">Skill</div></div>
+                <div class="skill-slot" style="background:#00bcd4">L<div class="skill-key">Kame</div></div>
+                <div class="skill-slot" style="background:#9c27b0">O<div class="skill-key">Gồng</div></div>
                 <div class="skill-slot" style="background:#4caf50">I<div class="skill-key">Túi</div></div>
             </div>
 
@@ -247,34 +250,30 @@
 
 <script>
 /* =========================================================================
-   [CONFIG] THÔNG SỐ GAME (config/races.js, config/animations.js)
+   [CONFIG] THÔNG SỐ GAME
    ========================================================================= */
 const CONFIG = {
     gravity: 0.6, friction: 0.8, maxFall: 15,
     races: {
         sayan: {
-            title: 'Sayan', maxHp: 180, maxMp: 70, baseDamage: 22, speed: 5.5, jumpForce: -12, maxExp: 110,
-            levelGrowth: { hp: 28, mp: 8, damage: 6, expFactor: 1.35 },
-            // Bảng màu chuẩn theo ảnh Pixel Art Goku
+            title: 'Sayan', maxHp: 250, maxMp: 70, baseDamage: 30, defense: 10, speed: 5.5, jumpForce: -12, maxExp: 110,
+            levelGrowth: { hp: 35, mp: 8, damage: 8, defense: 3, expFactor: 1.35 },
             colors: { aura: 'rgba(255,235,59,0.4)', body: '#f47b16', hair: '#111111', skin: '#fcdcb6', outfit: '#f47b16', accent: '#0074c7', proj: '#ffeb3b' },
             skill: { name: 'Thịnh nộ Sayan', cost: 20, cd: 8000, duration: 3000 }
         },
         namek: {
-            title: 'Namek', maxHp: 140, maxMp: 120, baseDamage: 16, speed: 4.8, jumpForce: -11, maxExp: 100,
-            levelGrowth: { hp: 18, mp: 18, damage: 4, expFactor: 1.25 },
-            // Bảng màu chuẩn Piccolo
+            title: 'Namek', maxHp: 180, maxMp: 200, baseDamage: 20, defense: 8, speed: 4.8, jumpForce: -11, maxExp: 100,
+            levelGrowth: { hp: 25, mp: 25, damage: 5, defense: 2, expFactor: 1.25 },
             colors: { aura: 'rgba(0,255,128,0.3)', body: '#4a148c', hair: '#2e7d32', skin: '#81c784', outfit: '#4a148c', accent: '#ff1744', proj: '#00e5ff' },
             skill: { name: 'Hồi phục & Khiên', cost: 30, cd: 10000, duration: 4000 }
         },
         earth: {
-            title: 'Trái Đất', maxHp: 150, maxMp: 80, baseDamage: 18, speed: 6.5, jumpForce: -13, maxExp: 95,
-            levelGrowth: { hp: 20, mp: 10, damage: 5, expFactor: 1.15 },
-            // Bảng màu chuẩn Võ sư
+            title: 'Trái Đất', maxHp: 160, maxMp: 80, baseDamage: 24, defense: 5, speed: 6.5, jumpForce: -13, maxExp: 95,
+            levelGrowth: { hp: 22, mp: 10, damage: 6, defense: 1, expFactor: 1.15 },
             colors: { aura: 'rgba(0,150,255,0.3)', body: '#d32f2f', hair: '#000000', skin: '#ffe0b2', outfit: '#d32f2f', accent: '#111111', proj: '#80d8ff' },
-            skill: { name: 'Bước Nhanh', cost: 15, cd: 9000, duration: 3000 }
+            skill: { name: 'Bước Nhanh', cost: 15, cd: 7000, duration: 3000 }
         }
     },
-    // Chuẩn bị cấu trúc Animation cho Sprite Sheet sau này
     animations: {
         idle: { frames: 4, speed: 200, loop: true },
         run: { frames: 6, speed: 100, loop: true },
@@ -282,27 +281,30 @@ const CONFIG = {
         attack: { frames: 3, speed: 100, loop: false },
         shoot: { frames: 3, speed: 100, loop: false },
         hurt: { frames: 2, speed: 100, loop: false },
-        dead: { frames: 1, speed: 1000, loop: false }
+        dead: { frames: 1, speed: 1000, loop: false },
+        charge: { frames: 4, speed: 80, loop: true },
+        powerup: { frames: 4, speed: 80, loop: true }
     }
 };
 
 /* =========================================================================
-   [CORE] TRẠNG THÁI TOÀN CỤC (src/globals.js)
+   [CORE] TRẠNG THÁI TOÀN CỤC
    ========================================================================= */
 const GLOBALS = {
     canvas: document.getElementById('gameCanvas'),
     ctx: document.getElementById('gameCanvas').getContext('2d'),
     width: window.innerWidth, height: window.innerHeight,
     groundY: window.innerHeight - 100,
-    state: 'LOGIN', // LOGIN, PLAYING, DEAD
+    state: 'LOGIN', 
     lastTime: 0,
+    gameTime: 0, // Dùng cho môi trường
     camera: { x: 0, y: 0, shakeTime: 0, shakeIntensity: 0 },
     keys: {},
     isChatFocused: false,
     network: null,
     
-    // Lists
     player: null,
+    previewPlayer: null, 
     entities: [],
     projectiles: [],
     particles: [],
@@ -318,7 +320,7 @@ window.addEventListener('resize', () => GLOBALS.resize());
 GLOBALS.resize();
 
 /* =========================================================================
-   [UTILS] CÔNG CỤ HỖ TRỢ (utils/helpers.js)
+   [UTILS] CÔNG CỤ HỖ TRỢ
    ========================================================================= */
 const Utils = {
     checkAABB: (r1, r2) => (r1.x < r2.x + r2.width && r1.x + r1.width > r2.x && r1.y < r2.y + r2.height && r1.y + r1.height > r2.y),
@@ -339,13 +341,133 @@ const Utils = {
 };
 
 /* =========================================================================
-   [SYSTEM] BẢN ĐỒ & DI CHUYỂN (systems/MapManager.js)
+   [SYSTEM] MÔI TRƯỜNG & HẠT BỤI
+   ========================================================================= */
+const EnvironmentSystem = {
+    clouds: [],
+    leaves: [],
+    trees: [], // Procedural trees
+    mountains: [],
+
+    init: function() {
+        // Sinh mây
+        for(let i=0; i<20; i++) this.clouds.push({x: Utils.rand(0, 3000), y: Utils.rand(20, 250), speed: Utils.rand(0.2, 0.6), scale: Utils.rand(0.5, 1.5)});
+    },
+
+    initMapProps: function(mapWidth) {
+        this.trees = [];
+        // Sinh cây cối ngẫu nhiên cho map
+        for(let i=100; i<mapWidth; i+= Utils.rand(300, 600)) {
+            this.trees.push({ x: i, scale: Utils.rand(0.8, 1.4), type: Math.random()>0.5?1:2 });
+        }
+    },
+
+    update: function(dt, camX) {
+        GLOBALS.gameTime += dt;
+        // Mây bay
+        this.clouds.forEach(c => { c.x -= c.speed; if(c.x < -200) c.x = MapManager.maps[MapManager.currentId].width + 200; });
+        // Lá rơi
+        if(Math.random() < 0.08) this.leaves.push({x: camX + Utils.rand(0, GLOBALS.width), y: -20, vx: Utils.rand(-3, -1), vy: Utils.rand(1, 3), rot: 0});
+        this.leaves.forEach(l => { l.x += l.vx; l.y += l.vy; l.rot += 0.05; });
+        this.leaves = this.leaves.filter(l => l.y < GLOBALS.groundY + 20);
+    },
+
+    drawBackground: function(ctx, camX, camY, mapData) {
+        // Chu kỳ ngày đêm (Day/Night cycle)
+        let cycle = Math.sin(GLOBALS.gameTime / 10000); 
+        let skyColor1 = `rgb(${Math.max(10, 23 * cycle)}, ${Math.max(25, 42 * cycle)}, ${Math.max(47, 69 * cycle)})`; // Đêm/Ngày
+        let skyColor2 = `rgb(${Math.max(23, 50 * cycle)}, ${Math.max(42, 100 * cycle)}, ${Math.max(69, 150 * cycle)})`;
+
+        let grad = ctx.createLinearGradient(0, 0, 0, GLOBALS.height);
+        grad.addColorStop(0, skyColor1); grad.addColorStop(1, skyColor2);
+        ctx.fillStyle = grad; ctx.fillRect(0, 0, GLOBALS.width, GLOBALS.height);
+        
+        ctx.save(); ctx.translate(-camX, -camY);
+        
+        // Vẽ Mây (Layer xa nhất)
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        this.clouds.forEach(c => {
+            if(c.x > camX - 200 && c.x < camX + GLOBALS.width + 200) { // Culling
+                ctx.beginPath(); ctx.arc(c.x, c.y, 40*c.scale, 0, Math.PI*2);
+                ctx.arc(c.x+30*c.scale, c.y-10*c.scale, 50*c.scale, 0, Math.PI*2);
+                ctx.arc(c.x+60*c.scale, c.y, 40*c.scale, 0, Math.PI*2); ctx.fill();
+            }
+        });
+
+        // Vẽ Núi Parallax 
+        ctx.fillStyle = '#1c2e4a';
+        ctx.beginPath(); ctx.moveTo(camX, GLOBALS.groundY);
+        for(let i=camX; i<camX+GLOBALS.width; i+=50) ctx.lineTo(i, GLOBALS.groundY - 150 - Math.sin(i*0.002)*100);
+        ctx.lineTo(camX+GLOBALS.width, GLOBALS.groundY); ctx.fill();
+
+        ctx.fillStyle = '#263238';
+        ctx.beginPath(); ctx.moveTo(camX, GLOBALS.groundY);
+        for(let i=camX; i<camX+GLOBALS.width; i+=40) ctx.lineTo(i, GLOBALS.groundY - 80 - Math.cos(i*0.005)*60);
+        ctx.lineTo(camX+GLOBALS.width, GLOBALS.groundY); ctx.fill();
+
+        // Vẽ Đất
+        ctx.fillStyle = mapData.groundColor; ctx.fillRect(0, GLOBALS.groundY, mapData.width, 25);
+        ctx.fillStyle = mapData.dirtColor; ctx.fillRect(0, GLOBALS.groundY + 25, mapData.width, GLOBALS.height - GLOBALS.groundY);
+        
+        // Vẽ Cây cối (Procedural)
+        this.trees.forEach(t => {
+            if(t.x > camX - 300 && t.x < camX + GLOBALS.width + 300) { // Culling
+                this.drawDragonBallTree(ctx, t.x, GLOBALS.groundY, t.scale, t.type);
+            }
+        });
+
+        // Cổng Portal
+        mapData.portals.forEach(p => {
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+            ctx.fillRect(p.x, GLOBALS.groundY - 80, 60, 80);
+            ctx.fillStyle = 'white'; ctx.font = '10px Roboto'; ctx.fillText(p.label, p.x, GLOBALS.groundY - 90);
+        });
+
+        ctx.restore();
+    },
+
+    drawDragonBallTree: function(ctx, x, y, scale, type) {
+        ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+        let sway = Math.sin(GLOBALS.gameTime/500 + x)*0.05; // Gió thổi
+        ctx.rotate(sway);
+
+        ctx.fillStyle = '#4e342e'; // Thân
+        ctx.fillRect(-10, -80, 20, 80);
+        
+        // Tán lá đặc trưng DBZ (Nhiều quả cầu lồng vào nhau)
+        ctx.fillStyle = type===1 ? '#2e7d32' : '#00695c';
+        ctx.beginPath();
+        ctx.arc(0, -90, 45, 0, Math.PI*2);
+        ctx.arc(-25, -70, 30, 0, Math.PI*2);
+        ctx.arc(25, -70, 30, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Highlight lá
+        ctx.fillStyle = type===1 ? '#4caf50' : '#26a69a';
+        ctx.beginPath(); ctx.arc(-10, -100, 20, 0, Math.PI*2); ctx.fill();
+        
+        ctx.restore();
+    },
+
+    drawParticles: function(ctx, camX, camY) {
+        ctx.save(); ctx.translate(-camX, -camY);
+        ctx.fillStyle = '#388e3c';
+        this.leaves.forEach(l => {
+            ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.rot);
+            ctx.fillRect(-4, -2, 8, 4); ctx.restore();
+        });
+        ctx.restore();
+    }
+};
+
+/* =========================================================================
+   [SYSTEM] BẢN ĐỒ & DI CHUYỂN
    ========================================================================= */
 const MapManager = {
     currentId: 'village',
     maps: {
         village: { 
-            name: 'Làng Khởi Đầu', width: 2500, bgStart: '#0a192f', bgEnd: '#172a45', groundColor: '#2e7d32', dirtColor: '#5d4037',
+            name: 'Làng Khởi Đầu', width: 2500, bgStart: '#0a192f', bgEnd: '#172a45', groundColor: '#689f38', dirtColor: '#5d4037',
             portals: [ { x: 2400, target: 'forest', targetX: 100, label: 'Tới Khu Rừng ->' } ],
             spawns: [
                 { type: 'npc', x: 400, id: 'truonglang' },
@@ -367,67 +489,34 @@ const MapManager = {
         let mapData = this.maps[mapId];
         document.getElementById('mapInfo').innerText = mapData.name;
         
-        // Clear old entities except player
-        GLOBALS.entities = GLOBALS.entities.filter(e => e === GLOBALS.player || e.isBot); // Giữ lại Bot mạng ảo
+        GLOBALS.entities = GLOBALS.entities.filter(e => e === GLOBALS.player || e.isBot); 
         GLOBALS.projectiles = []; GLOBALS.particles = [];
         
-        // Player pos
-        if(GLOBALS.player) {
-            GLOBALS.player.x = spawnX; GLOBALS.player.y = GLOBALS.groundY - 100;
-        }
+        if(GLOBALS.player) { GLOBALS.player.x = spawnX; GLOBALS.player.y = GLOBALS.groundY - 100; }
 
-        // Spawn Map Entities
         mapData.spawns.forEach(s => {
             if(s.type === 'npc') GLOBALS.entities.push(new NPC(s.x, GLOBALS.groundY - 50));
             if(s.type === 'monster') GLOBALS.entities.push(new Monster(s.x, GLOBALS.groundY - 50, s.lvl));
         });
 
+        EnvironmentSystem.initMapProps(mapData.width); // Tạo cây cối cho map mới
         UI.showCenterMessage(`Khu vực: ${mapData.name}`);
     },
 
     checkPortals: function() {
         if(!GLOBALS.player || GLOBALS.player.isDead) return;
         let p = this.maps[this.currentId].portals.find(port => Math.abs(GLOBALS.player.x - port.x) < 50);
-        if (p && GLOBALS.keys['KeyW']) { // Bấm W (Lên) để vào cổng
+        if (p && GLOBALS.keys['KeyW']) { 
             this.loadMap(p.target, p.targetX);
-            GLOBALS.keys['KeyW'] = false; // Reset key
+            GLOBALS.keys['KeyW'] = false; 
         }
-    },
-
-    drawBackground: function(ctx, camX, camY) {
-        let mapData = this.maps[this.currentId];
-        let grad = ctx.createLinearGradient(0, 0, 0, GLOBALS.height);
-        grad.addColorStop(0, mapData.bgStart); grad.addColorStop(1, mapData.bgEnd);
-        ctx.fillStyle = grad; ctx.fillRect(0, 0, GLOBALS.width, GLOBALS.height);
-        
-        ctx.save(); ctx.translate(-camX, -camY);
-        
-        // Cổng Portal
-        mapData.portals.forEach(p => {
-            ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
-            ctx.fillRect(p.x, GLOBALS.groundY - 80, 60, 80);
-            ctx.fillStyle = 'white'; ctx.font = '10px Roboto'; ctx.fillText(p.label, p.x, GLOBALS.groundY - 90);
-        });
-
-        // Mặt đất
-        ctx.fillStyle = mapData.groundColor; ctx.fillRect(0, GLOBALS.groundY, mapData.width, 20);
-        ctx.fillStyle = mapData.dirtColor; ctx.fillRect(0, GLOBALS.groundY + 20, mapData.width, GLOBALS.height - GLOBALS.groundY);
-        
-        // Trang trí cảnh vật
-        ctx.fillStyle = (this.currentId === 'forest') ? '#113311' : '#1b5e20';
-        for (let i = 100; i < mapData.width; i += 400) {
-            ctx.fillRect(i, GLOBALS.groundY - 60, 15, 60); // Thân cây
-            ctx.beginPath(); ctx.arc(i + 7, GLOBALS.groundY - 70, 35, 0, Math.PI * 2); ctx.fill(); // Tán lá
-        }
-        ctx.restore();
     }
 };
 
 /* =========================================================================
-   [SYSTEM] QUẢN LÝ ANIMATION & RENDERER (renderer/AnimationManager.js)
+   [SYSTEM] QUẢN LÝ ANIMATION & RENDERER PIXEL BLOCKY
    ========================================================================= */
 const AnimationManager = {
-    // Hàm này sẽ dùng cho Sprite sau này. Hiện tại dùng để xác định State cho CharacterRenderer
     updateState: function(char, dt) {
         if(char.isDead) { char.state = 'dead'; return; }
         
@@ -439,7 +528,6 @@ const AnimationManager = {
             if (char.animFrame >= config.frames) {
                 if (config.loop) char.animFrame = 0;
                 else {
-                    // Reset to idle sau khi xong animation 1 lần (như attack, shoot)
                     char.state = 'idle'; char.animFrame = 0;
                 }
             }
@@ -448,30 +536,23 @@ const AnimationManager = {
 };
 
 const CharacterRenderer = {
-    // Helper vẽ khối vuông có viền (Phong cách Pixel/Lego)
     drawBlock: function(ctx, x, y, w, h, fill, noStroke = false) {
         ctx.fillStyle = fill;
         ctx.fillRect(x, y, w, h);
         if (!noStroke) ctx.strokeRect(x, y, w, h);
     },
 
-    // Helper vẽ tứ chi (Tay, Chân) có khớp và băng đeo
     drawLimb: function(ctx, x, y, w, h, rot, color, accentColor, isLeg = false) {
         ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(rot);
-        this.drawBlock(ctx, -w/2, 0, w, h, color); // Cánh tay/Đùi
-        
-        // Vẽ băng cổ tay hoặc đôi giày mập mạp
+        ctx.translate(x, y); ctx.rotate(rot);
+        this.drawBlock(ctx, -w/2, 0, w, h, color);
         if (accentColor) {
             if (isLeg) {
-                // Giày to hơn ống chân
                 this.drawBlock(ctx, -w/2 - 2, h - 8, w + 4, 8, accentColor);
-                this.drawBlock(ctx, -w/2 - 2, h, w + 6, 4, '#ffeb3b'); // Mũi giày vàng
+                this.drawBlock(ctx, -w/2 - 2, h, w + 6, 4, '#ffeb3b');
             } else {
-                // Băng cổ tay
                 this.drawBlock(ctx, -w/2 - 1, h - 6, w + 2, 6, accentColor);
-                this.drawBlock(ctx, -w/2, h, w, 4, color); // Bàn tay
+                this.drawBlock(ctx, -w/2, h, w, 4, color);
             }
         }
         ctx.restore();
@@ -480,184 +561,161 @@ const CharacterRenderer = {
     draw: function(ctx, char) {
         ctx.save();
         ctx.translate(char.x + char.width / 2, char.y + char.height);
-        ctx.scale(char.dir, 1); // Lật theo hướng
+        ctx.scale(char.dir, 1);
 
-        // Setup nét vẽ đậm chất Pixel Art
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#000';
-        ctx.lineJoin = 'miter'; // Nét gập góc cạnh
-        ctx.lineCap = 'square';
+        ctx.lineWidth = 2; ctx.strokeStyle = '#000'; ctx.lineJoin = 'miter'; ctx.lineCap = 'square';
 
         if (char.hurtTimer > 0) ctx.globalAlpha = (Math.floor(Date.now() / 50) % 2 === 0) ? 0.5 : 1;
 
-        // Tính toán dao động Animation
+        if (char.isChargingKame || char.isChargingPower) {
+            ctx.translate(Utils.rand(-1,1), Utils.rand(-1,1)); // Rung lắc khi gồng
+        }
+
         let time = Date.now(); let bobY = 0, legRot = 0, armRot = 0;
         if (char.state === 'idle') bobY = Math.floor(Math.sin(time / 200) * 2);
         else if (char.state === 'run') { bobY = Math.floor(Math.abs(Math.sin(time / 100)) * 4); legRot = Math.sin(time / 80) * 0.8; armRot = -legRot; }
         else if (char.state === 'jump') { legRot = 0.5; armRot = -0.8; }
+        else if (char.state === 'charge' || char.state === 'powerup') { bobY = 2; legRot = 0.5; armRot = -0.5; }
         else if (char.state === 'dead') { ctx.rotate(Math.PI / 2); ctx.translate(-char.height / 2 + 10, -char.width / 2); }
 
-        // Kích thước chuẩn Pixel (Tỷ lệ y như ảnh mẫu)
         const headS = 20, bodyW = 18, bodyH = 16, limbW = 8, limbH = 14;
-        let waistY = -24; // Vị trí eo
+        let waistY = -24; 
         
-        let cSkin = char.colors.skin;
-        let cPants = char.colors.outfit;
-        let cAccent = char.colors.accent || '#000';
-        let isSuper = char.skillActive && char.raceKey === 'sayan';
+        let cSkin = char.colors.skin; let cPants = char.colors.outfit; let cAccent = char.colors.accent || '#000';
+        let isSuper = (char.skillActive && char.raceKey === 'sayan') || (char.powerUpActive && char.raceKey === 'sayan');
         let cHair = isSuper ? '#ffeb3b' : char.colors.hair;
 
-        // Vẽ Aura bùng nổ xung quanh
-        if (char instanceof Player && !char.isDead && (char.state === 'attack' || char.state === 'shoot' || char.skillActive)) {
+        // Vẽ Aura lớn cho Kame & Power Up
+        if ((char.raceKey !== undefined && !char.isDead && (char.state === 'attack' || char.state === 'shoot' || char.skillActive || char.powerUpActive || char.isChargingKame || char.isChargingPower)) && char.state !== 'dummy') {
             ctx.beginPath();
-            let auraSize = char.skillActive ? 50 : 35; let pulse = Math.floor(Math.sin(time / 50) * 5);
+            let auraSize = (char.skillActive || char.powerUpActive || char.isChargingKame || char.isChargingPower) ? (char.raceKey === 'sayan' ? 70 : 50) : 35;
+            let pulse = Math.floor(Math.sin(time / 50) * 5);
             ctx.moveTo(0, waistY - bodyH - headS - 10 - pulse);
             ctx.quadraticCurveTo(auraSize, waistY - bodyH, 0, 10);
             ctx.quadraticCurveTo(-auraSize, waistY - bodyH, 0, waistY - bodyH - headS - 10 - pulse);
-            ctx.fillStyle = char.colors.aura; ctx.fill();
+            
+            let auraColor = char.colors.aura;
+            if (char.isChargingKame) auraColor = 'rgba(0, 188, 212, 0.4)'; // Cyan
+            else if (char.isChargingPower) auraColor = 'rgba(156, 39, 176, 0.4)'; // Purple
+            
+            ctx.fillStyle = auraColor; ctx.fill();
         }
 
-        // --- 1. TAY TRONG (Tay khuất phía sau) ---
         this.drawLimb(ctx, -bodyW/2 + 2, waistY - bodyH + 2 + bobY, limbW, limbH, armRot, cSkin, cAccent, false);
-
-        // --- 2. HAI CHÂN ---
-        this.drawLimb(ctx, -5, waistY + bobY, limbW+2, limbH, legRot, cPants, cAccent, true); // Quần phồng
+        this.drawLimb(ctx, -5, waistY + bobY, limbW+2, limbH, legRot, cPants, cAccent, true); 
         this.drawLimb(ctx, 5, waistY + bobY, limbW+2, limbH, -legRot, cPants, cAccent, true);
 
-        // --- 3. THÂN (Ngực trần cho Sayan) ---
         let chestColor = (char.raceKey === 'sayan') ? cSkin : cPants;
         this.drawBlock(ctx, -bodyW/2, waistY - bodyH + bobY, bodyW, bodyH, chestColor);
-        // Vẽ cơ ngực cho Sayan
         if (char.raceKey === 'sayan') {
             ctx.beginPath(); ctx.moveTo(-bodyW/2 + 2, waistY - bodyH/2 + bobY); ctx.lineTo(bodyW/2 - 2, waistY - bodyH/2 + bobY); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(0, waistY - bodyH + 2 + bobY); ctx.lineTo(0, waistY - bodyH/2 + bobY); ctx.stroke();
         }
 
-        // --- 4. ĐAI LƯNG ---
         this.drawBlock(ctx, -bodyW/2 - 2, waistY - 2 + bobY, bodyW + 4, 6, cAccent);
-        // Tà đai thòng xuống
         this.drawBlock(ctx, -4, waistY + 4 + bobY, 6, 8, cAccent);
 
-        // --- 5. TAY NGOÀI ---
         let frontArmRot = -armRot;
         if (char.state === 'attack' || char.state === 'shoot') frontArmRot = -Math.PI / 1.5;
+        if (char.state === 'charge' || char.state === 'powerup') frontArmRot = -Math.PI / 4; 
         this.drawLimb(ctx, bodyW/2 - 2, waistY - bodyH + 2 + bobY, limbW, limbH, frontArmRot, cSkin, cAccent, false);
 
-        // --- 6. ĐẦU VÀ KHUÔN MẶT BLOCKY ---
         let hy = waistY - bodyH - headS + bobY;
-        this.drawBlock(ctx, -headS/2, hy, headS, headS, cSkin); // Khuôn mặt vuông vức
+        this.drawBlock(ctx, -headS/2, hy, headS, headS, cSkin);
         
-        // Mắt Pixel
         ctx.fillStyle = '#000';
         if (char.state === 'attack' || char.state === 'shoot') {
-            // Mắt xếch giận dữ
             ctx.beginPath(); ctx.moveTo(2, hy + 4); ctx.lineTo(8, hy + 8); ctx.lineTo(8, hy + 4); ctx.fill();
         } else if (char.state === 'dead') {
             ctx.fillRect(2, hy + 4, 2, 2); ctx.fillRect(6, hy + 8, 2, 2);
         } else {
-            ctx.fillRect(4, hy + 6, 4, 4); // Mắt thường to
+            ctx.fillRect(4, hy + 6, 4, 4); 
         }
 
-        // Cằm/Râu Namek
         if (char.raceKey === 'namek') {
             ctx.fillStyle = '#1b5e20';
             this.drawBlock(ctx, -headS/2 - 2, hy + 2, 4, 6, '#1b5e20');
             this.drawBlock(ctx, headS/2 - 2, hy + 2, 4, 6, '#1b5e20');
         }
 
-        // --- 7. TÓC GAI GÓC CỰC LỚN (ĐẶC TRƯNG) ---
         ctx.fillStyle = cHair;
         if (char.raceKey === 'sayan' || char.raceKey === 'earth') {
-            // Tạo path vẽ tóc nhọn hoắt như lego block
             ctx.beginPath();
-            ctx.moveTo(-headS/2 - 4, hy + headS); // Dưới tai trái
-            ctx.lineTo(-headS - 8, hy + 4);
-            ctx.lineTo(-headS/2 - 2, hy);
-            ctx.lineTo(-headS - 12, hy - 12);
-            ctx.lineTo(-headS/4, hy - 8);
-            ctx.lineTo(-headS/2, hy - 24); // Đỉnh nhọn cao nhất
-            ctx.lineTo(2, hy - 14);
-            ctx.lineTo(headS/2 + 6, hy - 28);
-            ctx.lineTo(headS/2, hy - 8);
-            ctx.lineTo(headS + 12, hy - 16);
-            ctx.lineTo(headS, hy);
-            ctx.lineTo(headS + 12, hy + 8);
-            ctx.lineTo(headS/2 + 4, hy + headS);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
+            ctx.moveTo(-headS/2 - 4, hy + headS); 
+            ctx.lineTo(-headS - 8, hy + 4); ctx.lineTo(-headS/2 - 2, hy); ctx.lineTo(-headS - 12, hy - 12);
+            ctx.lineTo(-headS/4, hy - 8); ctx.lineTo(-headS/2, hy - 24); ctx.lineTo(2, hy - 14);
+            ctx.lineTo(headS/2 + 6, hy - 28); ctx.lineTo(headS/2, hy - 8); ctx.lineTo(headS + 12, hy - 16);
+            ctx.lineTo(headS, hy); ctx.lineTo(headS + 12, hy + 8); ctx.lineTo(headS/2 + 4, hy + headS);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
             
-            // Vẽ vài lọn tóc mái rũ xuống trán
-            ctx.beginPath();
-            ctx.moveTo(-headS/4, hy); ctx.lineTo(0, hy + 6); ctx.lineTo(headS/4, hy);
-            ctx.fill(); ctx.stroke();
-        } else if (char instanceof Monster) {
-            // Quái vật đầu trọc có sừng
+            ctx.beginPath(); ctx.moveTo(-headS/4, hy); ctx.lineTo(0, hy + 6); ctx.lineTo(headS/4, hy); ctx.fill(); ctx.stroke();
+        } else if (char.name && char.name.includes("Quái Cấp")) {
             this.drawBlock(ctx, -headS/4, hy - 10, 4, 10, '#fff');
             this.drawBlock(ctx, headS/4 - 4, hy - 10, 4, 10, '#fff');
         }
 
-        // --- 8. HIỆU ỨNG CHIẾN ĐẤU ---
         if (char.state === 'attack' && !char.isDead) {
             ctx.beginPath(); ctx.arc(25, -char.height / 2, 20, -Math.PI / 2, Math.PI / 4); ctx.lineWidth = 4; ctx.strokeStyle = 'white'; ctx.stroke();
             ctx.beginPath(); ctx.moveTo(20, -char.height/2); ctx.lineTo(40, -char.height/2); ctx.strokeStyle = cHair; ctx.stroke();
         }
+        
+        // Particle khi đang sạc Kame
+        if (char.isChargingKame) {
+            ctx.fillStyle = '#00bcd4';
+            ctx.beginPath(); ctx.arc(20, -10, Utils.rand(5, 10), 0, Math.PI*2); ctx.fill();
+        }
+
         ctx.restore();
 
-        // UI trên đầu
-        if (!char.isDead && GLOBALS.state === 'PLAYING') {
+        if (char.name && !char.isDead && GLOBALS.state === 'PLAYING') {
             ctx.fillStyle = 'white'; ctx.font = '10px "Press Start 2P", monospace'; ctx.textAlign = 'center';
             let nameY = char.y - 15; ctx.fillText(char.name, char.x + char.width / 2, nameY - 5);
             ctx.fillStyle = '#000'; ctx.fillRect(char.x, nameY, char.width, 5);
-            ctx.fillStyle = (char instanceof Monster) ? '#d32f2f' : '#4caf50';
-            ctx.fillRect(char.x, nameY, char.width * Math.max(0, char.hp / char.maxHp), 5);
+            ctx.fillStyle = (char.name.includes("Quái Cấp")) ? '#d32f2f' : '#4caf50';
+            ctx.fillRect(char.x, nameY, char.width * Math.max(0, char.hp / (char.maxHp||1)), 5);
         }
     }
 };
 
 /* =========================================================================
-   [SYSTEM] COMBAT & AI NÂNG CAO (systems/CombatSystem.js)
+   [SYSTEM] COMBAT & AI NÂNG CAO
    ========================================================================= */
 const CombatSystem = {
     handleAttack: function(attacker, target, multiplier = 1) {
         if(target.isDead) return;
 
-        // Công thức tính toán
-        let isCrit = Math.random() < 0.2; // 20% Chí mạng
-        let isMiss = Math.random() < 0.05; // 5% Miss
+        let isCrit = Math.random() < 0.2; 
+        let isMiss = Math.random() < 0.05;
 
-        if(isMiss) {
-            Utils.spawnText(target.x + target.width/2, target.y, "MISS", "#9e9e9e");
-            return;
-        }
+        if(isMiss) { Utils.spawnText(target.x + target.width/2, target.y, "MISS", "#9e9e9e"); return; }
 
-        let dmg = attacker.baseDamage * multiplier + Math.floor(Math.random() * 5);
-        if(isCrit) dmg = Math.floor(dmg * 1.5); // Crit x1.5 sát thương
+        let dmgMultiplier = multiplier;
+        if (attacker.powerUpActive) dmgMultiplier *= 1.3; // +30% DMG Buff
 
-        // Giảm sát thương nếu target có Shield (Namek)
-        if(target.skillActive && target.raceKey === 'namek') dmg = Math.max(1, dmg - 10);
+        let rawDamage = attacker.baseDamage * dmgMultiplier + Math.floor(Math.random() * 5);
+        if(isCrit) rawDamage = Math.floor(rawDamage * 1.5); 
 
-        target.hp -= dmg;
-        target.hurtTimer = 200; // 0.2s chớp đỏ
+        let def = target.defense || 0;
+        if (target.powerUpActive) def = Math.floor(def * 1.2); // +20% DEF Buff
+
+        let finalDamage = Math.max(1, rawDamage - def);
+        if(target.skillActive && target.raceKey === 'namek') finalDamage = Math.max(1, finalDamage - 20);
+
+        target.hp -= finalDamage;
+        target.hurtTimer = 200; 
         
-        // Spawn Text
-        Utils.spawnText(target.x + target.width/2, target.y, isCrit ? `${dmg}!` : `-${dmg}`, isCrit ? '#ffea00' : '#ff5252', isCrit);
-        Utils.spawnParticles(target.x + target.width/2, target.y + target.height/2, '#ff1744', 5);
+        Utils.spawnText(target.x + target.width/2, target.y, isCrit ? `${Math.floor(finalDamage)}!` : `-${Math.floor(finalDamage)}`, isCrit ? '#ffea00' : '#ff5252', isCrit);
+        Utils.spawnParticles(target.x + target.width/2, target.y + target.height/2, '#ff1744', isCrit ? 15 : 8);
 
-        // Knockback nhẹ
-        target.vy = -3; target.vx = attacker.dir * 4;
+        target.vy = -4; target.vx = attacker.dir * 6;
 
-        // Hiệu ứng Màn hình (Chỉ khi Player liên quan)
-        if(attacker === GLOBALS.player) {
-            if(isCrit) Utils.screenShake(5, 100);
-        } else if (target === GLOBALS.player) {
-            Utils.screenFlash(); Utils.screenShake(3, 100);
-        }
+        if(attacker === GLOBALS.player) { if(isCrit) Utils.screenShake(8, 150); } 
+        else if (target === GLOBALS.player) { Utils.screenFlash(); Utils.screenShake(4, 120); }
 
         if(target.hp <= 0) {
             target.hp = 0; target.die();
-            if(target instanceof Monster && attacker === GLOBALS.player) {
+            if(target.name && target.name.includes("Quái Cấp") && attacker === GLOBALS.player) {
                 attacker.addExp(target.grantExp); attacker.money += target.grantGold;
-                // Quest Check
                 if (attacker.quest.step === 1) {
                     attacker.quest.progress++;
                     if (attacker.quest.progress >= attacker.quest.target) {
@@ -671,14 +729,14 @@ const CombatSystem = {
 };
 
 /* =========================================================================
-   [ENTITIES] ĐỐI TƯỢNG TRONG GAME (entities/*.js)
+   [ENTITIES] ĐỐI TƯỢNG TRONG GAME
    ========================================================================= */
 class Entity {
     constructor(x, y, w, h) {
         this.x = x; this.y = y; this.width = w; this.height = h;
         this.vx = 0; this.vy = 0; this.dir = 1; this.isGrounded = false;
         
-        this.state = 'idle'; // Dùng cho Animation
+        this.state = 'idle'; 
         this.animFrame = 0; this.animTimer = 0;
     }
     update(dt) {
@@ -708,49 +766,89 @@ class Player extends Entity {
         this.maxMp = this.raceConfig.maxMp; this.mp = this.maxMp;
         this.speed = this.raceConfig.speed; this.jumpForce = this.raceConfig.jumpForce;
         this.baseDamage = this.raceConfig.baseDamage; this.maxExp = this.raceConfig.maxExp;
+        this.defense = this.raceConfig.defense;
         this.colors = this.raceConfig.colors;
         
         this.level = 1; this.exp = 0; this.money = 0; this.isDead = false; this.hurtTimer = 0;
         this.inventory = [{ id: 'hp_potion', name: 'Bình Máu', desc: 'Hồi 50 HP', count: 5 }];
         this.quest = { step: 0, progress: 0, target: 3 };
         
-        this.cooldowns = { attack: 0, shoot: 0, skill: 0 };
+        this.cooldowns = { attack: 0, shoot: 0, skill: 0, kame: 0, powerUp: 0 };
         this.skillActive = false; this.skillTimer = 0;
+        
+        this.isChargingKame = false; this.kameTimer = 0;
+        this.isChargingPower = false; this.powerUpActive = false; this.powerUpTimer = 0;
+        
+        this.jumpCount = 0; this.maxJumpCount = 2;
     }
 
     addExp(amt) {
         this.exp += amt; UI.chatSys(`Nhận ${amt} EXP`);
-        if (this.exp >= this.maxExp) {
-            this.level++; this.exp -= this.maxExp;
-            this.maxExp = Math.floor(this.maxExp * this.raceConfig.levelGrowth.expFactor);
-            this.maxHp += this.raceConfig.levelGrowth.hp; this.maxMp += this.raceConfig.levelGrowth.mp;
-            this.baseDamage += this.raceConfig.levelGrowth.damage;
-            this.hp = this.maxHp; this.mp = this.maxMp;
-            UI.showCenterMessage(`LÊN CẤP ${this.level}!`); Utils.spawnParticles(this.x+20, this.y+50, '#ffeb3b', 40);
-        }
+        if (this.exp >= this.maxExp) { this.levelUp(); }
         UI.updateHUD();
     }
 
+    levelUp() {
+        this.level++; this.exp -= this.maxExp;
+        this.maxExp = Math.floor(this.maxExp * this.raceConfig.levelGrowth.expFactor);
+        this.maxHp += this.raceConfig.levelGrowth.hp; this.maxMp += this.raceConfig.levelGrowth.mp;
+        this.baseDamage += this.raceConfig.levelGrowth.damage;
+        this.defense += this.raceConfig.levelGrowth.defense;
+        this.hp = this.maxHp; this.mp = this.maxMp;
+        
+        if (this === GLOBALS.player) UI.showCenterMessage(`LÊN CẤP ${this.level}!`); 
+        Utils.spawnParticles(this.x+20, this.y+50, '#ffeb3b', 40);
+    }
+
     die() { this.isDead = true; this.state = 'dead'; this.vx = 0; if(this === GLOBALS.player) document.getElementById('respawnScreen').style.display = 'flex'; }
-    takeDamage(dmg) { if(!this.isDead) CombatSystem.handleAttack(this /*dummy*/, this, dmg); } // Bị đấm
+    takeDamage(dmg) { if(!this.isDead) CombatSystem.handleAttack(this, this, dmg); }
 
     update(dt) {
         if(this.isDead) return super.update(dt);
+
+        // --- SKILL KAME LOGIC ---
+        if (this.isChargingKame) {
+            this.vx = 0; this.kameTimer -= dt;
+            if (this.kameTimer <= 0) {
+                this.isChargingKame = false; this.state = 'shoot';
+                GLOBALS.projectiles.push(new KameBeam(this.dir === 1 ? this.x + this.width : this.x - 80, this.y + 15, this.dir, this, this.baseDamage * (this.powerUpActive ? 1.3 : 1)));
+                Utils.screenShake(8, 200);
+            }
+        }
+        
+        // --- POWER UP LOGIC ---
+        if (this.isChargingPower) {
+            this.vx = 0; this.powerUpTimer -= dt;
+            Utils.screenShake(2, 50);
+            if (this.powerUpTimer <= 0) {
+                this.isChargingPower = false; this.powerUpActive = true; this.powerUpTimer = 8000;
+                this.state = 'idle'; UI.showCenterMessage('SỨC MẠNH TĂNG ĐỘT BIẾN!');
+                Utils.spawnParticles(this.x + 20, this.y + 25, this.colors.aura, 50);
+            }
+        } else if (this.powerUpActive) {
+            this.powerUpTimer -= dt;
+            this.mp += 0.05; // Bonus MP Regen
+            if (this.powerUpTimer <= 0) {
+                this.powerUpActive = false; UI.chatSys('Hết trạng thái Gồng.');
+            }
+        }
         
         super.update(dt);
+        if (this.isGrounded) this.jumpCount = 0;
+
         for(let k in this.cooldowns) if(this.cooldowns[k] > 0) this.cooldowns[k] -= dt;
         
         if (this.skillTimer > 0) {
             this.skillTimer -= dt;
             if (this.skillTimer <= 0 && this.skillActive) {
                 this.skillActive = false;
-                if (this.raceKey === 'sayan') this.baseDamage -= 10;
-                else if (this.raceKey === 'earth') this.speed -= 2.5;
+                if (this.raceKey === 'sayan') this.baseDamage -= 20;
+                else if (this.raceKey === 'earth') this.speed -= 3;
                 if(this === GLOBALS.player) UI.chatSys('Hết thời gian kỹ năng.');
             }
         }
         
-        if (this.state !== 'attack' && this.state !== 'shoot') {
+        if (this.state !== 'attack' && this.state !== 'shoot' && !this.isChargingKame && !this.isChargingPower) {
             if (!this.isGrounded) this.state = 'jump';
             else if (Math.abs(this.vx) > 0.5) this.state = 'run';
             else this.state = 'idle';
@@ -758,7 +856,7 @@ class Player extends Entity {
     }
 
     actionAttack() {
-        if (this.cooldowns.attack > 0 || this.isDead) return;
+        if (this.cooldowns.attack > 0 || this.isDead || this.isChargingKame || this.isChargingPower) return;
         this.state = 'attack'; this.animFrame = 0; this.cooldowns.attack = 500;
         let hitbox = { x: this.dir===1 ? this.x+this.width : this.x-30, y: this.y, width: 30, height: this.height };
         
@@ -770,7 +868,7 @@ class Player extends Entity {
     }
 
     actionShoot() {
-        if (this.cooldowns.shoot > 0 || this.mp < this.raceConfig.skill.cost || this.isDead) return;
+        if (this.cooldowns.shoot > 0 || this.mp < this.raceConfig.skill.cost || this.isDead || this.isChargingKame || this.isChargingPower) return;
         this.mp -= this.raceConfig.skill.cost;
         this.state = 'shoot'; this.animFrame = 0; this.cooldowns.shoot = 800;
         GLOBALS.projectiles.push(new Projectile(this.dir===1 ? this.x+this.width : this.x-20, this.y+15, this.dir, this, this.baseDamage * 1.2));
@@ -778,16 +876,51 @@ class Player extends Entity {
     }
 
     actionSkill() {
-        if (this.cooldowns.skill > 0 || this.skillActive || this.isDead) return;
+        if (this.cooldowns.skill > 0 || this.skillActive || this.isDead || this.isChargingKame || this.isChargingPower) return;
         this.cooldowns.skill = this.raceConfig.skill.cd;
         this.skillTimer = this.raceConfig.skill.duration; this.skillActive = true;
         
         if (this.raceKey === 'sayan') {
-            this.baseDamage += 10; Utils.spawnParticles(this.x+20, this.y+25, '#ff9800', 30); UI.chatSys('Thịnh nộ Sayan kích hoạt!');
+            this.baseDamage += 20; Utils.spawnParticles(this.x+20, this.y+25, '#ff9800', 50); UI.chatSys('Thịnh nộ Sayan kích hoạt!');
         } else if (this.raceKey === 'namek') {
-            this.hp = Math.min(this.maxHp, this.hp + 50); Utils.spawnParticles(this.x+20, this.y+25, '#4caf50', 20); UI.chatSys('Namek hồi máu và tạo Khiên!');
+            this.hp = Math.min(this.maxHp, this.hp + 80); Utils.spawnParticles(this.x+20, this.y+25, '#4caf50', 30); UI.chatSys('Namek hồi máu và tạo Khiên!');
         } else if (this.raceKey === 'earth') {
-            this.speed += 2.5; Utils.spawnParticles(this.x+20, this.y+25, '#2196f3', 20); UI.chatSys('Trái Đất bức tốc!');
+            this.speed += 3; Utils.spawnParticles(this.x+20, this.y+25, '#2196f3', 20); UI.chatSys('Trái Đất bức tốc!');
+        }
+    }
+
+    actionKame() {
+        if (this.cooldowns.kame > 0) { UI.chatSys('Kame Wave đang hồi.'); return; }
+        if (this.mp < 40) { UI.chatSys('Không đủ MP.'); return; }
+        if (this.isDead || this.isChargingKame || this.isChargingPower) return;
+        
+        this.mp -= 40;
+        this.isChargingKame = true; this.state = 'charge';
+        this.kameTimer = 800; this.cooldowns.kame = 6000;
+        Utils.spawnParticles(this.x + 20, this.y + 25, '#00bcd4', 30);
+    }
+
+    actionPowerUp() {
+        if (this.cooldowns.powerUp > 0) { UI.chatSys('Power Up đang hồi.'); return; }
+        if (this.mp < 25) { UI.chatSys('Không đủ MP.'); return; }
+        if (this.isDead || this.isChargingKame || this.isChargingPower) return;
+
+        this.mp -= 25;
+        this.isChargingPower = true; this.state = 'powerup';
+        this.powerUpTimer = 1500; this.cooldowns.powerUp = 12000;
+        Utils.spawnParticles(this.x + 20, this.y + 25, '#9c27b0', 30);
+    }
+
+    useItem(itemId) {
+        let item = this.inventory.find(i => i.id === itemId);
+        if (item && item.count > 0 && !this.isDead) {
+            if (itemId === 'hp_potion') {
+                this.hp = Math.min(this.maxHp, this.hp + 50);
+                item.count--;
+                Utils.spawnParticles(this.x + this.width / 2, this.y + this.height, '#4caf50', 10);
+                Utils.spawnText(this.x + this.width / 2, this.y - 10, '+50 HP', '#4caf50');
+            }
+            UI.updateInventoryUI(); UI.updateHUD();
         }
     }
 
@@ -798,12 +931,12 @@ class Monster extends Entity {
     constructor(x, y, level) {
         super(x, y, 40, 50);
         this.name = `Quái Cấp ${level}`; this.level = level;
-        this.maxHp = 60 * level; this.hp = this.maxHp; this.baseDamage = 12 * level;
+        this.maxHp = 80 * level; this.hp = this.maxHp; this.baseDamage = 15 * level;
+        this.defense = 2 * level; 
         this.grantExp = 25 * level; this.grantGold = 15 * level;
         this.colors = { body: '#7b1fa2', skin: '#ab47bc', hair: '#fff' };
         this.originX = x; this.isDead = false; this.hurtTimer = 0;
         
-        // FSM Variables
         this.aiState = 'IDLE'; this.stateTimer = 0; this.attackCooldown = 0;
         this.aggroRange = 250; this.attackRange = 45;
     }
@@ -816,11 +949,10 @@ class Monster extends Entity {
         if(this.hurtTimer > 0) this.hurtTimer -= dt;
         if(this.attackCooldown > 0) this.attackCooldown -= dt;
 
-        // QUÁI VẬT AI (FSM Nâng Cao)
         switch(this.aiState) {
             case 'RESPAWNING':
                 this.stateTimer += dt;
-                if(this.stateTimer > 8000) { // Hồi sinh 8s
+                if(this.stateTimer > 8000) { 
                     this.hp = this.maxHp; this.isDead = false; this.x = this.originX;
                     this.aiState = 'IDLE'; this.state = 'idle';
                 }
@@ -834,7 +966,7 @@ class Monster extends Entity {
 
             case 'PATROL':
                 this.stateTimer += dt;
-                if(this.stateTimer === dt) { this.dir = Math.random()>0.5 ? 1 : -1; } // Mới vào patrol thì chọn hướng
+                if(this.stateTimer === dt) { this.dir = Math.random()>0.5 ? 1 : -1; } 
                 this.vx = this.dir * 1.5;
                 if(this.stateTimer > 2000 || Math.abs(this.x - this.originX) > 300) { this.aiState = 'IDLE'; this.stateTimer = 0; }
                 this.checkAggro();
@@ -845,9 +977,9 @@ class Monster extends Entity {
                 let dist = Math.abs(this.x - GLOBALS.player.x);
                 this.dir = this.x < GLOBALS.player.x ? 1 : -1;
                 
-                if (dist > this.aggroRange * 1.5) this.aiState = 'RETURN'; // Chạy xa quá bỏ cuộc
-                else if (dist > this.attackRange) this.vx = this.dir * 2.5; // Chạy theo
-                else { this.vx = 0; this.aiState = 'ATTACK'; } // Tới nơi thì đánh
+                if (dist > this.aggroRange * 1.5) this.aiState = 'RETURN'; 
+                else if (dist > this.attackRange) this.vx = this.dir * 2.5; 
+                else { this.vx = 0; this.aiState = 'ATTACK'; } 
                 break;
 
             case 'ATTACK':
@@ -856,18 +988,17 @@ class Monster extends Entity {
                     CombatSystem.handleAttack(this, GLOBALS.player, 1);
                     UI.updateHUD();
                 }
-                if(this.state !== 'attack') this.aiState = 'CHASE'; // Xong attack quay lại rượt
+                if(this.state !== 'attack') this.aiState = 'CHASE'; 
                 break;
 
             case 'RETURN':
                 let returnDist = Math.abs(this.x - this.originX);
                 if (returnDist < 10) { this.vx = 0; this.aiState = 'IDLE'; }
                 else { this.dir = this.x > this.originX ? -1 : 1; this.vx = this.dir * 2; }
-                this.checkAggro(); // Trên đường về nếu thấy lại quay ra cắn tiếp
+                this.checkAggro(); 
                 break;
         }
 
-        // Logic Animation Mapping (Khớp FSM với Draw State)
         if(this.aiState === 'IDLE' || this.aiState === 'RETURN' && this.vx===0) this.state = 'idle';
         else if(this.aiState === 'PATROL' || this.aiState === 'CHASE' || this.aiState === 'RETURN') this.state = 'run';
     }
@@ -886,6 +1017,7 @@ class NPC extends Entity {
         this.name = 'Trưởng Làng'; this.colors = { body: '#ff9800', skin: '#ffcc80', hair: '#e65100' };
         this.dialogTimer = 0; this.dialogText = '';
     }
+    takeDamage() {} 
     talkTo(p) {
         if(p.quest.step===0) { this.showDialog('Giết 3 quái ngoài rừng!'); p.quest.step=1; p.quest.progress=0; }
         else if(p.quest.step===1) this.showDialog(`Đã diệt: ${p.quest.progress}/3`);
@@ -917,7 +1049,7 @@ class Projectile {
         GLOBALS.entities.forEach(ent => {
             if (ent !== this.owner && ent.hp !== undefined && !ent.isDead && !(ent instanceof NPC)) {
                 if (Utils.checkAABB(this, ent)) {
-                    CombatSystem.handleAttack(this.owner, ent, 1.2); // Đạn mạnh hơn đánh thường 20%
+                    CombatSystem.handleAttack(this.owner, ent, 1.2); 
                     Utils.spawnParticles(this.x, this.y, this.color, 15);
                     this.life = 0;
                 }
@@ -930,6 +1062,41 @@ class Projectile {
     }
 }
 
+class KameBeam {
+    constructor(x, y, dir, owner, damage) {
+        this.x = x; this.y = y;
+        this.width = 80; this.height = 22;
+        this.vx = dir * 16; this.dir = dir;
+        this.owner = owner; this.damage = damage;
+        this.life = 900;
+        this.color = '#00bcd4';
+        this.hitTargets = new Set();
+    }
+    update(dt) {
+        this.x += this.vx; this.life -= dt;
+        Utils.spawnParticles(this.x + (this.dir === 1 ? 0 : this.width), this.y + this.height/2, this.color, 2);
+        
+        GLOBALS.entities.forEach(ent => {
+            if (ent !== this.owner && ent.hp !== undefined && !ent.isDead && !(ent instanceof NPC)) {
+                if (!this.hitTargets.has(ent.id) && Utils.checkAABB(this, ent)) {
+                    this.hitTargets.add(ent.id);
+                    CombatSystem.handleAttack(this.owner, ent, 3.0); // 3.0x KAME DAMAGE
+                    Utils.spawnParticles(ent.x + ent.width/2, ent.y + ent.height/2, this.color, 20);
+                    Utils.screenShake(4, 100);
+                }
+            }
+        });
+    }
+    draw(ctx) {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.roundRect(this.x, this.y, this.width, this.height, 10); ctx.fill();
+        ctx.shadowBlur = 20; ctx.shadowColor = this.color; ctx.fill(); ctx.shadowBlur = 0;
+        
+        ctx.fillStyle = this.color;
+        ctx.beginPath(); ctx.roundRect(this.x + 5, this.y + 4, this.width - 10, this.height - 8, 5); ctx.fill();
+    }
+}
+
 /* =========================================================================
    [SYSTEM] LƯU TRỮ (systems/SaveSystem.js)
    ========================================================================= */
@@ -939,7 +1106,8 @@ const SaveSystem = {
         let data = {
             name: GLOBALS.player.name, race: GLOBALS.player.raceKey, level: GLOBALS.player.level,
             exp: GLOBALS.player.exp, hp: GLOBALS.player.hp, mp: GLOBALS.player.mp, money: GLOBALS.player.money,
-            map: MapManager.currentId, x: GLOBALS.player.x, y: GLOBALS.player.y, quest: GLOBALS.player.quest
+            map: MapManager.currentId, x: GLOBALS.player.x, y: GLOBALS.player.y, quest: GLOBALS.player.quest,
+            inventory: GLOBALS.player.inventory
         };
         localStorage.setItem('aura_save', JSON.stringify(data));
         UI.chatSys('Đã lưu game!');
@@ -975,21 +1143,27 @@ const UI = {
         let el = document.getElementById('systemMessage'); el.innerText = msg; el.style.opacity = 1;
         setTimeout(() => el.style.opacity = 0, 2000);
     },
+    updateInventoryUI: function() {
+        let grid = document.getElementById('invGrid'); grid.innerHTML = '';
+        GLOBALS.player.inventory.forEach(item => {
+            if (item.count > 0) {
+                let slot = document.createElement('div'); slot.className = 'item-slot'; slot.onclick = () => GLOBALS.player.useItem(item.id);
+                if (item.id === 'hp_potion') { let icon = document.createElement('div'); icon.className = 'item-icon-hp'; slot.appendChild(icon); }
+                let cnt = document.createElement('div'); cnt.className = 'item-count'; cnt.innerText = item.count; slot.appendChild(cnt);
+                
+                let tt = document.createElement('span'); tt.className = 'tooltip'; tt.innerText = `${item.name}: ${item.desc}`; slot.appendChild(tt);
+                
+                grid.appendChild(slot);
+            }
+        });
+        for (let i = GLOBALS.player.inventory.length; i < 12; i++) { let slot = document.createElement('div'); slot.className = 'item-slot'; grid.appendChild(slot); }
+    },
     toggleInventory: function() {
         let inv = document.getElementById('inventory');
         if (inv.style.display === 'block') inv.style.display = 'none';
         else {
-            inv.style.display = 'block'; let grid = document.getElementById('invGrid'); grid.innerHTML = '';
-            GLOBALS.player.inventory.forEach(item => {
-                if (item.count > 0) {
-                    let slot = document.createElement('div'); slot.className = 'item-slot'; slot.onclick = () => GLOBALS.player.useItem(item.id);
-                    if (item.id === 'hp_potion') { let icon = document.createElement('div'); icon.className = 'item-icon-hp'; slot.appendChild(icon); }
-                    let cnt = document.createElement('div'); cnt.className = 'item-count'; cnt.innerText = item.count; slot.appendChild(cnt);
-                    let tt = document.createElement('span'); tooltip.className = 'tooltip'; tooltip.innerText = `${item.name}: ${item.desc}`; slot.appendChild(tooltip);
-                    grid.appendChild(slot);
-                }
-            });
-            for (let i = GLOBALS.player.inventory.length; i < 12; i++) { let slot = document.createElement('div'); slot.className = 'item-slot'; grid.appendChild(slot); }
+            inv.style.display = 'block'; 
+            this.updateInventoryUI();
         }
     }
 };
@@ -1023,10 +1197,27 @@ const GameCore = {
             GLOBALS.keys[e.code] = true;
             
             let p = GLOBALS.player; if(p.isDead) return;
-            if(e.code === 'KeyW') { if(p.isGrounded) p.vy = p.jumpForce; MapManager.checkPortals(); }
-            if(e.code === 'KeyJ') p.actionAttack();
-            if(e.code === 'KeyK') p.actionShoot();
-            if(e.code === 'KeyQ') p.actionSkill();
+            
+            if(e.code === 'KeyW' && !p.isChargingKame && !p.isChargingPower) { 
+                if (p.isGrounded) {
+                    p.vy = p.jumpForce; 
+                    p.jumpCount = 1;
+                } else if (p.jumpCount < p.maxJumpCount) {
+                    p.vy = p.jumpForce * 0.85; 
+                    p.jumpCount++;
+                    Utils.spawnParticles(p.x + p.width/2, p.y + p.height, '#e0e0e0', 15); 
+                }
+                MapManager.checkPortals(); 
+            }
+            
+            if (!p.isChargingKame && !p.isChargingPower) {
+                if(e.code === 'KeyJ') p.actionAttack();
+                if(e.code === 'KeyK') p.actionShoot();
+                if(e.code === 'KeyQ') p.actionSkill();
+                if(e.code === 'KeyL') p.actionKame();
+                if(e.code === 'KeyO') p.actionPowerUp();
+            }
+            
             if(e.code === 'KeyE') { let npc = GLOBALS.entities.find(e => e instanceof NPC && Math.abs(e.x-p.x)<100); if(npc) npc.talkTo(p); }
             if(e.code === 'KeyI') UI.toggleInventory();
         });
@@ -1034,18 +1225,23 @@ const GameCore = {
         document.getElementById('chatInput').addEventListener('focus', () => GLOBALS.isChatFocused = true);
         document.getElementById('chatInput').addEventListener('blur', () => GLOBALS.isChatFocused = false);
 
-        // Auto Save Interval
-        setInterval(() => { if(GLOBALS.state==='PLAYING') SaveSystem.save(); }, 60000); // Lưu mỗi phút
+        setInterval(() => { if(GLOBALS.state==='PLAYING') SaveSystem.save(); }, 60000); 
 
+        EnvironmentSystem.init(); // Initialize clouds
         requestAnimationFrame(this.loop.bind(this));
     },
 
     updatePreview: function() {
         let race = document.getElementById('playerRaceInput').value; let c = CONFIG.races[race];
         document.getElementById('racePreviewName').innerText = c.title; document.getElementById('raceHp').innerText = c.maxHp; document.getElementById('raceMp').innerText = c.maxMp;
-        document.getElementById('raceDamage').innerText = c.baseDamage; document.getElementById('raceSpeed').innerText = c.speed;
+        document.getElementById('raceDamage').innerText = c.baseDamage; document.getElementById('raceDef').innerText = c.defense; document.getElementById('raceSpeed').innerText = c.speed;
         document.getElementById('racePreviewSkillName').innerText = c.skill.name;
-        GLOBALS.previewPlayer = new Player(30, 60, '', race);
+        
+        GLOBALS.previewPlayer = {
+            x: 30, y: 60, width: 40, height: 50, dir: 1, state: 'idle', 
+            raceKey: race, colors: c.colors, skillActive: false, hurtTimer: 0,
+            animTimer: 0, animFrame: 0, isDead: false
+        };
     },
 
     startNewGame: function() {
@@ -1059,10 +1255,13 @@ const GameCore = {
         if(!data) { alert('Không tìm thấy file save!'); return; }
         GLOBALS.player = new Player(data.x, data.y, data.name, data.race);
         GLOBALS.player.level = data.level; GLOBALS.player.exp = data.exp; GLOBALS.player.money = data.money; GLOBALS.player.quest = data.quest;
-        // Tính toán lại max stat theo level
+        GLOBALS.player.defense = GLOBALS.player.raceConfig.defense;
+        
+        if(data.inventory) GLOBALS.player.inventory = data.inventory;
+        
         for(let i=1; i<data.level; i++) {
             GLOBALS.player.maxHp += GLOBALS.player.raceConfig.levelGrowth.hp; GLOBALS.player.maxMp += GLOBALS.player.raceConfig.levelGrowth.mp;
-            GLOBALS.player.baseDamage += GLOBALS.player.raceConfig.levelGrowth.damage; GLOBALS.player.maxExp = Math.floor(GLOBALS.player.maxExp * GLOBALS.player.raceConfig.levelGrowth.expFactor);
+            GLOBALS.player.baseDamage += GLOBALS.player.raceConfig.levelGrowth.damage; GLOBALS.player.defense += GLOBALS.player.raceConfig.levelGrowth.defense; GLOBALS.player.maxExp = Math.floor(GLOBALS.player.maxExp * GLOBALS.player.raceConfig.levelGrowth.expFactor);
         }
         GLOBALS.player.hp = data.hp; GLOBALS.player.mp = data.mp;
         this.enterWorld(data.map, data.x);
@@ -1072,14 +1271,17 @@ const GameCore = {
     enterWorld: function(mapId, spawnX) {
         if(!GLOBALS.network) GLOBALS.network = new MockNetwork();
         document.getElementById('loginScreen').style.display = 'none'; document.getElementById('hud').style.display = 'block';
-        GLOBALS.state = 'PLAYING'; GLOBALS.entities.push(GLOBALS.player);
+        GLOBALS.state = 'PLAYING'; 
+        if (!GLOBALS.entities.includes(GLOBALS.player)) {
+            GLOBALS.entities.push(GLOBALS.player);
+        }
         MapManager.loadMap(mapId, spawnX); UI.updateHUD(); UI.updateQuest(); GLOBALS.lastTime = performance.now();
     },
 
     respawnPlayer: function() {
         document.getElementById('respawnScreen').style.display = 'none';
         GLOBALS.player.hp = GLOBALS.player.maxHp; GLOBALS.player.mp = GLOBALS.player.maxMp; GLOBALS.player.isDead = false; GLOBALS.player.state = 'idle';
-        this.enterWorld('village', 200); // Hồi sinh ở làng
+        this.enterWorld('village', 200); 
     },
 
     loop: function(timestamp) {
@@ -1087,24 +1289,30 @@ const GameCore = {
 
         if (GLOBALS.state === 'LOGIN') {
             let pCtx = document.getElementById('previewCanvas').getContext('2d'); pCtx.clearRect(0,0,100,100);
-            if(GLOBALS.previewPlayer) { GLOBALS.previewPlayer.skillActive = (Math.floor(timestamp/1000)%3===0); CharacterRenderer.draw(pCtx, GLOBALS.previewPlayer); }
+            if(GLOBALS.previewPlayer) { 
+                GLOBALS.previewPlayer.skillActive = (Math.floor(timestamp/1000)%3===0); 
+                AnimationManager.updateState(GLOBALS.previewPlayer, dt);
+                CharacterRenderer.draw(pCtx, GLOBALS.previewPlayer); 
+            }
             requestAnimationFrame(this.loop.bind(this)); return;
         }
 
         if (GLOBALS.state === 'PLAYING' && !GLOBALS.player.isDead && !GLOBALS.isChatFocused) {
-            if(GLOBALS.keys['KeyA']) { GLOBALS.player.vx = -GLOBALS.player.speed; GLOBALS.player.dir = -1; }
-            else if(GLOBALS.keys['KeyD']) { GLOBALS.player.vx = GLOBALS.player.speed; GLOBALS.player.dir = 1; }
+            if (!GLOBALS.player.isChargingKame && !GLOBALS.player.isChargingPower) {
+                if(GLOBALS.keys['KeyA']) { GLOBALS.player.vx = -GLOBALS.player.speed; GLOBALS.player.dir = -1; }
+                else if(GLOBALS.keys['KeyD']) { GLOBALS.player.vx = GLOBALS.player.speed; GLOBALS.player.dir = 1; }
+            }
         }
         if(!GLOBALS.player.isDead && GLOBALS.player.mp < GLOBALS.player.maxMp) GLOBALS.player.mp += 0.05;
 
-        // Cập nhật thực thể
         GLOBALS.entities.forEach(e => e.update(dt));
         GLOBALS.projectiles = GLOBALS.projectiles.filter(p => p.life>0); GLOBALS.projectiles.forEach(p => p.update(dt));
         GLOBALS.particles = GLOBALS.particles.filter(p => p.life>0); GLOBALS.particles.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.life--; p.vy+=CONFIG.gravity*0.2; });
         GLOBALS.texts = GLOBALS.texts.filter(t => t.life>0); GLOBALS.texts.forEach(t => { t.y+=t.vy; t.life--; if(t.isCrit) t.vy *= 0.9; });
         if(GLOBALS.network) GLOBALS.network.update(dt);
 
-        // Camera Logic (với Rung màn hình)
+        EnvironmentSystem.update(dt, GLOBALS.camera.x);
+
         GLOBALS.camera.x = GLOBALS.player.x - GLOBALS.width/2 + GLOBALS.player.width/2;
         if(GLOBALS.camera.x < 0) GLOBALS.camera.x = 0;
         if(GLOBALS.camera.x > MapManager.maps[MapManager.currentId].width - GLOBALS.width) GLOBALS.camera.x = MapManager.maps[MapManager.currentId].width - GLOBALS.width;
@@ -1116,26 +1324,41 @@ const GameCore = {
             shakeOffY = Utils.rand(-GLOBALS.camera.shakeIntensity, GLOBALS.camera.shakeIntensity);
         }
 
-        // RENDER TẤT CẢ
         GLOBALS.ctx.clearRect(0,0,GLOBALS.width, GLOBALS.height);
         GLOBALS.ctx.save();
-        GLOBALS.ctx.translate(shakeOffX, shakeOffY); // Áp dụng rung màn hình
+        GLOBALS.ctx.translate(shakeOffX, shakeOffY); 
         
-        MapManager.drawBackground(GLOBALS.ctx, GLOBALS.camera.x, GLOBALS.camera.y);
+        EnvironmentSystem.drawBackground(GLOBALS.ctx, GLOBALS.camera.x, GLOBALS.camera.y, MapManager.maps[MapManager.currentId]);
         
         GLOBALS.ctx.save(); GLOBALS.ctx.translate(-GLOBALS.camera.x, -GLOBALS.camera.y);
+
+        GLOBALS.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        GLOBALS.entities.forEach(e => {
+            if(!e.isDead || e instanceof Player) {
+                GLOBALS.ctx.beginPath();
+                GLOBALS.ctx.ellipse(e.x + e.width/2, e.y + e.height, e.width/1.5, 6, 0, 0, Math.PI*2);
+                GLOBALS.ctx.fill();
+            }
+        });
+
         GLOBALS.entities.sort((a,b)=>a.y-b.y).forEach(e => e.draw(GLOBALS.ctx));
         GLOBALS.projectiles.forEach(p => p.draw(GLOBALS.ctx));
         
+        EnvironmentSystem.drawParticles(GLOBALS.ctx, GLOBALS.camera.x, GLOBALS.camera.y);
+
         GLOBALS.particles.forEach(p => { GLOBALS.ctx.fillStyle=p.color; GLOBALS.ctx.globalAlpha=p.life/30; GLOBALS.ctx.beginPath(); GLOBALS.ctx.arc(p.x,p.y,p.size,0,Math.PI*2); GLOBALS.ctx.fill(); GLOBALS.ctx.globalAlpha=1; });
         
         GLOBALS.ctx.font = 'bold 16px "Press Start 2P", monospace';
-        GLOBALS.texts.forEach(t => { GLOBALS.ctx.fillStyle=t.color; GLOBALS.ctx.globalAlpha=t.life/t.maxLife; GLOBALS.ctx.font = t.isCrit ? 'bold 20px "Press Start 2P"' : 'bold 14px "Press Start 2P"'; GLOBALS.ctx.fillText(t.text, t.x, t.y); GLOBALS.ctx.globalAlpha=1; });
+        GLOBALS.texts.forEach(t => { 
+            GLOBALS.ctx.fillStyle=t.color; GLOBALS.ctx.globalAlpha=t.life/t.maxLife; 
+            GLOBALS.ctx.font = t.isCrit ? 'bold 24px "Press Start 2P"' : 'bold 14px "Press Start 2P"'; 
+            GLOBALS.ctx.fillText(t.text, t.x, t.y); GLOBALS.ctx.globalAlpha=1; 
+        });
         
         GLOBALS.ctx.restore();
-        GLOBALS.ctx.restore(); // Restore shake
+        GLOBALS.ctx.restore(); 
         
-        if(GLOBALS.player.isDead) UI.updateHUD(); // Giữ UI khi chết
+        if(GLOBALS.player.isDead) UI.updateHUD(); 
         requestAnimationFrame(this.loop.bind(this));
     }
 };
