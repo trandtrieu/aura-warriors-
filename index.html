@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Warriors - 2D RPG Prototype</title>
+    <style>
+        /* ==========================================
+           1. CSS & UI STYLES
+           ========================================== */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap');
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000; overflow: hidden;
+            font-family: 'Roboto', sans-serif; user-select: none;
+        }
+
+        #gameCanvas {
+            display: block; width: 100%; height: 100%;
+            image-rendering: pixelated; /* Giữ nét pixel */
+        }
+
+        .ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+        }
+
+        /* --- Màn hình Login Phong cách Retro --- */
+        #loginScreen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVQIW2NkYGD4z8DAwMgAI0AMDA4IAmX7e1AAAAAASUVORK5CYII=') repeat;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 100;
+        }
+        .login-box {
+            background: rgba(20, 20, 25, 0.95); border: 4px solid #4a148c; padding: 30px; border-radius: 12px;
+            text-align: center; color: white; width: 380px;
+            box-shadow: 0 0 30px rgba(106, 27, 154, 0.6), inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        .login-box h1 { font-family: 'Press Start 2P', cursive; font-size: 18px; margin-bottom: 25px; color: #ffeb3b; text-shadow: 2px 2px 0px #f44336; }
+        
+        /* Canvas Preview inside Login */
+        .preview-container {
+            width: 100%; height: 120px; background: rgba(0,0,0,0.5); border: 2px inset #555;
+            border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        #previewCanvas { width: 100px; height: 100px; image-rendering: pixelated; }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #bbb; font-weight: bold;}
+        .input-group input, .input-group select {
+            width: 100%; padding: 12px; box-sizing: border-box; font-weight: bold;
+            background: #111; border: 2px solid #555; color: white; border-radius: 6px; outline: none; transition: 0.2s;
+        }
+        .input-group input:focus, .input-group select:focus { border-color: #ffeb3b; box-shadow: 0 0 10px rgba(255, 235, 59, 0.2);}
+        
+        .race-preview {
+            background: rgba(255,255,255,0.05); border: 1px solid #7e57c2; padding: 14px; border-radius: 8px;
+            margin-bottom: 16px; text-align: left; line-height: 1.4; font-size: 13px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .race-preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        .race-preview-label { font-size: 11px; color: #9e9e9e; text-transform: uppercase; letter-spacing: 1px; }
+        .race-preview-name { font-weight: bold; color: #ffeb3b; font-family: 'Press Start 2P', cursive; font-size: 10px;}
+        .race-preview-desc { color: #ddd; margin-bottom: 10px; font-size: 12px; font-style: italic;}
+        .race-preview-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; font-size: 12px;}
+        .race-preview-stats div { color: #eee; }
+        .race-preview-stats strong { color: #4fc3f7; }
+        .race-preview-skill { margin-top: 10px; border-top: 1px dashed #555; padding-top: 10px; }
+        .race-preview-skill-name { color: #b2ff59; font-weight: bold; margin-bottom: 4px; font-size: 12px;}
+        .race-preview-skill-desc { color: #ccc; font-size: 11px; }
+
+        .btn-start {
+            background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%); color: white; border: 2px solid #1b5e20;
+            padding: 15px 20px; font-weight: bold; width: 100%; border-radius: 6px; text-shadow: 1px 1px 2px black;
+            cursor: pointer; transition: 0.1s; font-family: 'Press Start 2P', cursive; font-size: 12px; box-shadow: 0 4px 0 #1b5e20;
+        }
+        .btn-start:active { transform: translateY(4px); box-shadow: 0 0 0 #1b5e20; }
+
+        /* --- HUD Nổi bật hơn --- */
+        #hud { display: none; pointer-events: auto; }
+        .player-stats {
+            position: absolute; top: 15px; left: 15px;
+            background: rgba(20,20,30,0.85); padding: 12px; border-radius: 4px;
+            border: 2px solid #8d6e63; width: 260px; color: white; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+        .level-info { font-weight: bold; margin-bottom: 8px; text-shadow: 1px 1px 0px black; font-size: 14px; border-bottom: 1px solid #555; padding-bottom: 5px;}
+        .stat-bar-container { width: 100%; background: #222; height: 14px; margin: 2px 0 6px 0; border: 2px solid #111; position: relative;}
+        .stat-bar { height: 100%; transition: width 0.1s; }
+        .stat-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 10px; line-height: 14px; font-weight: bold; text-shadow: 1px 1px 1px black; z-index: 2;}
+        #hpBar { background: linear-gradient(90deg, #d32f2f, #f44336); width: 100%; }
+        #mpBar { background: linear-gradient(90deg, #1976d2, #2196f3); width: 100%; }
+        #expBar { background: linear-gradient(90deg, #fbc02d, #ffeb3b); width: 0%; }
+        .money-info { color: #ffd700; font-weight: bold; margin-top: 8px; font-size: 14px; text-shadow: 1px 1px 1px black;}
+
+        /* --- Quest & Chat --- */
+        #questTracker {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(20,20,30,0.85); padding: 10px 15px; border-radius: 4px;
+            border: 2px solid #8d6e63; width: 200px; color: white; text-align: right; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+        #questTracker h3 { margin: 0 0 5px 0; font-size: 14px; color: #ffca28; text-shadow: 1px 1px 1px black;}
+        #questText { font-size: 12px; color: #fff; }
+
+        #chatBox {
+            position: absolute; bottom: 15px; left: 15px;
+            width: 320px; background: rgba(0,0,0,0.6); border-radius: 4px;
+            display: flex; flex-direction: column; border: 2px solid #555; pointer-events: auto;
+        }
+        #chatMessages {
+            height: 150px; overflow-y: auto; padding: 10px;
+            color: white; font-size: 13px; text-shadow: 1px 1px 1px black;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        #chatInput {
+            background: rgba(0,0,0,0.8); border: none; border-top: 2px solid #555;
+            color: white; padding: 10px; outline: none; border-radius: 0 0 2px 2px; font-family: 'Roboto', sans-serif;
+        }
+        .msg-sys { color: #ffeb3b; font-style: italic;}
+        .msg-player { color: #fff; }
+        .msg-name { font-weight: bold; color: #4caf50; }
+
+        /* --- Inventory với Tooltip --- */
+        #inventory {
+            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(30,30,35,0.95); border: 4px solid #8d6e63; padding: 20px; border-radius: 8px;
+            width: 300px; color: white; pointer-events: auto; box-shadow: 0 0 30px rgba(0,0,0,0.8); z-index: 50;
+        }
+        .inv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #555; padding-bottom: 10px; margin-bottom: 15px; }
+        .inv-header h2 { margin: 0; font-size: 16px; font-family: 'Press Start 2P', cursive; color: #ffcc80;}
+        .close-btn { background: #d32f2f; color: white; border: 2px solid #b71c1c; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; box-shadow: 0 2px 0 #b71c1c;}
+        .close-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #b71c1c;}
+        
+        .item-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .item-slot {
+            width: 100%; aspect-ratio: 1; background: #222; border: 2px solid #555;
+            border-radius: 5px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; position: relative; transition: 0.1s;
+        }
+        .item-slot:hover { border-color: #ffeb3b; background: #333;}
+        .item-count { position: absolute; bottom: 2px; right: 4px; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 1px black; }
+        .item-icon-hp { width: 60%; height: 60%; background: radial-gradient(circle, #ff5252, #c62828); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px #f44336; }
+        
+        /* Tooltip */
+        .tooltip { visibility: hidden; width: 120px; background-color: rgba(0,0,0,0.9); color: #fff; text-align: center; border-radius: 6px; padding: 5px; position: absolute; z-index: 1; bottom: 110%; left: 50%; margin-left: -60px; border: 1px solid #777; font-size: 11px; opacity: 0; transition: opacity 0.2s;}
+        .item-slot:hover .tooltip { visibility: visible; opacity: 1; }
+
+        #controlsHint {
+            position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;
+            color: rgba(255,255,255,0.8); font-size: 12px; text-align: right; pointer-events: none; border: 1px solid #444; line-height: 1.6;
+        }
+        kbd { background: #333; padding: 2px 6px; border-radius: 4px; border: 1px solid #777; font-family: monospace; color: white; font-weight: bold; box-shadow: 0 2px 0 #111;}
+
+        /* --- Respawn Screen --- */
+        #respawnScreen {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(100,0,0,0.8); flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 200;
+        }
+        #respawnScreen h1 { font-family: 'Press Start 2P', cursive; color: #ff5252; text-shadow: 3px 3px 0 #000; margin-bottom: 20px;}
+    </style>
+</head>
+<body>
+
+    <!-- Render Engine -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- UI Overlay -->
+    <div class="ui-layer" id="uiLayer">
+        
+        <!-- Login -->
+        <div id="loginScreen">
+            <div class="login-box">
+                <h1>AURA WARRIORS</h1>
+                
+                <div class="preview-container">
+                    <canvas id="previewCanvas"></canvas>
+                </div>
+
+                <div class="input-group">
+                    <label>Tên nhân vật</label>
+                    <input type="text" id="playerNameInput" placeholder="Nhập tên..." value="Gamer" maxlength="12">
+                </div>
+                <div class="input-group">
+                    <label>Chủng tộc</label>
+                    <select id="playerRaceInput">
+                        <option value="sayan">Sayan</option>
+                        <option value="namek">Namek</option>
+                        <option value="earth">Trái Đất</option>
+                    </select>
+                </div>
+                <div class="race-preview" id="racePreview">
+                    <div class="race-preview-header">
+                        <div class="race-preview-label">Thông tin</div>
+                        <div id="racePreviewName" class="race-preview-name">Sayan</div>
+                    </div>
+                    <div id="racePreviewDesc" class="race-preview-desc">Tóc dựng, chiến binh anime. HP cao, sát thương vật lý mạnh.</div>
+                    <div class="race-preview-stats">
+                        <div><strong>HP:</strong> <span id="raceHp">180</span></div>
+                        <div><strong>MP:</strong> <span id="raceMp">70</span></div>
+                        <div><strong>DMG:</strong> <span id="raceDamage">18</span></div>
+                        <div><strong>SPD:</strong> <span id="raceSpeed">5.5</span></div>
+                    </div>
+                    <div class="race-preview-skill">
+                        <div id="racePreviewSkillName" class="race-preview-skill-name">Thịnh nộ Sayan</div>
+                        <div id="racePreviewSkillDesc" class="race-preview-skill-desc">Tăng damage tạm thời và aura mạnh trong vài giây.</div>
+                    </div>
+                </div>
+                <button class="btn-start" onclick="startGame()">VÀO GAME</button>
+            </div>
+        </div>
+
+        <!-- HUD -->
+        <div id="hud">
+            <div class="player-stats">
+                <div class="level-info"><span id="hudName">Player</span> <span style="float:right; color:#ffeb3b">Lv.<span id="hudLevel">1</span></span></div>
+                
+                <div class="stat-bar-container">
+                    <div class="stat-bar" id="hpBar"></div>
+                    <div class="stat-text">HP: <span id="hudHpText">100/100</span></div>
+                </div>
+                <div class="stat-bar-container">
+                    <div class="stat-bar" id="mpBar"></div>
+                    <div class="stat-text">MP: <span id="hudMpText">50/50</span></div>
+                </div>
+                <div class="stat-bar-container" style="height: 8px; margin-top: 5px;">
+                    <div class="stat-bar" id="expBar"></div>
+                </div>
+                
+                <div class="money-info">🪙 <span id="hudMoney">0</span> Vàng</div>
+            </div>
+
+            <div id="questTracker">
+                <h3>Nhiệm vụ</h3>
+                <div id="questText">Nói chuyện với Trưởng Làng (Bấm E)</div>
+            </div>
+
+            <div id="chatBox">
+                <div id="chatMessages"></div>
+                <input type="text" id="chatInput" placeholder="Nhấn Enter để chat...">
+            </div>
+
+            <div id="controlsHint">
+                <kbd>A</kbd><kbd>D</kbd> Di chuyển<br>
+                <kbd>W</kbd> Nhảy<br>
+                <kbd>J</kbd> Đánh thường<br>
+                <kbd>K</kbd> Bắn khí<br>
+                <kbd>Q</kbd> Skill tộc<br>
+                <kbd>E</kbd> Nói chuyện<br>
+                <kbd>I</kbd> Hành trang
+            </div>
+        </div>
+
+        <!-- Inventory -->
+        <div id="inventory">
+            <div class="inv-header">
+                <h2>HÀNH TRANG</h2>
+                <button class="close-btn" onclick="toggleInventory()">X</button>
+            </div>
+            <div class="item-grid" id="invGrid">
+                <!-- Slots generated by JS -->
+            </div>
+            <div style="margin-top: 15px; font-size: 12px; color: #aaa; text-align: center;">Click vào vật phẩm để sử dụng</div>
+        </div>
+
+        <!-- Respawn Screen -->
+        <div id="respawnScreen">
+            <h1>BẠN ĐÃ BỊ HẠ GỤC</h1>
+            <p style="color: white; margin-bottom: 20px;">Kinh nghiệm và tiền không bị mất.</p>
+            <button class="btn-start" style="width: 200px;" onclick="respawnPlayer()">HỒI SINH</button>
+        </div>
+
+    </div>
+
+<script>
+/* ==========================================
+   2. CẤU HÌNH & DATA (CONFIGS)
+   ========================================== */
+const raceConfigs = {
+    sayan: {
+        title: 'Sayan',
+        desc: 'Tóc dựng, chiến binh anime. HP cao, sát thương vật lý mạnh.',
+        maxHp: 180, maxMp: 70, baseDamage: 22, speed: 5.5, jumpForce: -12, maxExp: 110,
+        levelGrowth: { hp: 28, mp: 8, damage: 6, expFactor: 1.35 },
+        aura: 'rgba(255,152,0,0.3)', bodyColor: '#ff8a65', hairColor: '#ffe500', skinColor: '#ffccaa', outfitColor: '#d84315', projectileColor: '#ffeb3b',
+        attackBonus: 4, shootCost: 12, shootCooldown: 1000, skillCooldown: 8000,
+        skillName: 'Thịnh nộ Sayan', skillDesc: 'Tăng sát thương vật lý, aura cam chớp nháy.'
+    },
+    namek: {
+        title: 'Namek',
+        desc: 'Da xanh, thần bí, thiên về năng lượng với phòng thủ tốt.',
+        maxHp: 140, maxMp: 120, baseDamage: 16, speed: 4.8, jumpForce: -11, maxExp: 100,
+        levelGrowth: { hp: 18, mp: 18, damage: 4, expFactor: 1.25 },
+        aura: 'rgba(0,255,128,0.3)', bodyColor: '#81c784', hairColor: '#2e7d32', skinColor: '#a5d6a7', outfitColor: '#2e7d32', projectileColor: '#00e5ff',
+        attackBonus: 2, shootCost: 10, shootCooldown: 1200, skillCooldown: 10000,
+        skillName: 'Hồi phục Namek', skillDesc: 'Hồi HP liên tục và tạo khiên năng lượng.'
+    },
+    earth: {
+        title: 'Trái Đất',
+        desc: 'Võ sĩ con người, võ phục gọn gàng, dáng nhanh nhẹn.',
+        maxHp: 150, maxMp: 80, baseDamage: 18, speed: 6.5, jumpForce: -13, maxExp: 95,
+        levelGrowth: { hp: 20, mp: 10, damage: 5, expFactor: 1.15 },
+        aura: 'rgba(0,150,255,0.3)', bodyColor: '#90caf9', hairColor: '#212121', skinColor: '#ffe0b2', outfitColor: '#1976d2', projectileColor: '#80d8ff',
+        attackBonus: 1, shootCost: 8, shootCooldown: 700, skillCooldown: 9000,
+        skillName: 'Bước nhanh', skillDesc: 'Tăng mạnh tốc độ chạy và nhảy.'
+    }
+};
+
+// Chuẩn bị cho Sprite Sheet sau này (Hiện tại dùng để quản lý state logic)
+const animationConfig = {
+    idle: { speed: 1 }, run: { speed: 1.5 }, jump: { speed: 1 },
+    attack: { duration: 300 }, shoot: { duration: 400 }, hurt: { duration: 200 }, die: { duration: 1000 }
+};
+
+/* ==========================================
+   3. GLOBALS & ENGINE SETUP
+   ========================================== */
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const prevCanvas = document.getElementById('previewCanvas');
+const prevCtx = prevCanvas.getContext('2d');
+
+let GAME_WIDTH = window.innerWidth;
+let GAME_HEIGHT = window.innerHeight;
+const GRAVITY = 0.6; const FRICTION = 0.8; const MAX_FALL_SPEED = 15;
+let GROUND_Y = GAME_HEIGHT - 100;
+
+let gameState = 'LOGIN'; // LOGIN, PLAYING, DEAD
+let lastTime = 0;
+let camera = { x: 0, y: 0 };
+let mapWidth = 3000;
+
+let localPlayer = null;
+let previewPlayer = null; // Dùng cho màn hình chọn nhân vật
+let entities = [];
+let projectiles = [];
+let particles = [];
+let floatingTexts = [];
+
+const keys = {};
+let isChatFocused = false;
+let network = null;
+
+// UI Elements
+const uiHUD = document.getElementById('hud');
+const uiLogin = document.getElementById('loginScreen');
+const uiInventory = document.getElementById('inventory');
+const uiRespawn = document.getElementById('respawnScreen');
+const chatInput = document.getElementById('chatInput');
+const chatMessages = document.getElementById('chatMessages');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    GAME_WIDTH = canvas.width; GAME_HEIGHT = canvas.height;
+    GROUND_Y = GAME_HEIGHT - 100;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+/* ==========================================
+   4. HỆ THỐNG VẼ NHÂN VẬT (CHARACTER RENDERER)
+   Tách logic vẽ ra khỏi Entity để dễ thay Sprite sau này
+   ========================================== */
+const CharacterRenderer = {
+    draw: function(ctx, char) {
+        ctx.save();
+        ctx.translate(char.x + char.width / 2, char.y + char.height); // Gốc tọa độ ở dưới chân
+        ctx.scale(char.dir, 1);
+
+        // Hiệu ứng nhấp nháy khi bị đau (Hurt)
+        if (char.hurtTimer > 0) {
+            ctx.globalAlpha = (Math.floor(Date.now() / 50) % 2 === 0) ? 0.5 : 1;
+        }
+
+        // Logic Animation (Chibi Proportions)
+        let time = Date.now();
+        let bobY = 0, legRot = 0, armRot = 0;
+        
+        if (char.state === 'idle') {
+            bobY = Math.sin(time / 200) * 2; // Thở nhẹ
+        } else if (char.state === 'run') {
+            bobY = Math.abs(Math.sin(time / 100)) * 4; // Nhún khi chạy
+            legRot = Math.sin(time / 80) * 0.6; // Xoay chân nhanh
+            armRot = -Math.sin(time / 80) * 0.6; // Xoay tay ngược chân
+        } else if (char.state === 'jump') {
+            legRot = 0.3; // Rút chân lên khi nhảy
+            armRot = -0.5; // Giơ tay
+        } else if (char.state === 'dead') {
+            ctx.rotate(Math.PI / 2); // Ngã ngang
+            ctx.translate(-char.height / 2 + 10, -char.width / 2);
+        }
+
+        // Kích thước chuẩn Chibi
+        const headRadius = 16;
+        const bodyW = 18, bodyH = 22;
+        const limbW = 6, limbH = 12;
+
+        // Vẽ Aura (Chỉ dành cho Player)
+        if (char instanceof Player && !char.isDead) {
+            this.drawAura(ctx, char, bodyH, time);
+        }
+
+        // --- BẮT ĐẦU VẼ CÁC BỘ PHẬN ---
+        
+        // 1. Tay sau (Bị che bởi thân)
+        this.drawLimb(ctx, -bodyW/2 + 2, -15 + bobY, armRot, limbW, limbH, char.skinColor || '#ffccaa');
+
+        // 2. Chân sau
+        this.drawLimb(ctx, -6, -10 + bobY, legRot, limbW, limbH, '#222');
+
+        // 3. Chân trước
+        this.drawLimb(ctx, 2, -10 + bobY, -legRot, limbW, limbH, '#222');
+
+        // 4. Thân (Body)
+        ctx.fillStyle = char.outfitColor || char.bodyColor || char.color;
+        // Nếu là Trái đất, vẽ áo võ thuật có viền
+        if (char.raceKey === 'earth') {
+            ctx.fillRect(-bodyW/2, -bodyH - 10 + bobY, bodyW, bodyH);
+            ctx.fillStyle = '#f57c00'; // Đai lưng cam
+            ctx.fillRect(-bodyW/2, -15 + bobY, bodyW, 4);
+        } else {
+            ctx.beginPath();
+            ctx.roundRect(-bodyW/2, -bodyH - 10 + bobY, bodyW, bodyH, 3);
+            ctx.fill();
+        }
+
+        // 5. Tay trước (Đổi góc nếu đang đánh/bắn)
+        let frontArmRot = -armRot;
+        if (char.state === 'attack') frontArmRot = -Math.PI / 2; // Chém tới trước
+        if (char.state === 'shoot') frontArmRot = -Math.PI / 2; // Giơ tay thẳng tới trước
+        this.drawLimb(ctx, bodyW/2 - 4, -15 + bobY, frontArmRot, limbW, limbH, char.skinColor || '#ffccaa');
+
+        // 6. Đầu (Head & Face & Hair)
+        this.drawHead(ctx, char, headRadius, bodyH, bobY);
+
+        // 7. Hiệu ứng vũ khí / Bắn
+        if (char.state === 'attack' && !char.isDead) {
+            ctx.beginPath();
+            ctx.arc(20, -char.height / 2, 25, -Math.PI / 3, Math.PI / 4);
+            ctx.lineWidth = 3; ctx.strokeStyle = 'white'; ctx.stroke();
+            // Tia chớp nhỏ
+            ctx.beginPath(); ctx.moveTo(15, -char.height/2); ctx.lineTo(35, -char.height/2); ctx.strokeStyle = '#ffeb3b'; ctx.stroke();
+        }
+
+        ctx.restore();
+
+        // 8. Vẽ HUD trên đầu (Name, HP Bar)
+        if (!char.isDead && gameState !== 'LOGIN') {
+            ctx.fillStyle = 'white';
+            ctx.font = '10px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            let nameY = char.y - 10;
+            ctx.fillText(char.name, char.x + char.width / 2, nameY - 5);
+            // HP Bar
+            ctx.fillStyle = '#000'; ctx.fillRect(char.x, nameY, char.width, 4);
+            ctx.fillStyle = (char instanceof Monster) ? '#d32f2f' : '#4caf50';
+            ctx.fillRect(char.x, nameY, char.width * Math.max(0, char.hp / char.maxHp), 4);
+        }
+    },
+
+    drawLimb: function(ctx, x, y, rot, w, h, color) {
+        ctx.save();
+        ctx.translate(x, y); ctx.rotate(rot);
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.roundRect(-w/2, 0, w, h, 3); ctx.fill();
+        ctx.restore();
+    },
+
+    drawAura: function(ctx, char, bodyH, time) {
+        if (char.state === 'attack' || char.state === 'shoot' || char.skillActive) {
+            ctx.beginPath();
+            let auraSize = char.skillActive ? 45 : 35;
+            let pulse = Math.sin(time / 50) * 5;
+            // Vẽ ngọn lửa Aura bốc lên
+            ctx.moveTo(0, -bodyH - 30 - pulse);
+            ctx.quadraticCurveTo(auraSize, -bodyH, 0, 10);
+            ctx.quadraticCurveTo(-auraSize, -bodyH, 0, -bodyH - 30 - pulse);
+            
+            ctx.fillStyle = char.raceConfig?.aura || 'rgba(255, 200, 0, 0.3)';
+            ctx.fill();
+        }
+    },
+
+    drawHead: function(ctx, char, r, bodyH, bobY) {
+        ctx.save();
+        ctx.translate(0, -bodyH - 10 - r + bobY);
+
+        // Namek Antennas
+        if (char.raceKey === 'namek') {
+            ctx.fillStyle = '#1b5e20';
+            ctx.beginPath(); ctx.ellipse(-8, -12, 3, 8, -0.5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(8, -12, 3, 8, 0.5, 0, Math.PI*2); ctx.fill();
+        }
+
+        // Khuôn mặt
+        ctx.fillStyle = char.skinColor || '#ffccaa';
+        ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+
+        // Mắt (Giận dữ nếu đang đánh/bắn)
+        ctx.fillStyle = '#000';
+        let eyeY = -2;
+        if (char.state === 'attack' || char.state === 'shoot') {
+            ctx.beginPath(); ctx.moveTo(2, eyeY - 2); ctx.lineTo(6, eyeY + 2); ctx.lineTo(8, eyeY - 1); ctx.fill(); // Mắt cau mày
+        } else if (char.state === 'dead') {
+            ctx.font = '10px Arial'; ctx.fillText('x', 5, eyeY + 3); // Mắt X
+        } else {
+            ctx.fillRect(4, eyeY, 3, 4); // Mắt thường
+        }
+
+        // Tóc
+        ctx.fillStyle = char.hairColor || '#000';
+        if (char.raceKey === 'sayan') {
+            // Tóc nhọn Sayan (Spiky)
+            ctx.beginPath();
+            ctx.moveTo(-r, 0);
+            ctx.lineTo(-r-5, -10); ctx.lineTo(-r/2, -r+2);
+            ctx.lineTo(0, -r-15); ctx.lineTo(r/2, -r+2);
+            ctx.lineTo(r+5, -10); ctx.lineTo(r, 0);
+            ctx.fill();
+        } else if (char.raceKey === 'earth') {
+            // Tóc Trái Đất (Ngắn, gọn)
+            ctx.beginPath();
+            ctx.arc(0, -r/2, r+1, Math.PI, 0);
+            ctx.fill();
+        } else if (char instanceof Monster) {
+            // Quái vật có sừng
+            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(10, -r-15); ctx.lineTo(5, -r); ctx.fill();
+        }
+
+        ctx.restore();
+    }
+};
+
+/* ==========================================
+   5. CÁC LỚP ĐỐI TƯỢNG (ENTITIES)
+   ========================================== */
+class GameObject {
+    constructor(x, y, width, height) {
+        this.id = Math.random().toString(36).substr(2, 9);
+        this.x = x; this.y = y; this.width = width; this.height = height;
+        this.vx = 0; this.vy = 0; this.dir = 1;
+        this.isGrounded = false;
+        this.state = 'idle'; this.stateTimer = 0;
+    }
+
+    update(dt) {
+        this.vy += GRAVITY;
+        if (this.vy > MAX_FALL_SPEED) this.vy = MAX_FALL_SPEED;
+        
+        this.x += this.vx; this.y += this.vy;
+        
+        // Map boundaries & Ground
+        if (this.y + this.height > GROUND_Y) {
+            this.y = GROUND_Y - this.height;
+            this.vy = 0; this.isGrounded = true;
+        } else { this.isGrounded = false; }
+        
+        if (this.x < 0) this.x = 0;
+        if (this.x > mapWidth - this.width) this.x = mapWidth - this.width;
+        
+        this.vx *= FRICTION;
+        if (Math.abs(this.vx) < 0.1) this.vx = 0;
+        
+        this.stateTimer += dt;
+    }
+}
+
+class Character extends GameObject {
+    constructor(x, y, name) {
+        super(x, y, 40, 50); // Thu nhỏ hitbox lại cho hợp Chibi
+        this.name = name;
+        this.maxHp = 100; this.hp = 100; this.maxMp = 50; this.mp = 50;
+        this.level = 1; this.speed = 5; this.jumpForce = -12;
+        this.isDead = false; this.hurtTimer = 0;
+        this.attackCooldown = 0; this.shootCooldown = 0;
+    }
+
+    takeDamage(amount) {
+        if (this.isDead) return;
+        this.hp -= amount;
+        this.hurtTimer = animationConfig.hurt.duration;
+        spawnDamageText(this.x + this.width / 2, this.y, amount, '#ff5252');
+        createParticles(this.x + this.width / 2, this.y + this.height / 2, '#ff1744', 5);
+        
+        // Hiệu ứng giật lùi (Knockback) nhẹ
+        this.vy = -3; this.vx = -this.dir * 2; 
+
+        if (this.hp <= 0) {
+            this.hp = 0;
+            this.die();
+        }
+    }
+
+    die() {
+        this.isDead = true;
+        this.state = 'dead';
+        this.vx = 0;
+        if (this instanceof Player && this === localPlayer) {
+            showRespawnScreen();
+        }
+    }
+
+    update(dt) {
+        if (this.isDead) { super.update(dt); return; } // Vẫn rớt xuống đất nếu chết trên không
+        
+        super.update(dt);
+        if (this.attackCooldown > 0) this.attackCooldown -= dt;
+        if (this.shootCooldown > 0) this.shootCooldown -= dt;
+        if (this.hurtTimer > 0) this.hurtTimer -= dt;
+        
+        // Quản lý State
+        if (this.state === 'attack' && this.stateTimer > animationConfig.attack.duration) this.state = 'idle';
+        if (this.state === 'shoot' && this.stateTimer > animationConfig.shoot.duration) this.state = 'idle';
+        
+        if (this.state !== 'attack' && this.state !== 'shoot') {
+            if (!this.isGrounded) this.state = 'jump';
+            else if (Math.abs(this.vx) > 0.5) this.state = 'run';
+            else this.state = 'idle';
+        }
+    }
+
+    draw(ctx) {
+        CharacterRenderer.draw(ctx, this);
+    }
+}
+
+class Player extends Character {
+    constructor(x, y, name, raceKey) {
+        super(x, y, name);
+        this.raceKey = raceKey;
+        this.raceConfig = raceConfigs[raceKey] || raceConfigs.sayan;
+        
+        this.maxHp = this.raceConfig.maxHp; this.hp = this.maxHp;
+        this.maxMp = this.raceConfig.maxMp; this.mp = this.maxMp;
+        this.speed = this.raceConfig.speed; this.jumpForce = this.raceConfig.jumpForce;
+        this.baseDamage = this.raceConfig.baseDamage; this.maxExp = this.raceConfig.maxExp;
+        
+        this.bodyColor = this.raceConfig.bodyColor; this.hairColor = this.raceConfig.hairColor;
+        this.skinColor = this.raceConfig.skinColor; this.outfitColor = this.raceConfig.outfitColor;
+        
+        this.exp = 0; this.money = 0;
+        this.inventory = [{ id: 'hp_potion', name: 'Bình Máu', desc: 'Hồi 50 HP', count: 5 }];
+        this.quest = { step: 0, progress: 0, target: 3 };
+        
+        this.skillCooldown = 0; this.skillDuration = 0; this.skillActive = false;
+    }
+
+    addExp(amount) {
+        this.exp += amount;
+        if (this.exp >= this.maxExp) this.levelUp();
+        if (this === localPlayer) updateHUD();
+    }
+
+    levelUp() {
+        this.level++;
+        this.exp -= this.maxExp;
+        this.maxExp = Math.floor(this.maxExp * this.raceConfig.levelGrowth.expFactor);
+        this.maxHp += this.raceConfig.levelGrowth.hp; this.maxMp += this.raceConfig.levelGrowth.mp;
+        this.baseDamage += this.raceConfig.levelGrowth.damage;
+        this.hp = this.maxHp; this.mp = this.maxMp;
+        
+        if (this === localPlayer) addSystemMessage(`Chúc mừng! Bạn đạt Cấp ${this.level}`);
+        createParticles(this.x + this.width/2, this.y + this.height, '#ffeb3b', 30);
+    }
+
+    takeDamage(amount) {
+        if (this.skillActive && this.raceKey === 'namek') amount = Math.max(1, amount - 8); // Namek Shield
+        super.takeDamage(amount);
+    }
+
+    update(dt) {
+        super.update(dt);
+        if (this.skillDuration > 0) {
+            this.skillDuration -= dt;
+            if (this.skillDuration <= 0 && this.skillActive) {
+                this.skillDuration = 0; this.skillActive = false;
+                if (this.raceKey === 'sayan') this.baseDamage -= 10;
+                else if (this.raceKey === 'earth') this.speed -= 2.5;
+                if (this === localPlayer) addSystemMessage('Kỹ năng đã kết thúc.');
+            }
+        }
+        if (this.skillCooldown > 0) this.skillCooldown -= dt;
+    }
+
+    useItem(itemId) {
+        let item = this.inventory.find(i => i.id === itemId);
+        if (item && item.count > 0 && !this.isDead) {
+            if (itemId === 'hp_potion') {
+                this.hp = Math.min(this.maxHp, this.hp + 50);
+                item.count--;
+                createParticles(this.x + this.width / 2, this.y + this.height, '#4caf50', 10);
+                spawnDamageText(this.x + this.width / 2, this.y - 10, '+50 HP', '#4caf50');
+            }
+            updateInventoryUI(); updateHUD();
+        }
+    }
+
+    attack() {
+        if (this.attackCooldown > 0 || this.isDead) return;
+        this.state = 'attack'; this.stateTimer = 0;
+        this.attackCooldown = 500;
+        
+        let hitbox = { x: this.dir === 1 ? this.x + this.width : this.x - 30, y: this.y, width: 30, height: this.height };
+        
+        entities.forEach(ent => {
+            if (ent !== this && ent instanceof Character && !ent.isDead && !(ent instanceof NPC)) {
+                if (checkAABBCollision(hitbox, ent)) {
+                    let dmg = this.baseDamage + Math.floor(Math.random() * 5) + (this.raceConfig.attackBonus || 0);
+                    ent.takeDamage(dmg);
+                    
+                    if (ent.hp <= 0 && ent instanceof Monster && this === localPlayer) {
+                        this.addExp(ent.grantExp); this.money += ent.grantGold;
+                        if (this.quest.step === 1) {
+                            this.quest.progress++;
+                            if (this.quest.progress >= this.quest.target) {
+                                this.quest.step = 2; addSystemMessage('Nhiệm vụ hoàn thành! Về báo cáo.');
+                            }
+                            updateQuestUI();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    shoot() {
+        if (this.shootCooldown > 0 || this.mp < this.raceConfig.shootCost || this.isDead) return;
+        this.mp -= this.raceConfig.shootCost;
+        this.state = 'shoot'; this.stateTimer = 0;
+        this.shootCooldown = this.raceConfig.shootCooldown;
+        
+        let pX = this.dir === 1 ? this.x + this.width : this.x - 20;
+        projectiles.push(new Projectile(pX, this.y + 15, this.dir, this, this.baseDamage * 1.2));
+        if (this === localPlayer) updateHUD();
+    }
+
+    useRaceSkill() {
+        if (this.skillCooldown > 0 || this.skillActive || this.isDead) return;
+        this.skillCooldown = this.raceConfig.skillCooldown;
+        this.skillDuration = 3000; this.skillActive = true;
+        
+        if (this.raceKey === 'sayan') {
+            this.baseDamage += 10;
+            createParticles(this.x + this.width/2, this.y + this.height/2, '#ff9800', 30);
+            if(this===localPlayer) addSystemMessage('Sayan bật Thịnh nộ!');
+        } else if (this.raceKey === 'namek') {
+            this.hp = Math.min(this.maxHp, this.hp + 40);
+            createParticles(this.x + this.width/2, this.y + this.height/2, '#4caf50', 20);
+            if(this===localPlayer) addSystemMessage('Namek dùng Hồi phục và tạo Khiên!');
+        } else if (this.raceKey === 'earth') {
+            this.speed += 2.5;
+            createParticles(this.x + this.width/2, this.y + this.height/2, '#2196f3', 20);
+            if(this===localPlayer) addSystemMessage('Trái Đất tiến vào trạng thái Nhanh nhẹn!');
+        }
+    }
+}
+
+class Monster extends Character {
+    constructor(x, y, level) {
+        super(x, y, 'Quái Vật');
+        this.level = level;
+        this.maxHp = 50 * level; this.hp = this.maxHp;
+        this.baseDamage = 10 * level;
+        this.grantExp = 20 * level; this.grantGold = 10 * level;
+        this.color = '#7b1fa2'; this.skinColor = '#ab47bc';
+        this.originX = x;
+        this.patrolTimer = 0; this.respawnTimer = 0;
+        
+        // AI parameters
+        this.aggroRange = 250;
+        this.attackRange = 40;
+        this.attackCooldown = 0;
+    }
+
+    update(dt) {
+        super.update(dt);
+        if (this.isDead) {
+            this.respawnTimer += dt;
+            if (this.respawnTimer > 8000) { // Hồi sinh sau 8s
+                this.hp = this.maxHp; this.isDead = false; this.x = this.originX;
+                this.respawnTimer = 0; this.state = 'idle';
+            }
+            return;
+        }
+
+        if (this.attackCooldown > 0) this.attackCooldown -= dt;
+
+        // Monster AI
+        let target = localPlayer;
+        if (target && !target.isDead) {
+            let distX = Math.abs(this.x - target.x);
+            let distY = Math.abs(this.y - target.y);
+
+            if (distX < this.aggroRange && distY < 100) {
+                // Đuổi theo người chơi
+                this.dir = this.x < target.x ? 1 : -1;
+                if (distX > this.attackRange) {
+                    this.vx = this.dir * (this.speed * 0.5); // Chạy chậm hơn player
+                } else {
+                    this.vx = 0; // Đứng lại đánh
+                    if (this.attackCooldown <= 0) this.performAttack(target);
+                }
+            } else {
+                this.idlePatrol(dt);
+            }
+        } else {
+            this.idlePatrol(dt);
+        }
+    }
+
+    performAttack(target) {
+        this.state = 'attack'; this.stateTimer = 0;
+        this.attackCooldown = 1500; // 1.5s đánh 1 lần
+        // Gây sát thương
+        let dmg = this.baseDamage + Math.floor(Math.random() * 3);
+        target.takeDamage(dmg);
+        updateHUD();
+    }
+
+    idlePatrol(dt) {
+        this.patrolTimer += dt;
+        if (this.patrolTimer > 2500) {
+            this.patrolTimer = 0;
+            let rand = Math.random();
+            if (rand < 0.3) { this.vx = 1.5; this.dir = 1; }
+            else if (rand < 0.6) { this.vx = -1.5; this.dir = -1; }
+            else { this.vx = 0; }
+        }
+    }
+}
+
+class NPC extends Character {
+    constructor(x, y) {
+        super(x, y, 'Trưởng Làng');
+        this.color = '#ff9800'; this.skinColor = '#ffcc80'; this.hairColor = '#e65100';
+        this.dialogTimer = 0; this.dialogText = '';
+    }
+    takeDamage() {} // Bất tử
+    talkTo(player) {
+        if (player.quest.step === 0) {
+            this.showDialog('Có quái vật quấy nhiễu! Giết 3 con giúp ta!');
+            player.quest.step = 1; player.quest.progress = 0;
+        } else if (player.quest.step === 1) {
+            this.showDialog(`Đã diệt: ${player.quest.progress}/${player.quest.target} con.`);
+        } else if (player.quest.step === 2) {
+            this.showDialog('Giỏi lắm! Phần thưởng của ngươi đây.');
+            player.addExp(100); player.money += 500; player.quest.step = 3;
+        } else {
+            this.showDialog('Làng đã bình yên nhờ ngươi.');
+        }
+        if (player === localPlayer) updateQuestUI();
+    }
+    showDialog(text) { this.dialogText = text; this.dialogTimer = 4000; }
+    draw(ctx) {
+        super.draw(ctx);
+        if (this.dialogTimer > 0) {
+            ctx.fillStyle = 'rgba(255,255,255,0.95)';
+            ctx.beginPath(); ctx.roundRect(this.x - 50, this.y - 65, 140, 35, 4); ctx.fill();
+            ctx.fillStyle = 'black'; ctx.font = 'bold 10px Roboto'; ctx.textAlign = 'center';
+            ctx.fillText(this.dialogText.substring(0, 22), this.x + this.width / 2, this.y - 50);
+            if (this.dialogText.length > 22) ctx.fillText(this.dialogText.substring(22, 44) + '...', this.x + this.width / 2, this.y - 40);
+        }
+    }
+    update(dt) { super.update(dt); if (this.dialogTimer > 0) this.dialogTimer -= dt; }
+}
+
+class Projectile {
+    constructor(x, y, dir, owner, damage) {
+        this.x = x; this.y = y; this.width = 16; this.height = 8;
+        this.vx = dir * 12; this.dir = dir;
+        this.owner = owner; this.damage = damage; this.life = 800;
+        this.color = owner.raceConfig?.projectileColor || '#ffeb3b';
+    }
+    update(dt) {
+        this.x += this.vx; this.life -= dt;
+        if (Math.random() > 0.4) createParticles(this.x, this.y + 4, this.color, 1);
+        
+        entities.forEach(ent => {
+            if (ent !== this.owner && ent instanceof Character && !ent.isDead && !(ent instanceof NPC)) {
+                if (checkAABBCollision(this, ent)) {
+                    ent.takeDamage(this.damage);
+                    createParticles(this.x, this.y, this.color, 15);
+                    this.life = 0;
+                    if (ent.hp <= 0 && ent instanceof Monster && this.owner === localPlayer) {
+                        this.owner.addExp(ent.grantExp); this.owner.money += ent.grantGold;
+                        if (this.owner.quest.step === 1) {
+                            this.owner.quest.progress++;
+                            if (this.owner.quest.progress >= this.owner.quest.target) {
+                                this.owner.quest.step = 2; addSystemMessage('Nhiệm vụ hoàn thành!');
+                            }
+                            updateQuestUI();
+                        }
+                    }
+                }
+            }
+        });
+    }
+    draw(ctx) {
+        ctx.fillStyle = this.color;
+        ctx.beginPath(); ctx.roundRect(this.x, this.y, this.width, this.height, 4); ctx.fill();
+        ctx.shadowBlur = 10; ctx.shadowColor = this.color; ctx.fill(); ctx.shadowBlur = 0;
+    }
+}
+
+/* ==========================================
+   6. HỆ THỐNG MẠNG GIẢ LẬP (MOCK NETWORK)
+   ========================================== */
+class MockNetwork {
+    constructor() {
+        this.mockPlayers = [];
+        setTimeout(() => {
+            let bot = new Player(600, 300, 'GokuFake', 'sayan');
+            bot.isBot = true; entities.push(bot); this.mockPlayers.push(bot);
+            addSystemMessage(`${bot.name} đã đăng nhập (Sayan).`);
+        }, 3000);
+    }
+    updateBots(dt) {
+        this.mockPlayers.forEach(bot => {
+            if (Math.random() < 0.01) { bot.dir = Math.random() > 0.5 ? 1 : -1; bot.vx = bot.dir * bot.speed; } 
+            else if (Math.random() < 0.02) { bot.vx = 0; }
+            if (Math.random() < 0.005 && bot.isGrounded) bot.vy = bot.jumpForce;
+            if (Math.random() < 0.005 && bot.isGrounded && Math.abs(bot.x - localPlayer.x) < 150) bot.attack();
+        });
+    }
+    sendChat(name, msg) { this.receiveChat(name, msg); }
+    receiveChat(name, msg) {
+        const el = document.createElement('div'); el.className = 'msg-player';
+        // Sửa lỗi XSS, dùng textContent thay vì innerHTML trực tiếp cho msg
+        const nameSpan = document.createElement('span'); nameSpan.className = 'msg-name'; nameSpan.textContent = name + ': ';
+        const textNode = document.createTextNode(msg);
+        el.appendChild(nameSpan); el.appendChild(textNode);
+        chatMessages.appendChild(el); chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+
+/* ==========================================
+   7. GIAO DIỆN & INPUT (UI & CONTROLS)
+   ========================================== */
+function updateRacePreview() {
+    const raceKey = document.getElementById('playerRaceInput').value;
+    const config = raceConfigs[raceKey];
+    document.getElementById('racePreviewName').innerText = config.title;
+    document.getElementById('racePreviewDesc').innerText = config.desc;
+    document.getElementById('raceHp').innerText = config.maxHp;
+    document.getElementById('raceMp').innerText = config.maxMp;
+    document.getElementById('raceDamage').innerText = config.baseDamage;
+    document.getElementById('raceSpeed').innerText = config.speed;
+    document.getElementById('racePreviewSkillName').innerText = config.skillName;
+    document.getElementById('racePreviewSkillDesc').innerText = config.skillDesc;
+
+    // Cập nhật preview Player object
+    previewPlayer = new Player(30, 60, '', raceKey); // X/Y tọa độ ảo trên preview canvas
+    previewPlayer.state = 'idle';
+}
+document.getElementById('playerRaceInput').addEventListener('change', updateRacePreview);
+
+function startGame() {
+    if (gameState === 'PLAYING') return;
+    let name = document.getElementById('playerNameInput').value || 'Gamer';
+    let raceKey = document.getElementById('playerRaceInput').value;
+    
+    localPlayer = new Player(200, 200, name, raceKey);
+    entities.push(localPlayer);
+    
+    entities.push(new NPC(400, GROUND_Y - 50));
+    entities.push(new Monster(1000, GROUND_Y - 50, 1));
+    entities.push(new Monster(1300, GROUND_Y - 50, 1));
+    entities.push(new Monster(2200, GROUND_Y - 50, 2));
+    
+    if (!network) network = new MockNetwork();
+    
+    uiLogin.style.display = 'none';
+    uiHUD.style.display = 'block';
+    gameState = 'PLAYING';
+    
+    addSystemMessage(`Chào mừng ${name} đến với Aura Warriors!`);
+    updateHUD(); updateQuestUI();
+    lastTime = performance.now();
+}
+
+function respawnPlayer() {
+    uiRespawn.style.display = 'none';
+    localPlayer.hp = localPlayer.maxHp; // Hồi đầy máu
+    localPlayer.mp = localPlayer.maxMp;
+    localPlayer.isDead = false;
+    localPlayer.state = 'idle';
+    localPlayer.x = 200; // Về gần làng
+    localPlayer.y = GROUND_Y - 100;
+    gameState = 'PLAYING';
+    updateHUD();
+}
+
+function showRespawnScreen() {
+    gameState = 'DEAD'; // Dừng nhận input di chuyển
+    setTimeout(() => { uiRespawn.style.display = 'flex'; }, 1000);
+}
+
+function updateHUD() {
+    if (!localPlayer) return;
+    document.getElementById('hudName').innerText = localPlayer.name;
+    document.getElementById('hudLevel').innerText = localPlayer.level;
+    document.getElementById('hudHpText').innerText = `${Math.floor(localPlayer.hp)}/${localPlayer.maxHp}`;
+    document.getElementById('hpBar').style.width = `${Math.max(0, (localPlayer.hp / localPlayer.maxHp) * 100)}%`;
+    document.getElementById('hudMpText').innerText = `${Math.floor(localPlayer.mp)}/${localPlayer.maxMp}`;
+    document.getElementById('mpBar').style.width = `${Math.max(0, (localPlayer.mp / localPlayer.maxMp) * 100)}%`;
+    document.getElementById('hudExpText').innerText = `${localPlayer.exp}/${localPlayer.maxExp}`;
+    document.getElementById('expBar').style.width = `${(localPlayer.exp / localPlayer.maxExp) * 100}%`;
+    document.getElementById('hudMoney').innerText = localPlayer.money;
+}
+
+function updateQuestUI() {
+    const qText = document.getElementById('questText');
+    if (localPlayer.quest.step === 0) qText.innerText = 'Nói chuyện Trưởng Làng (E)';
+    else if (localPlayer.quest.step === 1) qText.innerText = `Diệt Quái: ${localPlayer.quest.progress}/${localPlayer.quest.target}`;
+    else if (localPlayer.quest.step === 2) qText.innerText = 'Về báo cáo Trưởng Làng';
+    else if (localPlayer.quest.step === 3) qText.innerText = 'Đã xong nhiệm vụ.';
+}
+
+function toggleInventory() {
+    let inv = document.getElementById('inventory');
+    if (inv.style.display === 'block') { inv.style.display = 'none'; } 
+    else { inv.style.display = 'block'; updateInventoryUI(); }
+}
+
+function updateInventoryUI() {
+    let grid = document.getElementById('invGrid'); grid.innerHTML = '';
+    localPlayer.inventory.forEach(item => {
+        if (item.count > 0) {
+            let slot = document.createElement('div'); slot.className = 'item-slot';
+            slot.onclick = () => localPlayer.useItem(item.id);
+            if (item.id === 'hp_potion') {
+                let icon = document.createElement('div'); icon.className = 'item-icon-hp'; slot.appendChild(icon);
+            }
+            let cnt = document.createElement('div'); cnt.className = 'item-count'; cnt.innerText = item.count; slot.appendChild(cnt);
+            // Tooltip
+            let tooltip = document.createElement('span'); tooltip.className = 'tooltip'; tooltip.innerText = `${item.name}: ${item.desc}`; slot.appendChild(tooltip);
+            grid.appendChild(slot);
+        }
+    });
+    for (let i = localPlayer.inventory.length; i < 12; i++) {
+        let slot = document.createElement('div'); slot.className = 'item-slot'; grid.appendChild(slot);
+    }
+}
+
+// Controls Input
+window.addEventListener('keydown', e => {
+    if (gameState !== 'PLAYING') {
+        // Chỉ cho phép Enter nếu đang ở khung Login để test
+        if (gameState === 'LOGIN' && e.key === 'Enter') startGame();
+        return;
+    }
+    
+    if (e.key === 'Enter') {
+        if (isChatFocused) {
+            let msg = chatInput.value.trim();
+            if (msg) network.sendChat(localPlayer.name, msg);
+            chatInput.value = ''; chatInput.blur();
+        } else { chatInput.focus(); }
+        return;
+    }
+    
+    if (isChatFocused) return;
+    keys[e.code] = true;
+    
+    if (e.code === 'KeyW' && localPlayer.isGrounded && !localPlayer.isDead) localPlayer.vy = localPlayer.jumpForce;
+    if (e.code === 'KeyJ' && !localPlayer.isDead) localPlayer.attack();
+    if (e.code === 'KeyK' && !localPlayer.isDead) localPlayer.shoot();
+    if (e.code === 'KeyQ' && !localPlayer.isDead) localPlayer.useRaceSkill();
+    if (e.code === 'KeyE' && !localPlayer.isDead) {
+        let npc = entities.find(ent => ent instanceof NPC && Math.abs(ent.x - localPlayer.x) < 100);
+        if (npc) npc.talkTo(localPlayer);
+    }
+    if (e.code === 'KeyI') toggleInventory();
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+chatInput.addEventListener('focus', () => isChatFocused = true);
+chatInput.addEventListener('blur', () => isChatFocused = false);
+
+
+/* ==========================================
+   8. GAME LOOPS (RENDER & LOGIC)
+   ========================================== */
+function drawBackground(ctx, camX, camY) {
+    let skyGradient = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
+    skyGradient.addColorStop(0, '#0a192f'); skyGradient.addColorStop(1, '#172a45');
+    ctx.fillStyle = skyGradient; ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    
+    ctx.save(); ctx.translate(-camX, -camY);
+    
+    // Đất
+    ctx.fillStyle = '#2e7d32'; ctx.fillRect(0, GROUND_Y, mapWidth, 20);
+    ctx.fillStyle = '#5d4037'; ctx.fillRect(0, GROUND_Y + 20, mapWidth, GAME_HEIGHT - GROUND_Y);
+    
+    // Cảnh nền
+    ctx.fillStyle = '#1b5e20';
+    for (let i = 100; i < mapWidth; i += 500) {
+        ctx.fillRect(i, GROUND_Y - 80, 20, 80);
+        ctx.beginPath(); ctx.arc(i + 10, GROUND_Y - 90, 45, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(i - 15, GROUND_Y - 70, 30, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(i + 35, GROUND_Y - 70, 30, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+}
+
+function gameLoop(timestamp) {
+    let dt = timestamp - lastTime;
+    if (dt > 50) dt = 50; lastTime = timestamp;
+
+    if (gameState === 'LOGIN') {
+        // --- LOOP DÀNH RIÊNG CHO PREVIEW ---
+        prevCtx.clearRect(0, 0, 100, 100);
+        if (previewPlayer) {
+            previewPlayer.stateTimer += dt;
+            // Thỉnh thoảng nhấp nháy aura để xem hiệu ứng
+            previewPlayer.skillActive = (Math.floor(timestamp / 1000) % 3 === 0); 
+            CharacterRenderer.draw(prevCtx, previewPlayer);
+        }
+        requestAnimationFrame(gameLoop);
+        return;
+    }
+    
+    // --- LOOP CHÍNH (PLAYING/DEAD) ---
+    if (gameState === 'PLAYING' && !localPlayer.isDead && !isChatFocused) {
+        if (keys['KeyA']) { localPlayer.vx = -localPlayer.speed; localPlayer.dir = -1; }
+        else if (keys['KeyD']) { localPlayer.vx = localPlayer.speed; localPlayer.dir = 1; }
+        else { localPlayer.vx = 0; }
+    }
+    if (!localPlayer.isDead && localPlayer.mp < localPlayer.maxMp) localPlayer.mp += 0.05;
+    
+    entities.forEach(ent => ent.update(dt));
+    projectiles = projectiles.filter(p => p.life > 0); projectiles.forEach(p => p.update(dt));
+    
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life--; p.vy += GRAVITY * 0.2; });
+    
+    floatingTexts = floatingTexts.filter(t => t.life > 0);
+    floatingTexts.forEach(t => { t.y += t.vy; t.life--; });
+    
+    if (network) network.updateBots(dt);
+    
+    // Camera follow
+    camera.x = localPlayer.x - GAME_WIDTH / 2 + localPlayer.width / 2;
+    if (camera.x < 0) camera.x = 0;
+    if (camera.x > mapWidth - GAME_WIDTH) camera.x = mapWidth - GAME_WIDTH;
+    
+    // RENDER
+    drawBackground(ctx, camera.x, camera.y);
+    
+    ctx.save(); ctx.translate(-camera.x, -camera.y);
+    
+    entities.sort((a, b) => a.y - b.y).forEach(ent => ent.draw(ctx));
+    projectiles.forEach(p => p.draw(ctx));
+    
+    particles.forEach(p => {
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.life / 40;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1;
+    });
+    
+    ctx.font = 'bold 16px "Press Start 2P", monospace';
+    floatingTexts.forEach(t => {
+        ctx.fillStyle = t.color; ctx.globalAlpha = t.life / t.maxLife;
+        ctx.fillText(t.text, t.x, t.y); ctx.globalAlpha = 1;
+    });
+    
+    ctx.restore();
+    requestAnimationFrame(gameLoop);
+}
+
+// Khởi chạy vòng lặp ban đầu (Cho Login Preview)
+updateRacePreview();
+requestAnimationFrame(gameLoop);
+
+</script>
+</body>
+</html>
