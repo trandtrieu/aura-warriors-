@@ -215,8 +215,8 @@
                         <div id="racePreviewSkillName" class="race-preview-skill-name">Thịnh nộ Sayan</div>
                     </div>
                 </div>
-                <button class="btn-start" onclick="GameCore.startNewGame()">VÀO GAME MỚI</button>
-                <button class="btn-action btn-load" onclick="GameCore.loadGame()">TIẾP TỤC (TẢI LẠI)</button>
+                <button class="btn-start" onclick="GameCore.startNewGame(true)">VÀO GAME MỚI</button>
+                <button class="btn-action btn-load" onclick="GameCore.loadGame()">TIẾP TỤC SAVE CŨ</button>
             </div>
         </div>
 
@@ -628,8 +628,19 @@ const CharacterRenderer = {
         let chestColor = (char.raceKey === 'sayan') ? cSkin : cPants;
         this.drawBlock(ctx, -bodyW/2, waistY - bodyH + bobY, bodyW, bodyH, chestColor);
         if (char.raceKey === 'sayan') {
-            ctx.beginPath(); ctx.moveTo(-bodyW/2 + 2, waistY - bodyH/2 + bobY); ctx.lineTo(bodyW/2 - 2, waistY - bodyH/2 + bobY); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(0, waistY - bodyH + 2 + bobY); ctx.lineTo(0, waistY - bodyH/2 + bobY); ctx.stroke();
+            // Ngực trần Sayan
+            ctx.beginPath(); ctx.moveTo(-bodyW/2 + 2, waistY - bodyH/2 + bobY - 2); ctx.lineTo(0, waistY - bodyH/2 + bobY + 1); ctx.lineTo(bodyW/2 - 2, waistY - bodyH/2 + bobY - 2); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, waistY - bodyH/2 + bobY + 1); ctx.lineTo(0, waistY + bobY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(-3, waistY - bodyH/4 + bobY); ctx.lineTo(3, waistY - bodyH/4 + bobY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(-3, waistY - bodyH/8 + bobY); ctx.lineTo(3, waistY - bodyH/8 + bobY); ctx.stroke();
+        } else if (char.raceKey === 'earth') {
+            // Áo võ phục cổ V cho Trái Đất
+            ctx.fillStyle = cAccent;
+            ctx.beginPath(); 
+            ctx.moveTo(-bodyW/2 + 2, waistY - bodyH + bobY); 
+            ctx.lineTo(0, waistY - bodyH/2 + bobY); 
+            ctx.lineTo(bodyW/2 - 2, waistY - bodyH + bobY); 
+            ctx.fill(); ctx.stroke();
         }
 
         this.drawBlock(ctx, -bodyW/2 - 2, waistY - 2 + bobY, bodyW + 4, 6, cAccent);
@@ -656,19 +667,50 @@ const CharacterRenderer = {
             ctx.fillStyle = '#1b5e20';
             this.drawBlock(ctx, -headS/2 - 2, hy + 2, 4, 6, '#1b5e20');
             this.drawBlock(ctx, headS/2 - 2, hy + 2, 4, 6, '#1b5e20');
+            
+            // Ears cho Namek
+            ctx.fillStyle = cSkin;
+            ctx.beginPath(); ctx.moveTo(-headS/2, hy + 8); ctx.lineTo(-headS/2 - 6, hy + 4); ctx.lineTo(-headS/2, hy + 12); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(headS/2, hy + 8); ctx.lineTo(headS/2 + 6, hy + 4); ctx.lineTo(headS/2, hy + 12); ctx.fill(); ctx.stroke();
         }
 
         ctx.fillStyle = cHair;
         if (char.raceKey === 'sayan' || char.raceKey === 'earth') {
-            ctx.beginPath();
-            ctx.moveTo(-headS/2 - 4, hy + headS); 
-            ctx.lineTo(-headS - 8, hy + 4); ctx.lineTo(-headS/2 - 2, hy); ctx.lineTo(-headS - 12, hy - 12);
-            ctx.lineTo(-headS/4, hy - 8); ctx.lineTo(-headS/2, hy - 24); ctx.lineTo(2, hy - 14);
-            ctx.lineTo(headS/2 + 6, hy - 28); ctx.lineTo(headS/2, hy - 8); ctx.lineTo(headS + 12, hy - 16);
-            ctx.lineTo(headS, hy); ctx.lineTo(headS + 12, hy + 8); ctx.lineTo(headS/2 + 4, hy + headS);
-            ctx.closePath(); ctx.fill(); ctx.stroke();
-            
-            ctx.beginPath(); ctx.moveTo(-headS/4, hy); ctx.lineTo(0, hy + 6); ctx.lineTo(headS/4, hy); ctx.fill(); ctx.stroke();
+            if (isSuper) {
+                // Tóc Super Saiyan (dựng đứng)
+                ctx.beginPath();
+                ctx.moveTo(-headS/2 - 4, hy + headS); 
+                ctx.lineTo(-headS - 8, hy + 4); ctx.lineTo(-headS/2 - 2, hy); ctx.lineTo(-headS - 12, hy - 12);
+                ctx.lineTo(-headS/4, hy - 8); ctx.lineTo(-headS/2, hy - 24); ctx.lineTo(2, hy - 14);
+                ctx.lineTo(headS/2 + 6, hy - 28); ctx.lineTo(headS/2, hy - 8); ctx.lineTo(headS + 12, hy - 16);
+                ctx.lineTo(headS, hy); ctx.lineTo(headS + 12, hy + 8); ctx.lineTo(headS/2 + 4, hy + headS);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                
+                // Mái
+                ctx.beginPath(); ctx.moveTo(-headS/4, hy); ctx.lineTo(0, hy + 6); ctx.lineTo(headS/4, hy); ctx.fill(); ctx.stroke();
+            } else {
+                // Tóc Base Goku (Bồng bềnh, chĩa ngang)
+                ctx.beginPath();
+                ctx.moveTo(-headS/2, hy + headS); 
+                // Gai trái
+                ctx.lineTo(-headS - 10, hy + 8); ctx.lineTo(-headS/2 - 2, hy + 2);
+                ctx.lineTo(-headS - 14, hy - 4); ctx.lineTo(-headS/2, hy - 6);
+                ctx.lineTo(-headS - 6, hy - 14); ctx.lineTo(-headS/4, hy - 8);
+                // Gai trên
+                ctx.lineTo(-headS/4, hy - 18); ctx.lineTo(2, hy - 10);
+                ctx.lineTo(headS/2 + 2, hy - 20); ctx.lineTo(headS/2, hy - 6);
+                // Gai phải
+                ctx.lineTo(headS + 10, hy - 12); ctx.lineTo(headS - 2, hy - 2);
+                ctx.lineTo(headS + 14, hy + 6); ctx.lineTo(headS/2 + 2, hy + 10);
+                ctx.lineTo(headS/2, hy + headS);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                
+                // Mái bồng bềnh
+                ctx.beginPath(); 
+                ctx.moveTo(-headS/2 + 2, hy); ctx.lineTo(-headS/4, hy + 8); ctx.lineTo(0, hy + 2); 
+                ctx.lineTo(headS/4, hy + 8); ctx.lineTo(headS/2 - 2, hy); 
+                ctx.fill(); ctx.stroke();
+            }
         } else if (char.name && char.name.includes("Quái Cấp")) {
             this.drawBlock(ctx, -headS/4, hy - 10, 4, 10, '#fff');
             this.drawBlock(ctx, headS/4 - 4, hy - 10, 4, 10, '#fff');
@@ -932,10 +974,10 @@ class Player extends Entity {
         let item = this.inventory.find(i => i.id === itemId);
         if (item && item.count > 0 && !this.isDead) {
             if (itemId === 'hp_potion') {
-                this.hp = Math.min(this.maxHp, this.hp + 100);
+                this.hp = Math.min(this.maxHp, this.hp + 50);
                 item.count--;
                 Utils.spawnParticles(this.x + this.width / 2, this.y + this.height, '#4caf50', 10);
-                Utils.spawnText(this.x + this.width / 2, this.y - 10, '+100 HP', '#4caf50');
+                Utils.spawnText(this.x + this.width / 2, this.y - 10, '+50 HP', '#4caf50');
             }
             UI.updateInventoryUI(); UI.updateHUD();
         }
@@ -1296,16 +1338,20 @@ const GameCore = {
         };
     },
 
-    startNewGame: function(forceNew = false) {
-        if (!forceNew) {
-            let data = SaveSystem.load();
-            if (data) {
-                this.loadGame();
-                return;
-            }
+    startNewGame: function(forceNew = true) {
+        if (forceNew) {
+            localStorage.removeItem('aura_save');
         }
+
+        GLOBALS.entities = [];
+        GLOBALS.projectiles = [];
+        GLOBALS.particles = [];
+        GLOBALS.texts = [];
+
         let name = document.getElementById('playerNameInput').value || 'Gamer';
-        GLOBALS.player = new Player(200, GLOBALS.groundY-100, name, document.getElementById('playerRaceInput').value);
+        let race = document.getElementById('playerRaceInput').value;
+
+        GLOBALS.player = new Player(200, GLOBALS.groundY - 100, name, race);
         this.enterWorld('village', 200);
     },
 
