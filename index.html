@@ -522,6 +522,7 @@
             font-weight: bold;
             position: relative;
             font-size: 18px;
+            overflow: hidden;
         }
 
         .skill-key {
@@ -631,10 +632,14 @@
             border: 2px solid #555;
             cursor: pointer;
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .item-slot:hover {
             border-color: #ffeb3b;
+            background: #333;
         }
 
         .item-count {
@@ -643,16 +648,18 @@
             right: 4px;
             font-size: 12px;
             font-weight: bold;
+            text-shadow: 1px 1px 1px black;
         }
 
+        /* Cải tiến Tooltip và Emoji */
         .tooltip {
             visibility: hidden;
-            width: 130px;
-            background: rgba(0, 0, 0, 0.9);
+            width: 160px;
+            background: rgba(10, 15, 25, 0.95);
             color: #fff;
-            text-align: center;
+            text-align: left;
             border-radius: 6px;
-            padding: 6px;
+            padding: 8px;
             position: absolute;
             bottom: 110%;
             left: 50%;
@@ -661,10 +668,19 @@
             z-index: 10;
             font-family: 'Roboto', sans-serif;
             line-height: 1.4;
+            border: 1px solid #555;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            pointer-events: none;
         }
 
         .item-slot:hover .tooltip {
             visibility: visible;
+        }
+
+        .item-icon-emoji {
+            font-size: 26px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            pointer-events: none;
         }
 
         #respawnScreen {
@@ -867,8 +883,8 @@
             </div>
 
             <div class="login-footer">
-                <div>Aura Warriors v0.5</div>
-                <div>Developed by Julian Tran • GOAT MESSI</div>
+                <div>Aura Warriors Alpha v0.1</div>
+                <div>Developed by TrumaccQN • HTML5 Canvas • Vanilla JavaScript</div>
             </div>
         </div>
 
@@ -995,6 +1011,35 @@ const CONFIG = {
         charge: { frames: 4, speed: 80, loop: true },
         powerup: { frames: 4, speed: 80, loop: true }
     }
+};
+
+/* =========================================================================
+   [DATABASE] HỆ THỐNG ITEM & ĐỘ HIẾM
+   ========================================================================= */
+const RARITY_COLORS = {
+    'common': '#b0bec5',    // Xám
+    'uncommon': '#69f0ae',  // Xanh lá
+    'rare': '#40c4ff',      // Xanh dương
+    'epic': '#e040fb',      // Tím
+    'legendary': '#ffd54f'  // Vàng
+};
+
+const ITEMS_DB = {
+    'hp_potion_small': { name: 'Bình Máu Nhỏ', desc: 'Hồi phục nhanh 50 HP.', type: 'Tiêu hao', rarity: 'common', icon: '🧪', heal: 50 },
+    'hp_potion_big': { name: 'Bình Máu Lớn', desc: 'Hồi phục mạnh 150 HP.', type: 'Tiêu hao', rarity: 'uncommon', icon: '❤️', heal: 150 },
+    'mp_potion_small': { name: 'Bình Năng Lượng Nhỏ', desc: 'Khôi phục 50 MP.', type: 'Tiêu hao', rarity: 'common', icon: '🔵', mp: 50 },
+    'mp_potion_big': { name: 'Bình Năng Lượng Lớn', desc: 'Khôi phục 150 MP.', type: 'Tiêu hao', rarity: 'uncommon', icon: '💧', mp: 150 },
+    'revive_bean': { name: 'Đậu Hồi Phục', desc: 'Khôi phục 100% HP và MP.', type: 'Đặc biệt', rarity: 'legendary', icon: '🫘' },
+    'power_stone': { name: 'Đá Sức Mạnh', desc: 'Cường hóa cơ thể, tăng vĩnh viễn 2 DMG.', type: 'Nâng cấp', rarity: 'rare', icon: '🔥' },
+    'defense_stone': { name: 'Đá Phòng Thủ', desc: 'Tăng cường độ cứng cáp, tăng vĩnh viễn 1 DEF.', type: 'Nâng cấp', rarity: 'rare', icon: '🛡️' },
+    'speed_stone': { name: 'Đá Tốc Độ', desc: 'Cơ thể nhẹ nhàng, tăng vĩnh viễn 0.2 Tốc độ.', type: 'Nâng cấp', rarity: 'epic', icon: '⚡' },
+    'skill_fragment': { name: 'Mảnh Kỹ Năng', desc: 'Nguyên liệu kỳ bí dùng để thức tỉnh kỹ năng.', type: 'Nguyên liệu', rarity: 'epic', icon: '✨' },
+    'teleport_ticket': { name: 'Vé Dịch Chuyển', desc: 'Lập tức dịch chuyển về Làng Khởi Đầu.', type: 'Tiêu hao', rarity: 'uncommon', icon: '🎫' },
+    'wood_chest': { name: 'Rương Gỗ', desc: 'Bên trong chứa các vật phẩm cơ bản.', type: 'Rương', rarity: 'common', icon: '📦' },
+    'rare_chest': { name: 'Rương Hiếm', desc: 'Tỏa ra hào quang, chứa vật phẩm quý giá.', type: 'Rương', rarity: 'epic', icon: '🎁' },
+    'green_gem': { name: 'Ngọc Xanh', desc: 'Đá quý mang năng lượng sinh mệnh.', type: 'Ngọc', rarity: 'uncommon', icon: '🟢' },
+    'red_gem': { name: 'Ngọc Đỏ', desc: 'Đá quý mang năng lượng hủy diệt.', type: 'Ngọc', rarity: 'rare', icon: '🔴' },
+    'gold_gem': { name: 'Ngọc Vàng', desc: 'Bảo vật rực rỡ hiếm có.', type: 'Ngọc', rarity: 'legendary', icon: '🟡' }
 };
 
 /* =========================================================================
@@ -1760,8 +1805,17 @@ class Player extends Entity {
         this.colors = this.raceConfig.colors;
         
         this.level = 1; this.exp = 0; this.money = 0; this.isDead = false;
-        this.inventory = [{ id: 'hp_potion', name: 'Bình Máu', desc: 'Hồi 50 HP', count: 5 }];
         this.quest = { step: 0, progress: 0, target: 3 };
+
+        // Mặc định Inventory Test Full Item UI
+        this.inventory = [
+            { id: 'hp_potion_small', count: 5 },
+            { id: 'mp_potion_small', count: 3 },
+            { id: 'revive_bean', count: 2 },
+            { id: 'power_stone', count: 1 },
+            { id: 'teleport_ticket', count: 1 },
+            { id: 'wood_chest', count: 1 }
+        ];
         
         this.cooldowns = { attack: 0, shoot: 0, skill: 0, kame: 0, powerUp: 0 };
         this.skillActive = false; this.skillTimer = 0;
@@ -1950,15 +2004,40 @@ class Player extends Entity {
     }
 
     useItem(itemId) {
-        let item = this.inventory.find(i => i.id === itemId);
-        if (item && item.count > 0 && !this.isDead) {
-            if (itemId === 'hp_potion') {
-                this.hp = Math.min(this.maxHp, this.hp + 50);
-                item.count--;
-                Utils.spawnParticles(this.x + this.width / 2, this.y + this.height, '#4caf50', 10);
-                Utils.spawnText(this.x + this.width / 2, this.y - 10, '+50 HP', '#4caf50');
+        let itemObj = this.inventory.find(i => i.id === itemId);
+        if (itemObj && itemObj.count > 0 && !this.isDead) {
+            let dbItem = ITEMS_DB[itemId];
+            if(!dbItem) return;
+
+            let isUsed = false;
+
+            if (itemId.includes('hp_potion')) {
+                this.hp = Math.min(this.maxHp, this.hp + dbItem.heal);
+                Utils.spawnText(this.x + this.width / 2, this.y - 10, `+${dbItem.heal} HP`, '#4caf50');
+                isUsed = true;
+            } else if (itemId.includes('mp_potion')) {
+                this.mp = Math.min(this.maxMp, this.mp + dbItem.mp);
+                Utils.spawnText(this.x + this.width / 2, this.y - 10, `+${dbItem.mp} MP`, '#2196f3');
+                isUsed = true;
+            } else if (itemId === 'revive_bean') {
+                this.hp = this.maxHp;
+                this.mp = this.maxMp;
+                Utils.spawnText(this.x + this.width / 2, this.y - 20, `FULL RESTORE`, '#ffd54f');
+                isUsed = true;
+            } else if (itemId === 'power_stone') {
+                this.baseDamage += 2;
+                Utils.spawnText(this.x + this.width / 2, this.y - 20, `+2 DMG`, '#ff9800');
+                isUsed = true;
+            } else {
+                UI.chatSys(`${dbItem.name} hiện tại chưa thể sử dụng.`);
             }
-            UI.updateInventoryUI(); UI.updateHUD();
+
+            if (isUsed) {
+                itemObj.count--;
+                Utils.spawnParticles(this.x + this.width / 2, this.y + this.height, RARITY_COLORS[dbItem.rarity] || '#fff', 15);
+                UI.updateInventoryUI(); 
+                UI.updateHUD();
+            }
         }
     }
 
@@ -2030,7 +2109,7 @@ class Monster extends Entity {
                 } else if (dx > this.attackRange) {
                     this.vx = this.dir * 2.5; 
                 } else if (dy > 40) {
-                    this.vx = 0; 
+                    this.vx = 0; // Player is too high, wait below
                 } else { 
                     this.vx = 0; this.aiState = 'ATTACK'; 
                 } 
@@ -2135,12 +2214,13 @@ class KameBeam {
         this.life = 900;
         this.color = '#00bcd4';
         this.hitTargets = new Set();
-        this.maxTargets = 3; 
+        this.maxTargets = 3; // Giới hạn xuyên mục tiêu
     }
     update(dt) {
         this.x += this.vx; this.life -= dt;
         Utils.spawnParticles(this.x + (this.dir === 1 ? 0 : this.width), this.y + this.height/2, this.color, 2);
         
+        // Phá hủy tia nếu đạt giới hạn mục tiêu
         if (this.hitTargets.size >= this.maxTargets) {
             this.life = 0;
             return;
@@ -2217,16 +2297,47 @@ const UI = {
         let grid = document.getElementById('invGrid'); grid.innerHTML = '';
         GLOBALS.player.inventory.forEach(item => {
             if (item.count > 0) {
-                let slot = document.createElement('div'); slot.className = 'item-slot'; slot.onclick = () => GLOBALS.player.useItem(item.id);
-                if (item.id === 'hp_potion') { let icon = document.createElement('div'); icon.className = 'item-icon-hp'; slot.appendChild(icon); }
-                let cnt = document.createElement('div'); cnt.className = 'item-count'; cnt.innerText = item.count; slot.appendChild(cnt);
+                let dbItem = ITEMS_DB[item.id];
+                if (!dbItem) return;
+
+                let slot = document.createElement('div'); 
+                slot.className = 'item-slot'; 
+                // Border màu theo độ hiếm
+                slot.style.border = `2px solid ${RARITY_COLORS[dbItem.rarity] || '#555'}`;
+                slot.onclick = () => GLOBALS.player.useItem(item.id);
                 
-                let tt = document.createElement('span'); tt.className = 'tooltip'; tt.innerText = `${item.name}: ${item.desc}`; slot.appendChild(tt);
+                // Icon Emoji Mini Canvas
+                let icon = document.createElement('div'); 
+                icon.className = 'item-icon-emoji'; 
+                icon.innerText = dbItem.icon;
+                slot.appendChild(icon);
+
+                // Số lượng
+                let cnt = document.createElement('div'); 
+                cnt.className = 'item-count'; 
+                cnt.innerText = item.count; 
+                slot.appendChild(cnt);
+                
+                // Tooltip MMORPG Style
+                let tt = document.createElement('span'); 
+                tt.className = 'tooltip'; 
+                tt.innerHTML = `
+                    <strong style="color:${RARITY_COLORS[dbItem.rarity] || '#fff'}; font-size:14px; text-transform: uppercase;">${dbItem.name}</strong><br>
+                    <span style="font-size:10px; color:#aaa; font-style:italic;">[${dbItem.type}]</span><br>
+                    <div style="margin-top:6px; color:#e0e0e0;">${dbItem.desc}</div>
+                `;
+                slot.appendChild(tt);
                 
                 grid.appendChild(slot);
             }
         });
-        for (let i = GLOBALS.player.inventory.length; i < 12; i++) { let slot = document.createElement('div'); slot.className = 'item-slot'; grid.appendChild(slot); }
+        
+        // Cố định tạo lưới 16 slot (4x4)
+        for (let i = GLOBALS.player.inventory.length; i < 16; i++) { 
+            let slot = document.createElement('div'); 
+            slot.className = 'item-slot'; 
+            grid.appendChild(slot); 
+        }
     },
     toggleInventory: function() {
         let inv = document.getElementById('inventory');
@@ -2320,10 +2431,11 @@ const GameCore = {
 
             let combatKeys = ['KeyJ', 'KeyK', 'KeyQ', 'KeyL', 'KeyO'];
             if (combatKeys.includes(e.code)) {
-                GLOBALS.inputBuffer = { code: e.code, time: 300 }; 
+                GLOBALS.inputBuffer = { code: e.code, time: 300 }; // Tăng lên 300ms combo window
             } 
             
-            if(e.code === 'KeyW' && !p.isChargingKame && !p.isChargingPower) { 
+            // Allow jumping independently of combat keys
+            if(e.code === 'KeyW' && !p.isChargingKame && !p.isChargingPower && p.hurtTimer <= 0) { 
                 if (p.isGrounded) {
                     p.vy = p.jumpForce; 
                     p.jumpCount = 1;
@@ -2430,7 +2542,19 @@ const GameCore = {
 
     enterWorld: function(mapId, spawnX) {
         if(!GLOBALS.network) GLOBALS.network = new MockNetwork();
-        document.getElementById('loginScreen').style.display = 'none'; document.getElementById('hud').style.display = 'block';
+        
+        const loginScreen = document.getElementById('loginScreen');
+        const hud = document.getElementById('hud');
+
+        if (loginScreen) {
+            loginScreen.style.display = 'none';
+            loginScreen.style.pointerEvents = 'none';
+        }
+
+        if (hud) {
+            hud.style.display = 'block';
+        }
+
         GLOBALS.state = 'PLAYING'; 
         
         if (!GLOBALS.entities.includes(GLOBALS.player)) {
@@ -2466,7 +2590,12 @@ const GameCore = {
         document.getElementById('respawnScreen').style.display = 'none';
         
         this.updatePreview();
-        document.getElementById('loginScreen').style.display = 'flex';
+
+        const loginScreen = document.getElementById('loginScreen');
+        if (loginScreen) {
+            loginScreen.style.display = 'flex';
+            loginScreen.style.pointerEvents = 'auto';
+        }
     },
 
     loop: function(timestamp) {
@@ -2491,16 +2620,19 @@ const GameCore = {
         let actualDt = dt;
         if (GLOBALS.hitStopTimer > 0) {
             GLOBALS.hitStopTimer -= dt;
-            actualDt = 0; 
+            actualDt = 0; // Freeze time for entities
         }
 
         if (!GLOBALS.isPaused && actualDt > 0) {
             if (GLOBALS.state === 'PLAYING' && !GLOBALS.player.isDead && !GLOBALS.isChatFocused) {
                 if (!GLOBALS.player.isChargingKame && !GLOBALS.player.isChargingPower && GLOBALS.player.state !== 'attack' && GLOBALS.player.state !== 'shoot') {
+                    // Allow movement even during attack/shoot, but maybe restrict if you prefer. 
+                    // Keeping it free allows smoother combat drifting
                     if(GLOBALS.keys['KeyA']) { GLOBALS.player.vx = -GLOBALS.player.speed; GLOBALS.player.dir = -1; }
                     else if(GLOBALS.keys['KeyD']) { GLOBALS.player.vx = GLOBALS.player.speed; GLOBALS.player.dir = 1; }
                 }
             }
+            if(!GLOBALS.player.isDead && GLOBALS.player.mp < GLOBALS.player.maxMp) GLOBALS.player.mp = Math.min(GLOBALS.player.maxMp, GLOBALS.player.mp + 0.05);
 
             GLOBALS.entities.forEach(e => e.update(actualDt));
             GLOBALS.projectiles = GLOBALS.projectiles.filter(p => p.life>0); GLOBALS.projectiles.forEach(p => p.update(actualDt));
