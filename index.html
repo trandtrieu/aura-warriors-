@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,227 +11,839 @@
            ========================================== */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700;900&display=swap');
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000; overflow: hidden;
-            font-family: 'Roboto', sans-serif; user-select: none;
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            user-select: none;
         }
 
         #gameCanvas {
-            display: block; width: 100%; height: 100%;
+            display: block;
+            width: 100%;
+            height: 100%;
             image-rendering: pixelated; 
         }
 
         .ui-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
 
-        /* --- Màn hình Login --- */
+        /* --- Màn hình Login Tái Thiết Kế Chuẩn MMORPG --- */
         #loginScreen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9));
-            display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 100;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 32px;
+            box-sizing: border-box;
+            pointer-events: auto;
+            z-index: 100;
         }
-        .login-box {
-            background: rgba(20, 20, 25, 0.95); border: 4px solid #4a148c; padding: 30px; border-radius: 12px;
-            text-align: center; color: white; width: 380px;
-            box-shadow: 0 0 30px rgba(106, 27, 154, 0.6), inset 0 0 20px rgba(0,0,0,0.8);
-        }
-        .login-box h1 { font-family: 'Press Start 2P', cursive; font-size: 18px; margin-bottom: 25px; color: #ffeb3b; text-shadow: 2px 2px 0px #f44336; line-height: 1.4; }
-        
-        .preview-container {
-            width: 100%; height: 120px; background: rgba(0,0,0,0.5); border: 2px inset #555;
-            border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden;
-        }
-        #previewCanvas { width: 100px; height: 100px; image-rendering: pixelated; }
 
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #bbb; font-weight: bold;}
-        .input-group input, .input-group select {
-            width: 100%; padding: 12px; box-sizing: border-box; font-weight: bold;
-            background: #111; border: 2px solid #555; color: white; border-radius: 6px; outline: none; transition: 0.2s;
+        .login-main-card {
+            width: min(980px, calc(100vw - 48px));
+            max-height: calc(100vh - 96px);
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 40px;
+            padding: 28px;
+            box-sizing: border-box;
+            background: rgba(10, 15, 25, 0.45);
+            border: 2px solid rgba(126, 87, 194, 0.35);
+            border-radius: 22px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+        }
+
+        /* Khối Bao Kính Mờ Bên Trái */
+        .login-left-panel {
+            background: rgba(15, 15, 20, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(126, 87, 194, 0.4);
+            border-radius: 16px;
+            padding: 30px;
+            color: white;
+            width: auto;
+            height: auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Khối Bao Kính Mờ Bên Phải */
+        .login-right-panel {
+            background: rgba(15, 15, 20, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(126, 87, 194, 0.4);
+            border-radius: 16px;
+            padding: 35px;
+            color: white;
+            width: auto;
+            height: auto;
+            min-height: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            overflow-y: auto;
+        }
+
+        .login-left-panel h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            margin: 0 0 20px 0;
+            color: #ffeb3b;
+            text-shadow: 3px 3px 0px #f44336;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        /* Khung Preview To, Đặt Trên Bệ Đứng Đường Kính Lớn Hơn */
+        .preview-container {
+            width: 100%;
+            height: 180px;
+            background: radial-gradient(circle, rgba(126, 87, 194, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+        }
+
+        #previewCanvas {
+            width: 150px;
+            height: 150px;
+            image-rendering: pixelated;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #ccc;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #555;
+            color: white;
+            border-radius: 6px;
+            outline: none;
+            transition: 0.2s;
             font-family: 'Roboto', sans-serif;
         }
-        
-        .race-preview {
-            background: rgba(255,255,255,0.05); border: 1px solid #7e57c2; padding: 14px; border-radius: 8px;
-            margin-bottom: 16px; text-align: left; line-height: 1.4; font-size: 13px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #ffeb3b;
+            background: rgba(0, 0, 0, 0.8);
         }
-        .race-preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
-        .race-preview-label { font-size: 11px; color: #9e9e9e; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-        .race-preview-name { font-weight: 900; color: #ffeb3b; font-family: 'Roboto', sans-serif; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;}
-        .race-preview-desc { color: #ddd; margin-bottom: 10px; font-size: 13px; font-style: italic;}
-        .race-preview-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; font-size: 13px;}
-        .race-preview-stats div { color: #eee; }
-        .race-preview-stats strong { color: #4fc3f7; }
-        .race-preview-skill { margin-top: 10px; border-top: 1px dashed #555; padding-top: 10px; }
-        .race-preview-skill-name { color: #b2ff59; font-weight: bold; margin-bottom: 4px; font-size: 13px;}
 
-        .btn-start, .btn-action {
-            background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%); color: white; border: 2px solid #1b5e20;
-            padding: 15px 20px; font-weight: 900; width: 100%; border-radius: 6px; text-shadow: 1px 1px 2px black;
-            cursor: pointer; transition: 0.1s; font-family: 'Roboto', sans-serif; font-size: 15px; box-shadow: 0 4px 0 #1b5e20; margin-bottom: 5px; letter-spacing: 0.5px;
+        /* Cải tiến Giao diện Mô tả Chủng tộc bên Phải */
+        .race-preview-name {
+            font-weight: 900;
+            color: #ffeb3b;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
-        .btn-start:active, .btn-action:active { transform: translateY(4px); box-shadow: 0 0 0 #1b5e20; }
-        .btn-load { background: linear-gradient(180deg, #2196f3 0%, #1565c0 100%); border-color: #0d47a1; box-shadow: 0 4px 0 #0d47a1; }
-        .btn-load:active { box-shadow: 0 0 0 #0d47a1; }
+
+        .race-preview-subtitle {
+            color: #4fc3f7;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .race-preview-desc {
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            font-size: 13.5px;
+            font-style: italic;
+            line-height: 1.5;
+            border-left: 3px solid #7e57c2;
+            padding-left: 10px;
+        }
+
+        .race-preview-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .race-preview-stats div {
+            color: #eee;
+            font-size: 13px;
+        }
+
+        .race-preview-stats strong {
+            color: #81c784;
+        }
+
+        .race-preview-pros-label, .race-preview-skill-label {
+            font-size: 12px;
+            color: #aaa;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .race-preview-pros-list {
+            font-size: 13px;
+            color: #b2ff59;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .race-preview-skill-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .race-preview-skill-name {
+            color: #00bcd4;
+            font-weight: 900;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .race-preview-skill-desc {
+            color: #ccc;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .btn-start,
+        .btn-action {
+            background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+            border: 2px solid #1b5e20;
+            padding: 14px 20px;
+            font-weight: 900;
+            width: 100%;
+            border-radius: 6px;
+            text-shadow: 1px 1px 2px black;
+            cursor: pointer;
+            transition: 0.1s;
+            font-family: 'Roboto', sans-serif;
+            font-size: 15px;
+            box-shadow: 0 4px 0 #1b5e20;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-start:active,
+        .btn-action:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #1b5e20;
+        }
+
+        .btn-load {
+            background: linear-gradient(180deg, #2196f3 0%, #1565c0 100%);
+            border-color: #0d47a1;
+            box-shadow: 0 4px 0 #0d47a1;
+        }
+
+        .btn-load:active {
+            box-shadow: 0 0 0 #0d47a1;
+        }
+
+        /* Footer Login Screen */
+        .login-footer {
+            position: absolute;
+            left: 50%;
+            bottom: 12px;
+            transform: translateX(-50%);
+            text-align: center;
+            color: rgba(255,255,255,0.72);
+            font-size: 12px;
+            line-height: 1.4;
+            letter-spacing: 0.3px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+            pointer-events: none;
+            z-index: 101;
+        }
+
+        .login-footer div:first-child {
+            font-weight: 900;
+            color: rgba(255,235,59,0.9);
+        }
+
+        .login-footer div:last-child {
+            font-size: 11px;
+            color: rgba(255,255,255,0.65);
+        }
+
+        /* Responsive Mobile cho Login Screen */
+        @media (max-width: 900px) {
+            #loginScreen {
+                padding: 16px;
+                align-items: center;
+            }
+
+            .login-main-card {
+                grid-template-columns: 1fr;
+                width: min(520px, calc(100vw - 24px));
+                max-height: calc(100vh - 84px);
+                overflow-y: auto;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .login-left-panel,
+            .login-right-panel {
+                height: auto;
+            }
+
+            .login-footer {
+                bottom: 8px;
+                font-size: 11px;
+                width: calc(100vw - 24px);
+            }
+
+            .login-footer div:last-child {
+                font-size: 10px;
+            }
+        }
 
         /* --- HUD --- */
-        #hud { display: none; pointer-events: auto; }
-        .player-stats {
-            position: absolute; top: 15px; left: 15px;
-            background: rgba(20,20,30,0.85); padding: 12px; border-radius: 4px;
-            border: 2px solid #8d6e63; width: 260px; color: white; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        #hud {
+            display: none;
+            pointer-events: auto;
         }
-        .level-info { font-weight: bold; margin-bottom: 8px; text-shadow: 1px 1px 0px black; font-size: 15px; border-bottom: 1px solid #555; padding-bottom: 5px;}
-        .stat-bar-container { width: 100%; background: #222; height: 14px; margin: 4px 0 6px 0; border: 2px solid #111; position: relative;}
-        .stat-bar { height: 100%; transition: width 0.1s; }
-        .stat-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 11px; line-height: 14px; font-weight: bold; text-shadow: 1px 1px 1px black; z-index: 2;}
-        #hpBar { background: linear-gradient(90deg, #d32f2f, #f44336); width: 100%; }
-        #mpBar { background: linear-gradient(90deg, #1976d2, #2196f3); width: 100%; }
-        #expBar { background: linear-gradient(90deg, #fbc02d, #ffeb3b); width: 0%; }
-        
+
+        .player-stats {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(20, 20, 30, 0.85);
+            padding: 12px;
+            border-radius: 4px;
+            border: 2px solid #8d6e63;
+            width: 260px;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+        }
+
+        .level-info {
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 0px black;
+            font-size: 15px;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+        }
+
+        .stat-bar-container {
+            width: 100%;
+            background: #222;
+            height: 14px;
+            margin: 4px 0 6px 0;
+            border: 2px solid #111;
+            position: relative;
+        }
+
+        .stat-bar {
+            height: 100%;
+            transition: width 0.1s;
+        }
+
+        .stat-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+            line-height: 14px;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px black;
+            z-index: 2;
+        }
+
+        #hpBar {
+            background: linear-gradient(90deg, #d32f2f, #f44336);
+            width: 100%;
+        }
+
+        #mpBar {
+            background: linear-gradient(90deg, #1976d2, #2196f3);
+            width: 100%;
+        }
+
+        #expBar {
+            background: linear-gradient(90deg, #fbc02d, #ffeb3b);
+            width: 0%;
+        }
+
         /* Map Info */
         #mapInfo {
-            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.6); border: 2px solid #555; padding: 6px 20px;
-            color: #fff; font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: bold; letter-spacing: 0.5px; border-radius: 20px; text-shadow: 1px 1px 0 #000;
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #555;
+            padding: 6px 20px;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            border-radius: 20px;
+            text-shadow: 1px 1px 0 #000;
         }
 
         /* Nút Sảnh chính */
         #btnMainMenu {
-            position: absolute; top: 15px; right: 230px;
-            background: rgba(20,20,30,0.85); border: 2px solid #8d6e63; color: white;
-            padding: 8px 12px; border-radius: 4px; cursor: pointer;
-            font-family: 'Roboto', sans-serif; font-weight: bold; font-size: 13px;
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.5); transition: 0.2s; pointer-events: auto; z-index: 10;
+            position: absolute;
+            top: 15px;
+            right: 270px;
+            background: rgba(20, 20, 30, 0.85);
+            border: 2px solid #8d6e63;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            font-size: 13px;
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+            transition: 0.2s;
+            pointer-events: auto;
+            z-index: 10;
         }
-        #btnMainMenu:hover { background: #8d6e63; color: #fff; }
+
+        #btnMainMenu:hover {
+            background: #8d6e63;
+            color: #fff;
+        }
 
         #questTracker {
-            position: absolute; top: 15px; right: 15px; background: rgba(20,20,30,0.85); padding: 10px 15px; border-radius: 4px;
-            border: 2px solid #8d6e63; width: 200px; color: white; text-align: right; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(20, 20, 30, 0.85);
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: 2px solid #8d6e63;
+            width: 200px;
+            color: white;
+            text-align: right;
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
         }
-        #questTracker h3 { margin: 0 0 5px 0; font-size: 14px; color: #ffca28; font-weight: 900;}
-        #questText { font-size: 13px; color: #fff; line-height: 1.4;}
+
+        #questTracker h3 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            color: #ffca28;
+            font-weight: 900;
+        }
+
+        #questText {
+            font-size: 13px;
+            color: #fff;
+            line-height: 1.4;
+        }
 
         /* Skill Bar */
         #skillBar {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 5px; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 8px; border: 2px solid #444; pointer-events: auto;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px;
+            border-radius: 8px;
+            border: 2px solid #444;
+            pointer-events: auto;
         }
+
         .skill-slot {
-            width: 44px; height: 44px; background: #333; border: 2px solid #777; border-radius: 4px;
-            display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; position: relative; font-size: 18px;
+            width: 44px;
+            height: 44px;
+            background: #333;
+            border: 2px solid #777;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            font-size: 18px;
+            overflow: hidden;
         }
-        .skill-key { position: absolute; top: -8px; right: -8px; background: #ffca28; color: black; font-size: 11px; padding: 2px 5px; border-radius: 4px; border: 1px solid #000; font-family: 'Roboto', sans-serif; font-weight: 900;}
-        
-        /* Cooldown UI */
-        .cd-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.75); height: 0%; border-radius: 2px; }
-        .cd-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-family: 'Roboto', sans-serif; color: white; text-shadow: 1px 1px 2px black; font-weight: 900; display: none; z-index: 2; }
+
+        .skill-key {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ffca28;
+            color: black;
+            font-size: 11px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            border: 1px solid #000;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+        }
 
         #chatBox {
             position: absolute;
             top: 95px;
             right: 15px;
             width: 320px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 4px;
             display: flex;
             flex-direction: column;
             border: 2px solid #555;
             pointer-events: auto;
         }
-        #chatMessages { height: 150px; overflow-y: auto; padding: 10px; color: white; font-size: 13px; text-shadow: 1px 1px 1px black; display: flex; flex-direction: column; gap: 6px; line-height: 1.4;}
-        #chatInput { background: rgba(0,0,0,0.8); border: none; border-top: 2px solid #555; color: white; padding: 10px; outline: none; font-family: 'Roboto', sans-serif; font-size: 13px;}
-        .msg-sys { color: #ffeb3b; font-style: italic;}
-        .msg-name { font-weight: bold; color: #4caf50; }
+
+        #chatMessages {
+            height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            color: white;
+            font-size: 13px;
+            text-shadow: 1px 1px 1px black;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            line-height: 1.4;
+        }
+
+        #chatInput {
+            background: rgba(0, 0, 0, 0.8);
+            border: none;
+            border-top: 2px solid #555;
+            color: white;
+            padding: 10px;
+            outline: none;
+            font-family: 'Roboto', sans-serif;
+            font-size: 13px;
+        }
+
+        .msg-sys {
+            color: #ffeb3b;
+            font-style: italic;
+        }
+
+        .msg-name {
+            font-weight: bold;
+            color: #4caf50;
+        }
 
         #inventory {
-            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(30,30,35,0.95); border: 4px solid #8d6e63; padding: 20px; border-radius: 8px;
-            width: 300px; color: white; pointer-events: auto; box-shadow: 0 0 30px rgba(0,0,0,0.8); z-index: 50;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 35, 0.95);
+            border: 4px solid #8d6e63;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            color: white;
+            pointer-events: auto;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            z-index: 50;
         }
-        .inv-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 2px solid #555; padding-bottom: 10px;}
-        .inv-header h2 { margin: 0; font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 18px; color: #ffca28;}
-        .item-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .item-slot { width: 100%; aspect-ratio: 1; background: #222; border: 2px solid #555; cursor: pointer; position: relative;}
-        .item-slot:hover { border-color: #ffeb3b; }
-        .item-count { position: absolute; bottom: 2px; right: 4px; font-size: 12px; font-weight: bold; }
-        .tooltip { visibility: hidden; width: 130px; background: rgba(0,0,0,0.9); color: #fff; text-align: center; border-radius: 6px; padding: 6px; position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); font-size: 12px; z-index: 10; font-family: 'Roboto', sans-serif; line-height: 1.4;}
-        .item-slot:hover .tooltip { visibility: visible; }
+
+        .inv-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #555;
+            padding-bottom: 10px;
+        }
+
+        .inv-header h2 {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            font-size: 18px;
+            color: #ffca28;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .item-slot {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #222;
+            border: 2px solid #555;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .item-slot:hover {
+            border-color: #ffeb3b;
+        }
+
+        .item-count {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            width: 130px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px;
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            z-index: 10;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.4;
+        }
+
+        .item-slot:hover .tooltip {
+            visibility: visible;
+        }
 
         #respawnScreen {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(100,0,0,0.8); flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 200;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(100, 0, 0, 0.8);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            z-index: 200;
         }
-        #respawnScreen h1 { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 32px; color: #ff5252; text-shadow: 3px 3px 0 #000; margin-bottom: 20px;}
+
+        #respawnScreen h1 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            font-size: 32px;
+            color: #ff5252;
+            text-shadow: 3px 3px 0 #000;
+            margin-bottom: 20px;
+        }
 
         /* --- Dialog Xác Nhận Về Sảnh --- */
         #confirmMenuScreen {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 300;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            z-index: 300;
         }
-        #confirmMenuScreen h2 { font-family: 'Roboto', sans-serif; font-weight: 900; color: #ff5252; font-size: 20px; margin-top:0; margin-bottom: 15px;}
+
+        #confirmMenuScreen h2 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            color: #ff5252;
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
 
         /* --- Pause Menu --- */
         #pauseScreen {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; z-index: 250;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            z-index: 250;
         }
-        #pauseScreen h1 { font-family: 'Roboto', sans-serif; font-weight: 900; color: #fff; font-size: 36px; margin-bottom: 30px; letter-spacing: 2px;}
+
+        #pauseScreen h1 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            color: #fff;
+            font-size: 36px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
 
         #systemMessage {
-            position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
-            color: #ffeb3b; font-size: 16px; font-weight: bold; text-shadow: 2px 2px 2px #000;
-            opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: 60;
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffeb3b;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 2px 2px 2px #000;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 60;
         }
 
         .screen-flash {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white;
-            opacity: 0; pointer-events: none; z-index: 50; transition: opacity 0.1s;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+            transition: opacity 0.1s;
         }
 
         #controlsHint {
-            position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;
-            color: rgba(255,255,255,0.8); font-size: 12px; text-align: right; pointer-events: none; border: 1px solid #444; line-height: 1.6;
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            text-align: right;
+            pointer-events: none;
+            border: 1px solid #444;
+            line-height: 1.6;
         }
-        kbd { background: #333; padding: 2px 6px; border-radius: 4px; border: 1px solid #777; font-family: monospace; color: white; font-weight: bold; box-shadow: 0 2px 0 #111;}
 
+        kbd {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #777;
+            font-family: monospace;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 0 #111;
+        }
     </style>
 </head>
+
 <body>
 
-    <!-- Render Engine -->
     <canvas id="gameCanvas"></canvas>
 
-    <!-- UI Overlay -->
     <div class="ui-layer" id="uiLayer">
         <div id="screenFlash" class="screen-flash"></div>
         <div id="systemMessage">Thông báo hệ thống</div>
-        
-        <!-- Login -->
+
+        <!-- Login Screen Tái cấu trúc phân vùng Đối xứng Trái/Phải chuẩn MMORPG -->
         <div id="loginScreen">
-            <div class="login-box">
-                <h1>AURA WARRIORS</h1>
-                <div class="preview-container"><canvas id="previewCanvas"></canvas></div>
-                <div class="input-group">
-                    <label>Tên nhân vật</label>
-                    <input type="text" id="playerNameInput" placeholder="Nhập tên..." value="Gamer" maxlength="12">
-                </div>
-                <div class="input-group">
-                    <label>Chủng tộc</label>
-                    <select id="playerRaceInput">
-                        <option value="sayan">Sayan</option>
-                        <option value="namek">Namek</option>
-                        <option value="earth">Trái Đất</option>
-                    </select>
-                </div>
-                <div class="race-preview" id="racePreview">
-                    <div class="race-preview-header">
-                        <div class="race-preview-label">Thông tin</div>
-                        <div id="racePreviewName" class="race-preview-name">Sayan</div>
+            <div class="login-main-card">
+                <!-- Khối bên Trái: Nhập liệu và Vận hành chính -->
+                <div class="login-left-panel">
+                    <h1>AURA WARRIORS</h1>
+                    
+                    <div class="preview-container">
+                        <canvas id="previewCanvas"></canvas>
                     </div>
+
+                    <div class="input-group">
+                        <label>Tên nhân vật</label>
+                        <input type="text" id="playerNameInput" placeholder="Nhập tên..." value="Player 01" maxlength="12">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Chủng tộc</label>
+                        <select id="playerRaceInput">
+                            <option value="sayan">Sayan</option>
+                            <option value="namek">Namek</option>
+                            <option value="earth">Trái Đất</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <button class="btn-start" onclick="GameCore.startNewGame(true)">VÀO GAME MỚI</button>
+                        <button class="btn-action btn-load" onclick="GameCore.loadGame()">TIẾP TỤC SAVE CŨ</button>
+                    </div>
+                </div>
+
+                <!-- Khối bên Phải: Trình chiếu chuyên sâu chỉ số, kỹ năng và ưu điểm -->
+                <div class="login-right-panel">
+                    <div id="racePreviewName" class="race-preview-name">Sayan</div>
+                    <div id="racePreviewSubtitle" class="race-preview-subtitle">"Chiến binh cận chiến tối thượng"</div>
+                    <div id="racePreviewDesc" class="race-preview-desc">Sayan là những chiến binh sinh ra để chiến đấu. Sở hữu lượng HP lớn, sát thương cao và khả năng bộc phát sức mạnh vượt trội, họ luôn áp đảo đối thủ trong những trận chiến trực diện.</div>
+                    
+                    <div class="race-preview-label">Chỉ số cơ bản</div>
                     <div class="race-preview-stats">
                         <div><strong>HP:</strong> <span id="raceHp">250</span></div>
                         <div><strong>MP:</strong> <span id="raceMp">70</span></div>
@@ -238,12 +851,25 @@
                         <div><strong>DEF:</strong> <span id="raceDef">10</span></div>
                         <div><strong>SPD:</strong> <span id="raceSpeed">5.5</span></div>
                     </div>
-                    <div class="race-preview-skill">
+
+                    <div class="race-preview-pros-label">Ưu điểm chủng tộc</div>
+                    <div id="racePreviewPros" class="race-preview-pros-list">
+                        • HP cao nhất<br>
+                        • Sát thương cận chiến mạnh<br>
+                        • Phòng thủ tốt
+                    </div>
+
+                    <div class="race-preview-skill-label">Tuyệt kỹ đặc trưng</div>
+                    <div class="race-preview-skill-box">
                         <div id="racePreviewSkillName" class="race-preview-skill-name">Thịnh nộ Sayan</div>
+                        <div id="racePreviewSkillDesc" class="race-preview-skill-desc">Giải phóng sức mạnh tiềm ẩn, tăng mạnh sức tấn công và bao phủ cơ thể bằng hào quang vàng rực.</div>
                     </div>
                 </div>
-                <button class="btn-start" onclick="GameCore.startNewGame(true)">VÀO GAME MỚI</button>
-                <button class="btn-action btn-load" onclick="GameCore.loadGame()">TIẾP TỤC SAVE CŨ</button>
+            </div>
+
+            <div class="login-footer">
+                <div>Aura Warriors v0.5</div>
+                <div>Developed by Julian Tran • GOAT MESSI</div>
             </div>
         </div>
 
@@ -266,7 +892,6 @@
                 <div id="questText">Nói chuyện Trưởng Làng</div>
             </div>
 
-            <!-- Skill Bar with Cooldown UI -->
             <div id="skillBar">
                 <div class="skill-slot" id="skillJ">J<div class="skill-key">Đánh</div></div>
                 <div class="skill-slot" id="skillK" style="background:#1565c0">K<div class="skill-key">Khí</div><div class="cd-overlay"></div><div class="cd-text"></div></div>
@@ -282,26 +907,23 @@
             </div>
             
             <div id="controlsHint">
-                <kbd>A</kbd><kbd>D</kbd> Đi lại &nbsp; 
+                <kbd>A</kbd><kbd>D</kbd> Di chuyển &nbsp; 
                 <kbd>W</kbd> Nhảy &nbsp; 
                 <kbd>E</kbd> Hành động/Cổng &nbsp;
                 <kbd>ESC</kbd> Tạm dừng
             </div>
         </div>
 
-        <!-- Inventory -->
         <div id="inventory">
             <div class="inv-header"><h2>HÀNH TRANG</h2><button class="close-btn" onclick="UI.toggleInventory()">X</button></div>
             <div class="item-grid" id="invGrid"></div>
         </div>
 
-        <!-- Respawn Screen -->
         <div id="respawnScreen">
             <h1>BẠN ĐÃ BỊ HẠ GỤC</h1>
             <button class="btn-start" style="width: 200px;" onclick="GameCore.respawnPlayer()">HỒI SINH TẠI LÀNG</button>
         </div>
 
-        <!-- Confirm Menu Screen -->
         <div id="confirmMenuScreen">
             <div class="login-box" style="width: 320px;">
                 <h2>VỀ SẢNH CHÍNH?</h2>
@@ -313,7 +935,6 @@
             </div>
         </div>
         
-        <!-- Pause Screen -->
         <div id="pauseScreen">
             <h1>TẠM DỪNG</h1>
             <div style="width: 250px;">
@@ -334,22 +955,34 @@ const CONFIG = {
     gravity: 0.6, friction: 0.8, maxFall: 15, MAX_PARTICLES: 400,
     races: {
         sayan: {
-            title: 'Sayan', maxHp: 250, maxMp: 70, baseDamage: 30, defense: 10, speed: 5.5, jumpForce: -12, maxExp: 110,
+            title: 'Sayan',
+            subtitle: 'Chiến binh cận chiến tối thượng',
+            desc: 'Sayan là những chiến binh sinh ra để chiến đấu. Sở hữu lượng HP lớn, sát thương cao và khả năng bộc phát sức mạnh vượt trội, họ luôn áp đảo đối thủ trong những trận chiến trực diện.',
+            pros: ['HP cao nhất', 'Sát thương cận chiến mạnh', 'Phòng thủ tốt', 'Power Up tăng sức mạnh vượt trội', 'Rất mạnh khi solo Boss và PvE'],
+            maxHp: 250, maxMp: 70, baseDamage: 30, defense: 10, speed: 5.5, jumpForce: -12, maxExp: 110,
             levelGrowth: { hp: 35, mp: 8, damage: 8, defense: 3, expFactor: 1.35 },
             colors: { aura: 'rgba(255,235,59,0.4)', body: '#f47b16', hair: '#111111', skin: '#fcdcb6', outfit: '#f47b16', accent: '#0074c7', proj: '#ffeb3b' },
-            skill: { name: 'Thịnh nộ Sayan', cost: 20, cd: 8000, duration: 3000 }
+            skill: { name: 'Thịnh Nộ Sayan', desc: 'Giải phóng sức mạnh tiềm ẩn, tăng mạnh sức tấn công và bao phủ cơ thể bằng hào quang vàng rực.', cost: 20, cd: 8000, duration: 3000 }
         },
         namek: {
-            title: 'Namek', maxHp: 180, maxMp: 200, baseDamage: 20, defense: 8, speed: 4.8, jumpForce: -11, maxExp: 100,
+            title: 'Namek',
+            subtitle: 'Bậc thầy sinh tồn',
+            desc: 'Người Namek sở hữu nguồn năng lượng dồi dào cùng khả năng hồi phục vượt trội. Họ không gây sát thương lớn nhưng cực kỳ bền bỉ trong các trận chiến kéo dài.',
+            pros: ['MP cao nhất', 'Khả năng hồi phục mạnh', 'Có khiên bảo vệ', 'Chống chịu rất tốt', 'Phù hợp lối chơi phòng thủ và hỗ trợ'],
+            maxHp: 180, maxMp: 200, baseDamage: 20, defense: 8, speed: 4.8, jumpForce: -11, maxExp: 100,
             levelGrowth: { hp: 25, mp: 25, damage: 5, defense: 2, expFactor: 1.25 },
             colors: { aura: 'rgba(0,255,128,0.3)', body: '#4a148c', hair: '#2e7d32', skin: '#81c784', outfit: '#4a148c', accent: '#ff1744', proj: '#00e5ff' },
-            skill: { name: 'Hồi phục & Khiên', cost: 30, cd: 10000, duration: 4000 }
+            skill: { name: 'Hồi Phục & Khiên Năng Lượng', desc: 'Hồi phục sinh lực đồng thời tạo lá chắn giúp giảm sát thương trong một khoảng thời gian.', cost: 30, cd: 10000, duration: 4000 }
         },
         earth: {
-            title: 'Trái Đất', maxHp: 160, maxMp: 80, baseDamage: 24, defense: 5, speed: 6.5, jumpForce: -13, maxExp: 95,
+            title: 'Trái Đất',
+            subtitle: 'Chiến binh tốc độ',
+            desc: 'Con người chiến đấu bằng sự linh hoạt, tốc độ và kỹ năng võ thuật. Họ dễ dàng né tránh đòn đánh, thực hiện combo liên tục và kiểm soát giao tranh bằng khả năng cơ động.',
+            pros: ['Tốc độ di chuyển nhanh nhất', 'Nhảy cao nhất', 'Cơ động vượt trội', 'Combo mượt và linh hoạt', 'Phù hợp với người chơi thích kỹ năng'],
+            maxHp: 160, maxMp: 80, baseDamage: 24, defense: 5, speed: 6.5, jumpForce: -13, maxExp: 95,
             levelGrowth: { hp: 22, mp: 10, damage: 6, defense: 1, expFactor: 1.15 },
             colors: { aura: 'rgba(0,150,255,0.3)', body: '#d32f2f', hair: '#000000', skin: '#ffe0b2', outfit: '#d32f2f', accent: '#111111', proj: '#80d8ff' },
-            skill: { name: 'Bước Nhanh', cost: 15, cd: 7000, duration: 3000 }
+            skill: { name: 'Bước Nhanh', desc: 'Gia tăng mạnh tốc độ di chuyển trong thời gian ngắn, giúp áp sát hoặc rút lui cực kỳ hiệu quả.', cost: 15, cd: 7000, duration: 3000 }
         }
     },
     animations: {
@@ -426,31 +1059,135 @@ const Utils = {
 };
 
 /* =========================================================================
-   [SYSTEM] MÔI TRƯỜNG & HẠT BỤI
+   [SYSTEM] MÔI TRƯỜNG & HẠT BỤI & NỀN SẢNH CHÍNH CHUYÊN DỤNG
    ========================================================================= */
 const EnvironmentSystem = {
     clouds: [],
     leaves: [],
     trees: [], 
     mountains: [],
+    loginParticles: [], // Hạt bụi sảnh chính riêng biệt
 
     init: function() {
-        for(let i=0; i<20; i++) this.clouds.push({x: Utils.rand(0, 3000), y: Utils.rand(20, 250), speed: Utils.rand(0.2, 0.6), scale: Utils.rand(0.5, 1.5)});
+        this.clouds = [];
+        for(let i=0; i<25; i++) this.clouds.push({x: Utils.rand(0, 4000), y: Utils.rand(15, 300), speed: Utils.rand(0.15, 0.55), scale: Utils.rand(0.6, 1.6)});
+        // Khởi tạo hạt bụi sảnh chính bay phân tán
+        for(let i=0; i<40; i++) this.loginParticles.push({x: Utils.rand(0, GLOBALS.width), y: Utils.rand(0, GLOBALS.height), size: Utils.rand(1.5, 3.5), vy: Utils.rand(-0.8, -0.2), alpha: Utils.rand(0.2, 0.7)});
     },
 
     initMapProps: function(mapWidth) {
         this.trees = [];
         for(let i=100; i<mapWidth; i+= Utils.rand(300, 600)) {
-            this.trees.push({ x: i, scale: Utils.rand(0.8, 1.4), type: Math.random()>0.5?1:2 });
+            this.trees.push({ x: i, scale: Utils.rand(0.8, 1.4), type: Math.random() > 0.5 ? 1 : 2 });
         }
     },
 
     update: function(dt, camX) {
         GLOBALS.gameTime += dt;
-        this.clouds.forEach(c => { c.x -= c.speed; if(c.x < -200) c.x = MapManager.maps[MapManager.currentId].width + 200; });
-        if(Math.random() < 0.08 && this.leaves.length < 50) this.leaves.push({x: camX + Utils.rand(0, GLOBALS.width), y: -20, vx: Utils.rand(-3, -1), vy: Utils.rand(1, 3), rot: 0});
-        this.leaves.forEach(l => { l.x += l.vx; l.y += l.vy; l.rot += 0.05; });
-        this.leaves = this.leaves.filter(l => l.y < GLOBALS.groundY + 20);
+        this.clouds.forEach(c => { 
+            c.x -= c.speed; 
+            let boundW = (GLOBALS.state === 'LOGIN') ? GLOBALS.width : MapManager.maps[MapManager.currentId].width;
+            if (c.x < -240) c.x = boundW + 240; 
+        });
+        
+        if (GLOBALS.state === 'LOGIN') {
+            // Cập nhật hạt bụi sảnh chính bay lên
+            this.loginParticles.forEach(p => {
+                p.y += p.vy;
+                if(p.y < -10) { p.y = GLOBALS.height + 10; p.x = Utils.rand(0, GLOBALS.width); }
+            });
+        } else {
+            if(Math.random() < 0.08 && this.leaves.length < 50) this.leaves.push({x: camX + Utils.rand(0, GLOBALS.width), y: -20, vx: Utils.rand(-3, -1), vy: Utils.rand(1, 3), rot: 0});
+            this.leaves.forEach(l => { l.x += l.vx; l.y += l.vy; l.rot += 0.05; });
+            this.leaves = this.leaves.filter(l => l.y < GLOBALS.groundY + 20);
+        }
+    },
+
+    // Hệ thống Vẽ nền Sảnh Đăng nhập Anime Parallax Hoành tráng
+    drawLoginBackground: function(ctx) {
+        let time = GLOBALS.gameTime;
+        
+        // 1. Lớp Bầu trời gradient xanh ngọc rực rỡ đặc trưng phong cách Toriyama
+        let skyGrad = ctx.createLinearGradient(0, 0, 0, GLOBALS.height);
+        skyGrad.addColorStop(0, '#1171ba');
+        skyGrad.addColorStop(0.4, '#48b2eb');
+        skyGrad.addColorStop(1, '#a6e3fa');
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, GLOBALS.width, GLOBALS.height);
+
+        // Hiệu ứng ánh mặt trời rực rỡ chiếu xiên nhẹ
+        let sunGrad = ctx.createRadialGradient(GLOBALS.width * 0.15, GLOBALS.height * 0.15, 10, GLOBALS.width * 0.15, GLOBALS.height * 0.15, 400);
+        sunGrad.addColorStop(0, 'rgba(255, 255, 220, 0.45)');
+        sunGrad.addColorStop(0.2, 'rgba(255, 255, 240, 0.15)');
+        sunGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = sunGrad;
+        ctx.fillRect(0, 0, GLOBALS.width, GLOBALS.height);
+
+        // 2. Lớp Mây Trôi Bồng Bềnh Xa (Parallax Lớp 1)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+        this.clouds.forEach(c => {
+            ctx.beginPath(); 
+            ctx.arc(c.x, c.y, 45 * c.scale, 0, Math.PI * 2);
+            ctx.arc(c.x + 35 * c.scale, c.y - 12 * c.scale, 55 * c.scale, 0, Math.PI * 2);
+            ctx.arc(c.x + 70 * c.scale, c.y, 45 * c.scale, 0, Math.PI * 2); 
+            ctx.fill();
+        });
+
+        // 3. Lớp Núi đá/Đảo nổi huyền ảo phía cực xa (Parallax Lớp 2)
+        ctx.fillStyle = '#6196cc';
+        ctx.beginPath();
+        ctx.moveTo(0, GLOBALS.groundY);
+        for (let i = 0; i <= GLOBALS.width; i += 60) {
+            let nY = GLOBALS.groundY - 180 - Math.sin(i * 0.0015 + 1.2) * 110 - Math.cos(i * 0.004) * 25;
+            ctx.lineTo(i, nY);
+        }
+        ctx.lineTo(GLOBALS.width, GLOBALS.groundY); ctx.fill();
+
+        // 4. Dãy núi đá sừng sững, nhấp nhô cận cảnh hơn (Parallax Lớp 3)
+        ctx.fillStyle = '#395373';
+        ctx.beginPath();
+        ctx.moveTo(0, GLOBALS.groundY);
+        for (let i = 0; i <= GLOBALS.width; i += 40) {
+            let nY = GLOBALS.groundY - 110 - Math.cos(i * 0.0035 + 0.4) * 80 - Math.sin(i * 0.008) * 15;
+            ctx.lineTo(i, nY);
+        }
+        ctx.lineTo(GLOBALS.width, GLOBALS.groundY); ctx.fill();
+
+        // 5. Thảm đồng cỏ nền sảnh chính phối màu Anime tươi sáng
+        let groundYTop = GLOBALS.groundY - 40;
+        let groundGrad = ctx.createLinearGradient(0, groundYTop, 0, GLOBALS.height);
+        groundGrad.addColorStop(0, '#55a630');
+        groundGrad.addColorStop(0.1, '#3f7d20');
+        groundGrad.addColorStop(1, '#1b4332');
+        ctx.fillStyle = groundGrad;
+        ctx.fillRect(0, groundYTop, GLOBALS.width, GLOBALS.height - groundYTop);
+
+        // Đường viền viền cỏ sắc nét ngăn cách
+        ctx.strokeStyle = '#2b9348'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(0, groundYTop); ctx.lineTo(GLOBALS.width, groundYTop); ctx.stroke();
+
+        // 6. Điểm xuyết vài cụm cây tán tròn bồng bềnh đặc thù DBZ hai bên rìa nền
+        ctx.fillStyle = '#2d6a4f';
+        this.drawAnimeTreeCluster(ctx, GLOBALS.width * 0.08, groundYTop + 20, 1.5);
+        this.drawAnimeTreeCluster(ctx, GLOBALS.width * 0.88, groundYTop + 20, 1.6);
+
+        // 7. Kết xuất các hạt bụi sáng/năng lượng nhẹ lơ lửng xung quanh sảnh chính
+        this.loginParticles.forEach(p => {
+            ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    },
+
+    drawAnimeTreeCluster: function(ctx, x, y, scale) {
+        ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+        ctx.fillStyle = '#402e2b'; ctx.fillRect(-6, -50, 12, 50); // Thân cây
+        ctx.fillStyle = '#132a13';
+        ctx.beginPath(); ctx.arc(0, -55, 38, 0, Math.PI*2); ctx.arc(-22, -40, 26, 0, Math.PI*2); ctx.arc(22, -40, 26, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#3f7d20';
+        ctx.beginPath(); ctx.arc(-6, -62, 22, 0, Math.PI*2); ctx.arc(10, -52, 18, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
     },
 
     drawBackground: function(ctx, camX, camY, mapData) {
@@ -524,6 +1261,7 @@ const EnvironmentSystem = {
 
     drawParticles: function(ctx, camX, camY) {
         ctx.save(); ctx.translate(-camX, -camY);
+        if (GLOBALS.state === 'LOGIN') return;
         ctx.fillStyle = '#388e3c';
         this.leaves.forEach(l => {
             ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.rot);
@@ -600,29 +1338,29 @@ const AnimationManager = {
 };
 
 const CharacterRenderer = {
-    drawBlock: function(ctx, x, y, w, h, fill, noStroke = false) {
+    drawBlock: function (ctx, x, y, w, h, fill, noStroke = false) {
         ctx.fillStyle = fill;
         ctx.fillRect(x, y, w, h);
         if (!noStroke) ctx.strokeRect(x, y, w, h);
     },
 
-    drawLimb: function(ctx, x, y, w, h, rot, color, accentColor, isLeg = false) {
+    drawLimb: function (ctx, x, y, w, h, rot, color, accentColor, isLeg = false) {
         ctx.save();
         ctx.translate(x, y); ctx.rotate(rot);
-        this.drawBlock(ctx, -w/2, 0, w, h, color);
+        this.drawBlock(ctx, -w / 2, 0, w, h, color);
         if (accentColor) {
             if (isLeg) {
-                this.drawBlock(ctx, -w/2 - 2, h - 8, w + 4, 8, accentColor);
-                this.drawBlock(ctx, -w/2 - 2, h, w + 6, 4, '#ffeb3b');
+                this.drawBlock(ctx, -w / 2 - 2, h - 8, w + 4, 8, accentColor);
+                this.drawBlock(ctx, -w / 2 - 2, h, w + 6, 4, '#ffeb3b');
             } else {
-                this.drawBlock(ctx, -w/2 - 1, h - 6, w + 2, 6, accentColor);
-                this.drawBlock(ctx, -w/2, h, w, 4, color);
+                this.drawBlock(ctx, -w / 2 - 1, h - 6, w + 2, 6, accentColor);
+                this.drawBlock(ctx, -w / 2, h, w, 4, color);
             }
         }
         ctx.restore();
     },
 
-    draw: function(ctx, char) {
+    draw: function (ctx, char) {
         ctx.save();
         ctx.translate(char.x + char.width / 2, char.y + char.height);
         ctx.scale(char.dir, 1);
@@ -637,7 +1375,7 @@ const CharacterRenderer = {
         }
 
         if (char.isChargingKame || char.isChargingPower) {
-            ctx.translate(Utils.rand(-1,1), Utils.rand(-1,1)); 
+            ctx.translate(Utils.rand(-1, 1), Utils.rand(-1, 1)); 
         }
 
         let time = Date.now(); let bobY = 0, legRot = 0, armRot = 0;
@@ -676,11 +1414,13 @@ const CharacterRenderer = {
         let chestColor = (char.raceKey === 'sayan') ? cSkin : cPants;
         this.drawBlock(ctx, -bodyW/2, waistY - bodyH + bobY, bodyW, bodyH, chestColor);
         if (char.raceKey === 'sayan') {
+            // Ngực trần Sayan
             ctx.beginPath(); ctx.moveTo(-bodyW/2 + 2, waistY - bodyH/2 + bobY - 2); ctx.lineTo(0, waistY - bodyH/2 + bobY + 1); ctx.lineTo(bodyW/2 - 2, waistY - bodyH/2 + bobY - 2); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(0, waistY - bodyH/2 + bobY + 1); ctx.lineTo(0, waistY + bobY); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(-3, waistY - bodyH/4 + bobY); ctx.lineTo(3, waistY - bodyH/4 + bobY); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(-3, waistY - bodyH/8 + bobY); ctx.lineTo(3, waistY - bodyH/8 + bobY); ctx.stroke();
         } else if (char.raceKey === 'earth') {
+            // Áo võ phục cổ V cho Trái Đất
             ctx.fillStyle = cAccent;
             ctx.beginPath(); 
             ctx.moveTo(-bodyW/2 + 2, waistY - bodyH + bobY); 
@@ -714,6 +1454,7 @@ const CharacterRenderer = {
             this.drawBlock(ctx, -headS/2 - 2, hy + 2, 4, 6, '#1b5e20');
             this.drawBlock(ctx, headS/2 - 2, hy + 2, 4, 6, '#1b5e20');
             
+            // Ears cho Namek
             ctx.fillStyle = cSkin;
             ctx.beginPath(); ctx.moveTo(-headS/2, hy + 8); ctx.lineTo(-headS/2 - 6, hy + 4); ctx.lineTo(-headS/2, hy + 12); ctx.fill(); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(headS/2, hy + 8); ctx.lineTo(headS/2 + 6, hy + 4); ctx.lineTo(headS/2, hy + 12); ctx.fill(); ctx.stroke();
@@ -722,6 +1463,7 @@ const CharacterRenderer = {
         ctx.fillStyle = cHair;
         if (char.raceKey === 'sayan' || char.raceKey === 'earth') {
             if (isSuper) {
+                // Tóc Super Saiyan (dựng đứng)
                 ctx.beginPath();
                 ctx.moveTo(-headS/2 - 4, hy + headS); 
                 ctx.lineTo(-headS - 8, hy + 4); ctx.lineTo(-headS/2 - 2, hy); ctx.lineTo(-headS - 12, hy - 12);
@@ -730,20 +1472,26 @@ const CharacterRenderer = {
                 ctx.lineTo(headS, hy); ctx.lineTo(headS + 12, hy + 8); ctx.lineTo(headS/2 + 4, hy + headS);
                 ctx.closePath(); ctx.fill(); ctx.stroke();
                 
+                // Mái
                 ctx.beginPath(); ctx.moveTo(-headS/4, hy); ctx.lineTo(0, hy + 6); ctx.lineTo(headS/4, hy); ctx.fill(); ctx.stroke();
             } else {
+                // Tóc Base Goku (Bồng bềnh, chĩa ngang)
                 ctx.beginPath();
                 ctx.moveTo(-headS/2, hy + headS); 
+                // Gai trái
                 ctx.lineTo(-headS - 10, hy + 8); ctx.lineTo(-headS/2 - 2, hy + 2);
                 ctx.lineTo(-headS - 14, hy - 4); ctx.lineTo(-headS/2, hy - 6);
                 ctx.lineTo(-headS - 6, hy - 14); ctx.lineTo(-headS/4, hy - 8);
+                // Gai trên
                 ctx.lineTo(-headS/4, hy - 18); ctx.lineTo(2, hy - 10);
                 ctx.lineTo(headS/2 + 2, hy - 20); ctx.lineTo(headS/2, hy - 6);
+                // Gairight
                 ctx.lineTo(headS + 10, hy - 12); ctx.lineTo(headS - 2, hy - 2);
                 ctx.lineTo(headS + 14, hy + 6); ctx.lineTo(headS/2 + 2, hy + 10);
                 ctx.lineTo(headS/2, hy + headS);
                 ctx.closePath(); ctx.fill(); ctx.stroke();
                 
+                // Mái bồng bềnh
                 ctx.beginPath(); 
                 ctx.moveTo(-headS/2 + 2, hy); ctx.lineTo(-headS/4, hy + 8); ctx.lineTo(0, hy + 2); 
                 ctx.lineTo(headS/4, hy + 8); ctx.lineTo(headS/2 - 2, hy); 
@@ -756,12 +1504,12 @@ const CharacterRenderer = {
 
         if (char.state === 'attack' && !char.isDead) {
             ctx.beginPath(); ctx.arc(25, -char.height / 2, 20, -Math.PI / 2, Math.PI / 4); ctx.lineWidth = 4; ctx.strokeStyle = 'white'; ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(20, -char.height/2); ctx.lineTo(40, -char.height/2); ctx.strokeStyle = cHair; ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(20, -char.height / 2); ctx.lineTo(40, -char.height / 2); ctx.strokeStyle = cHair; ctx.stroke();
         }
         
         if (char.isChargingKame) {
             ctx.fillStyle = '#00bcd4';
-            ctx.beginPath(); ctx.arc(20, -10, Utils.rand(5, 10), 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(20, -10, Utils.rand(5, 10), 0, Math.PI * 2); ctx.fill();
         }
 
         ctx.restore();
@@ -771,8 +1519,143 @@ const CharacterRenderer = {
             let nameY = char.y - 15; ctx.fillText(char.name, char.x + char.width / 2, nameY - 5);
             ctx.fillStyle = '#000'; ctx.fillRect(char.x, nameY, char.width, 5);
             ctx.fillStyle = (char.name.includes("Quái Cấp")) ? '#d32f2f' : '#4caf50';
-            ctx.fillRect(char.x, nameY, char.width * Math.max(0, char.hp / (char.maxHp||1)), 5);
+            ctx.fillRect(char.x, nameY, char.width * Math.max(0, char.hp / (char.maxHp || 1)), 5);
         }
+    }
+};
+
+/* =========================================================================
+   [SYSTEM] PREVIEW RENDERER CHUYÊN DỤNG (MỚI)
+   ========================================================================= */
+const PreviewRenderer = {
+    drawRect: function (ctx, x, y, w, h, fill) {
+        ctx.fillStyle = fill; ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h);
+    },
+
+    draw: function (ctx, char, time) {
+        ctx.save();
+        ctx.translate(50, 75); // Căn trục đứng bệ đứng preview
+        let scale = 1.6; ctx.scale(scale, scale);
+
+        let isSuper = char.skillActive && char.raceKey === 'sayan';
+        let bobY = Math.sin(time / 180) * 2.5; // Chuyển động nhún thở động mượt hơn
+        let auraPulse = Math.sin(time / 80) * 4;
+
+        // 1. Tạo hiệu ứng Aura phản chiếu lan tỏa dưới bệ đứng
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        let floorAura = ctx.createRadialGradient(0, 5, 2, 0, 5, 30 + auraPulse);
+        floorAura.addColorStop(0, char.colors.aura.replace('0.4', '0.25'));
+        floorAura.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = floorAura;
+        ctx.fillRect(-40, -10, 80, 20);
+        ctx.restore();
+
+        // 2. Thể hiện Bệ đứng kiên cố vững chắc cho preview nhân vật
+        ctx.lineWidth = 2; ctx.strokeStyle = '#222';
+        this.drawRect(ctx, -26, 0, 52, 6, '#333');
+        this.drawRect(ctx, -22, 6, 44, 4, '#111');
+
+        // 3. Kết xuất hào quang Aura bốc cháy nhiều tầng (Lighter Blend)
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        let auraColor = char.colors.aura;
+        if (isSuper) auraColor = 'rgba(255, 235, 59, 0.55)';
+
+        for (let i = 0; i < 3; i++) {
+            ctx.beginPath();
+            ctx.ellipse(0, -22 - bobY, 28 + auraPulse - i * 6, 40 + auraPulse - i * 5, 0, 0, Math.PI * 2);
+            ctx.fillStyle = auraColor; ctx.fill();
+        }
+        ctx.restore();
+
+        // Cấu hình nét vẽ đen viền cứng cáp bao bọc nhân vật
+        ctx.lineWidth = 1.8; ctx.strokeStyle = '#000'; ctx.lineJoin = 'miter';
+
+        let headS = 18, bodyW = 16, bodyH = 18, limbW = 6, limbH = 12;
+        let cSkin = char.colors.skin; let cOutfit = char.colors.outfit;
+        let cAccent = char.colors.accent; let cHair = isSuper ? '#ffeb3b' : char.colors.hair;
+
+        // Tay sau thủ thế khuất sau thân
+        ctx.save(); ctx.translate(-bodyW / 2, -bodyH + bobY); ctx.rotate(0.5);
+        this.drawRect(ctx, -limbW / 2, 0, limbW, limbH, cSkin);
+        this.drawRect(ctx, -limbW / 2 - 1, limbH - 4, limbW + 2, 4, cAccent);
+        ctx.restore();
+
+        // 2 Chân dạng rộng tấn đứng oai nghiêm oai phong lẫm liệt
+        ctx.save(); ctx.translate(-6, bobY); ctx.rotate(0.25);
+        this.drawRect(ctx, -limbW / 2, 0, limbW + 2, limbH, cOutfit);
+        this.drawRect(ctx, -limbW / 2 - 1, limbH - 4, limbW + 4, 6, cAccent);
+        ctx.restore();
+
+        ctx.save(); ctx.translate(6, bobY); ctx.rotate(-0.25);
+        this.drawRect(ctx, -limbW / 2, 0, limbW + 2, limbH, cOutfit);
+        this.drawRect(ctx, -limbW / 2 - 1, limbH - 4, limbW + 4, 6, cAccent);
+        ctx.restore();
+
+        // Khối thân giáp ngực trần lực lưỡng / Võ phục
+        if (char.raceKey === 'sayan') {
+            this.drawRect(ctx, -bodyW / 2, -bodyH + bobY, bodyW, bodyH, cSkin);
+            ctx.beginPath(); ctx.moveTo(-bodyW / 2 + 2, -bodyH / 2 + bobY); ctx.lineTo(bodyW / 2 - 2, -bodyH / 2 + bobY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, -bodyH / 2 + bobY); ctx.lineTo(0, bobY); ctx.stroke();
+        } else if (char.raceKey === 'namek') {
+            this.drawRect(ctx, -bodyW / 2, -bodyH + bobY, bodyW, bodyH, cOutfit);
+            this.drawRect(ctx, -bodyW / 2 - 4, -bodyH + bobY, bodyW + 8, 5, '#fff');
+            ctx.beginPath(); ctx.moveTo(-4, -bodyH + 5 + bobY); ctx.lineTo(0, bobY); ctx.lineTo(4, -bodyH + 5 + bobY); ctx.fillStyle = cSkin; ctx.fill(); ctx.stroke();
+        } else {
+            this.drawRect(ctx, -bodyW / 2, -bodyH + bobY, bodyW, bodyH, cOutfit);
+            ctx.beginPath(); ctx.moveTo(-bodyW / 2, -bodyH + bobY); ctx.lineTo(0, -bodyH / 2 + bobY); ctx.lineTo(bodyW / 2, -bodyH + bobY); ctx.fillStyle = cSkin; ctx.fill(); ctx.stroke();
+        }
+
+        // Thắt lưng dải tà đai buông thả động
+        this.drawRect(ctx, -bodyW / 2 - 1, -4 + bobY, bodyW + 2, 4, cAccent);
+        this.drawRect(ctx, -3, bobY, 6, 8, cAccent);
+
+        // Tay trước đưa cao đưa cao thế thủ chiến đấu
+        ctx.save(); ctx.translate(bodyW / 2, -bodyH + 3 + bobY); ctx.rotate(-0.6);
+        this.drawRect(ctx, -limbW / 2, 0, limbW, limbH, cSkin);
+        this.drawRect(ctx, -limbW / 2 - 1, limbH - 4, limbW + 2, 4, cAccent);
+        ctx.restore();
+
+        // Đầu mặt vuông khối góc cạnh
+        let hy = -bodyH - headS + bobY + 2;
+        this.drawRect(ctx, -headS / 2, hy, headS, headS, cSkin);
+
+        if (char.raceKey === 'namek') {
+            ctx.fillStyle = '#1b5e20';
+            this.drawRect(ctx, -headS / 2 - 2, hy + 2, 3, 5, '#1b5e20');
+            this.drawRect(ctx, headS/2 - 1, hy + 2, 3, 5, '#1b5e20');
+            ctx.beginPath(); ctx.moveTo(-headS / 2, hy + 8); ctx.lineTo(-headS / 2 - 8, hy + 4); ctx.lineTo(-headS / 2, hy + 12); ctx.fillStyle = cSkin; ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(headS / 2, hy + 8); ctx.lineTo(headS / 2 + 8, hy + 4); ctx.lineTo(headS / 2, hy + 12); ctx.fillStyle = cSkin; ctx.fill(); ctx.stroke();
+        }
+
+        // Ánh nhìn sắc lẹm võ sĩ anime
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.moveTo(-3, hy + 7); ctx.lineTo(-7, hy + 10); ctx.lineTo(-3, hy + 10); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(3, hy + 7); ctx.lineTo(7, hy + 10); ctx.lineTo(3, hy + 10); ctx.fill();
+
+        // Kiểu tóc khối nhọn bao quanh dồi dào
+        ctx.fillStyle = cHair;
+        if (char.raceKey === 'sayan') {
+            ctx.beginPath();
+            ctx.moveTo(-headS / 2 - 5, hy + headS); ctx.lineTo(-headS - 14, hy + 2);
+            ctx.lineTo(-headS / 2 - 3, hy - 1); ctx.lineTo(-headS - 18, hy - 17);
+            ctx.lineTo(-headS / 4, hy - 10); ctx.lineTo(-headS / 2 - 6, hy - 34);
+            ctx.lineTo(0, hy - 18); ctx.lineTo(headS / 2 + 6, hy - 34);
+            ctx.lineTo(headS / 4, hy - 10); ctx.lineTo(headS + 18, hy - 17);
+            ctx.lineTo(headS / 2 + 3, hy - 1); ctx.lineTo(headS + 14, hy + 2);
+            ctx.lineTo(headS / 2 + 5, hy + headS);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+        } else if (char.raceKey === 'earth') {
+            ctx.beginPath();
+            ctx.moveTo(-headS / 2, hy + headS / 2); ctx.lineTo(-headS / 2 - 8, hy - 2);
+            ctx.lineTo(-headS / 3, hy - 9); ctx.lineTo(0, hy - 16);
+            ctx.lineTo(headS / 3, hy - 9); ctx.lineTo(headS / 2 + 8, hy - 25);
+            ctx.lineTo(headS / 2, hy + headS / 2);
+            ctx.fill(); ctx.stroke();
+        }
+
+        ctx.restore();
     }
 };
 
@@ -916,7 +1799,7 @@ class Player extends Entity {
     takeDamage(dmg) { if(!this.isDead) CombatSystem.handleAttack(this, this, dmg); }
 
     update(dt) {
-        // Input Buffer Processing
+        // Input Buffer Processing (Combo 300ms window)
         if (this === GLOBALS.player && GLOBALS.inputBuffer && GLOBALS.inputBuffer.time > 0 && !this.isDead) {
             GLOBALS.inputBuffer.time -= dt;
             let executed = false;
@@ -1004,7 +1887,6 @@ class Player extends Entity {
         this.animTimer = 0;
         this.cooldowns.attack = 350; // combo friendly
         this.attackHitboxActive = false; // reset flag
-        this.hurtTimer = 0; // Break out of hurt state slightly
         if(this.isGrounded) this.vx = this.dir * 1.5; // slight step forward for better combat feel
         return true;
     }
@@ -1017,7 +1899,6 @@ class Player extends Entity {
         this.animTimer = 0;
         this.cooldowns.shoot = 800;
         this.shootFired = false;
-        this.hurtTimer = 0;
         if (this === GLOBALS.player) UI.updateHUD();
         return true;
     }
@@ -1110,7 +1991,6 @@ class Monster extends Entity {
             case 'RESPAWNING':
                 this.stateTimer += dt;
                 if(this.stateTimer > 8000) { 
-                    // BUG FIX: Reset hoàn toàn trạng thái quái
                     this.hp = this.maxHp; 
                     this.isDead = false; 
                     this.x = this.originX;
@@ -1151,7 +2031,7 @@ class Monster extends Entity {
                 } else if (dx > this.attackRange) {
                     this.vx = this.dir * 2.5; 
                 } else if (dy > 40) {
-                    this.vx = 0; // Player is too high, wait below
+                    this.vx = 0; 
                 } else { 
                     this.vx = 0; this.aiState = 'ATTACK'; 
                 } 
@@ -1256,13 +2136,12 @@ class KameBeam {
         this.life = 900;
         this.color = '#00bcd4';
         this.hitTargets = new Set();
-        this.maxTargets = 3; // Giới hạn xuyên mục tiêu
+        this.maxTargets = 3; 
     }
     update(dt) {
         this.x += this.vx; this.life -= dt;
         Utils.spawnParticles(this.x + (this.dir === 1 ? 0 : this.width), this.y + this.height/2, this.color, 2);
         
-        // Phá hủy tia nếu đạt giới hạn mục tiêu
         if (this.hitTargets.size >= this.maxTargets) {
             this.life = 0;
             return;
@@ -1442,11 +2321,10 @@ const GameCore = {
 
             let combatKeys = ['KeyJ', 'KeyK', 'KeyQ', 'KeyL', 'KeyO'];
             if (combatKeys.includes(e.code)) {
-                GLOBALS.inputBuffer = { code: e.code, time: 150 };
+                GLOBALS.inputBuffer = { code: e.code, time: 300 }; 
             } 
             
-            // Allow jumping independently of combat keys
-            if(e.code === 'KeyW' && !p.isChargingKame && !p.isChargingPower && p.hurtTimer <= 0) { 
+            if(e.code === 'KeyW' && !p.isChargingKame && !p.isChargingPower) { 
                 if (p.isGrounded) {
                     p.vy = p.jumpForce; 
                     p.jumpCount = 1;
@@ -1455,7 +2333,6 @@ const GameCore = {
                     p.jumpCount++;
                     Utils.spawnParticles(p.x + p.width/2, p.y + p.height, '#e0e0e0', 15); 
                 }
-                MapManager.checkPortals(); 
             }
                 
             if(e.code === 'KeyE') { 
@@ -1493,9 +2370,20 @@ const GameCore = {
 
     updatePreview: function() {
         let race = document.getElementById('playerRaceInput').value; let c = CONFIG.races[race];
-        document.getElementById('racePreviewName').innerText = c.title; document.getElementById('raceHp').innerText = c.maxHp; document.getElementById('raceMp').innerText = c.maxMp;
-        document.getElementById('raceDamage').innerText = c.baseDamage; document.getElementById('raceDef').innerText = c.defense; document.getElementById('raceSpeed').innerText = c.speed;
-        document.getElementById('racePreviewSkillName').innerText = c.skill.name;
+        document.getElementById('racePreviewName').innerText = c.title;
+
+        document.getElementById('racePreviewSubtitle').innerText = `"${c.subtitle}"`;
+        document.getElementById('racePreviewDesc').innerText = c.desc;
+        document.getElementById('racePreviewPros').innerHTML = c.pros.map(p => `• ${p}`).join('<br>');
+
+        document.getElementById('raceHp').innerText = c.maxHp;
+        document.getElementById('raceMp').innerText = c.maxMp;
+        document.getElementById('raceDamage').innerText = c.baseDamage;
+        document.getElementById('raceDef').innerText = c.defense;
+        document.getElementById('raceSpeed').innerText = c.speed;
+
+        document.getElementById('racePreviewSkillName').innerText = `Kỹ năng: ${c.skill.name}`;
+        document.getElementById('racePreviewSkillDesc').innerText = c.skill.desc;
         
         GLOBALS.previewPlayer = {
             x: 30, y: 60, width: 40, height: 50, dir: 1, state: 'idle', 
@@ -1586,11 +2474,17 @@ const GameCore = {
         let dt = timestamp - GLOBALS.lastTime; if(dt > 50) dt = 50; GLOBALS.lastTime = timestamp;
 
         if (GLOBALS.state === 'LOGIN') {
+            EnvironmentSystem.update(dt, 0); // Kích hoạt bộ đếm thời gian cho nền động sảnh
+            
+            // Xóa canvas sảnh chính và kết xuất bộ nền Parallax Anime đặc chủng
+            GLOBALS.ctx.clearRect(0, 0, GLOBALS.width, GLOBALS.height);
+            EnvironmentSystem.drawLoginBackground(GLOBALS.ctx);
+
             let pCtx = document.getElementById('previewCanvas').getContext('2d'); pCtx.clearRect(0,0,100,100);
             if(GLOBALS.previewPlayer) { 
                 GLOBALS.previewPlayer.skillActive = (Math.floor(timestamp/1000)%3===0); 
                 AnimationManager.updateState(GLOBALS.previewPlayer, dt);
-                CharacterRenderer.draw(pCtx, GLOBALS.previewPlayer); 
+                PreviewRenderer.draw(pCtx, GLOBALS.previewPlayer, timestamp); 
             }
             requestAnimationFrame(this.loop.bind(this)); return;
         }
@@ -1598,19 +2492,16 @@ const GameCore = {
         let actualDt = dt;
         if (GLOBALS.hitStopTimer > 0) {
             GLOBALS.hitStopTimer -= dt;
-            actualDt = 0; // Freeze time for entities
+            actualDt = 0; 
         }
 
         if (!GLOBALS.isPaused && actualDt > 0) {
             if (GLOBALS.state === 'PLAYING' && !GLOBALS.player.isDead && !GLOBALS.isChatFocused) {
                 if (!GLOBALS.player.isChargingKame && !GLOBALS.player.isChargingPower && GLOBALS.player.state !== 'attack' && GLOBALS.player.state !== 'shoot') {
-                    // Allow movement even during attack/shoot, but maybe restrict if you prefer. 
-                    // Keeping it free allows smoother combat drifting
                     if(GLOBALS.keys['KeyA']) { GLOBALS.player.vx = -GLOBALS.player.speed; GLOBALS.player.dir = -1; }
                     else if(GLOBALS.keys['KeyD']) { GLOBALS.player.vx = GLOBALS.player.speed; GLOBALS.player.dir = 1; }
                 }
             }
-            if(!GLOBALS.player.isDead && GLOBALS.player.mp < GLOBALS.player.maxMp) GLOBALS.player.mp = Math.min(GLOBALS.player.maxMp, GLOBALS.player.mp + 0.05);
 
             GLOBALS.entities.forEach(e => e.update(actualDt));
             GLOBALS.projectiles = GLOBALS.projectiles.filter(p => p.life>0); GLOBALS.projectiles.forEach(p => p.update(actualDt));
@@ -1681,4 +2572,5 @@ GameCore.init();
 
 </script>
 </body>
+
 </html>
