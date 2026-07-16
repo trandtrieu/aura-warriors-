@@ -809,6 +809,70 @@
             font-weight: bold;
             box-shadow: 0 2px 0 #111;
         }
+
+        /* --- Donate Modal --- */
+        #donateScreen {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.82);
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            z-index: 400;
+        }
+
+        .donate-dialog {
+            width: min(560px, calc(100vw - 32px));
+            max-height: calc(100vh - 32px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding: 24px;
+            border-radius: 16px;
+            background: rgba(20,20,28,0.98);
+            border: 2px solid rgba(255,213,79,0.7);
+            color: white;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.65);
+        }
+
+        .donate-dialog h2 {
+            margin-top: 0;
+            color: #ffca28;
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        .donate-qr {
+            display: block;
+            width: min(320px, 100%);
+            aspect-ratio: 1;
+            object-fit: contain;
+            margin: 18px auto;
+            padding: 10px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .donate-note {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #ddd;
+        }
+
+        .donate-account-info {
+            margin: 16px 0;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.06);
+            text-align: left;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .donate-account-info strong {
+            color: #4fc3f7;
+        }
     </style>
 </head>
 
@@ -848,6 +912,7 @@
                     <div style="margin-top: 10px;">
                         <button class="btn-start" onclick="GameCore.startNewGame(true)">VÀO GAME MỚI</button>
                         <button class="btn-action btn-load" onclick="GameCore.loadGame()">TIẾP TỤC SAVE CŨ</button>
+                        <button class="btn-action" style="background: linear-gradient(180deg, #e91e63 0%, #c2185b 100%); border-color: #880e4f; box-shadow: 0 4px 0 #880e4f; margin-top: 15px;" onclick="UI.showDonate()">❤️ ỦNG HỘ NHÀ PHÁT TRIỂN</button>
                     </div>
                 </div>
 
@@ -955,7 +1020,23 @@
                 <button class="btn-action" onclick="GameCore.togglePause()">TIẾP TỤC</button>
                 <button class="btn-action" onclick="UI.toggleInventory(); GameCore.togglePause();">HÀNH TRANG</button>
                 <button class="btn-action" onclick="alert('Chưa có menu cài đặt!')">CÀI ĐẶT</button>
+                <button class="btn-action" style="background: linear-gradient(180deg, #e91e63 0%, #c2185b 100%); border-color: #880e4f; box-shadow: 0 4px 0 #880e4f;" onclick="UI.showDonate()">❤️ ỦNG HỘ</button>
                 <button class="btn-action" style="background: linear-gradient(180deg, #f44336 0%, #c62828 100%); border-color: #b71c1c; box-shadow: 0 4px 0 #b71c1c; margin-top: 15px;" onclick="GameCore.togglePause(); UI.showConfirmMenu();">VỀ SẢNH CHÍNH</button>
+            </div>
+        </div>
+
+        <!-- --- Donate Screen --- -->
+        <div id="donateScreen" onclick="UI.hideDonate()">
+            <div class="donate-dialog" onclick="event.stopPropagation()">
+                <h2>Ủng hộ Aura Warriors</h2>
+                <p class="donate-note">Nếu bạn yêu thích trò chơi, bạn có thể quét mã QR bên dưới để ủng hộ nhà phát triển. Mọi sự ủng hộ đều hoàn toàn tự nguyện.</p>
+                
+                <img id="donateQrImage" class="donate-qr" src="./assets/qr-code.jpg" alt="Mã QR ủng hộ Aura Warriors" onerror="this.style.display='none'; document.getElementById('donateQrFallback').style.display='block';">
+                
+                <div id="donateQrFallback" style="display: none; padding: 20px; border: 1px dashed #ff5252; color: #ff5252; margin: 18px 0; font-size: 13px;">
+                    Chưa tìm thấy ảnh QR. Hãy thêm file <b>assets/qr-code.jpg</b>.
+                </div>
+                <button class="btn-action" style="background: #555; border-color: #333; box-shadow: 0 4px 0 #333;" aria-label="Đóng cửa sổ ủng hộ" onclick="UI.hideDonate()">ĐÓNG</button>
             </div>
         </div>
 
@@ -2376,6 +2457,16 @@ const UI = {
         updateSlot('skillQ', p.cooldowns.skill, p.raceConfig.skill.cd);
         updateSlot('skillL', p.cooldowns.kame, 6000);
         updateSlot('skillO', p.cooldowns.powerUp, 12000);
+    },
+    showDonate: function() {
+        const donateScreen = document.getElementById('donateScreen');
+        if (!donateScreen) return;
+        donateScreen.style.display = 'flex';
+    },
+    hideDonate: function() {
+        const donateScreen = document.getElementById('donateScreen');
+        if (!donateScreen) return;
+        donateScreen.style.display = 'none';
     }
 };
 
@@ -2409,9 +2500,30 @@ const GameCore = {
         
         window.addEventListener('keydown', e => {
             if (e.code === 'Escape') {
+                const donateScreen = document.getElementById('donateScreen');
+                const inventory = document.getElementById('inventory');
+
+                const isDonateOpen = donateScreen && donateScreen.style.display === 'flex';
+                const isInventoryOpen = inventory && inventory.style.display === 'block';
+
+                // 1. Nếu Donate Modal đang mở -> Đóng Donate
+                if (isDonateOpen) {
+                    UI.hideDonate();
+                    return;
+                }
+
+                // 2. Nếu Inventory đang mở -> Đóng Inventory
+                if (isInventoryOpen) {
+                    UI.toggleInventory();
+                    return;
+                }
+
+                // 3. Nếu không có modal nào mở và đang Play -> Bật/Tắt Menu Tạm dừng
                 if (GLOBALS.state === 'PLAYING') {
                     this.togglePause();
                 }
+                
+                return;
             }
 
             if(GLOBALS.state === 'LOGIN' && e.key === 'Enter' && document.activeElement.tagName !== 'INPUT') {
@@ -2426,7 +2538,7 @@ const GameCore = {
             if(GLOBALS.isChatFocused) return;
             GLOBALS.keys[e.code] = true;
             
-            let p = GLOBALS.player; if(p.isDead) return;
+            let p = GLOBALS.player; if(p && p.isDead) return;
 
             let combatKeys = ['KeyJ', 'KeyK', 'KeyQ', 'KeyL', 'KeyO'];
             if (combatKeys.includes(e.code)) {
@@ -2434,7 +2546,7 @@ const GameCore = {
             } 
             
             // Allow jumping independently of combat keys
-            if(e.code === 'KeyW' && !p.isChargingKame && !p.isChargingPower && p.hurtTimer <= 0) { 
+            if(p && e.code === 'KeyW' && !p.isChargingKame && !p.isChargingPower && p.hurtTimer <= 0) { 
                 if (p.isGrounded) {
                     p.vy = p.jumpForce; 
                     p.jumpCount = 1;
@@ -2445,14 +2557,14 @@ const GameCore = {
                 }
             }
                 
-            if(e.code === 'KeyE') { 
+            if(p && e.code === 'KeyE') { 
                 let portal = MapManager.maps[MapManager.currentId].portals.find(port => Math.abs(p.x - port.x) < 50);
                 if (portal) {
                     MapManager.loadMap(portal.target, portal.targetX);
                     return;
                 }
                 
-                let npc = GLOBALS.entities.find(e => e instanceof NPC && Math.abs(e.x-p.x)<100); 
+                let npc = GLOBALS.entities.find(ent => ent instanceof NPC && Math.abs(ent.x-p.x)<100); 
                 if(npc) npc.talkTo(p); 
             }
             if(e.code === 'KeyI') UI.toggleInventory();
@@ -2518,7 +2630,7 @@ const GameCore = {
     loadGame: function() {
         let data = SaveSystem.load();
         if(!data || !CONFIG.races[data.race] || !MapManager.maps[data.map]) { 
-            alert('File save bị lỗi hoặc phiên bản cũ. Vui lòng Tạo Game Mới!'); 
+            UI.showCenterMessage('File save bị lỗi hoặc phiên bản cũ. Vui lòng Tạo Game Mới!'); 
             return; 
         }
         
@@ -2607,7 +2719,7 @@ const GameCore = {
             GLOBALS.ctx.clearRect(0, 0, GLOBALS.width, GLOBALS.height);
             EnvironmentSystem.drawLoginBackground(GLOBALS.ctx);
 
-            let pCtx = document.getElementById('previewCanvas').getContext('2d'); pCtx.clearRect(0,0,100,100);
+            let pCtx = document.getElementById('previewCanvas').getContext('2d'); pCtx.clearRect(0,0,150,150);
             if(GLOBALS.previewPlayer) { 
                 GLOBALS.previewPlayer.skillActive = (Math.floor(timestamp/1000)%3===0); 
                 AnimationManager.updateState(GLOBALS.previewPlayer, dt);
@@ -2623,15 +2735,13 @@ const GameCore = {
         }
 
         if (!GLOBALS.isPaused && actualDt > 0) {
-            if (GLOBALS.state === 'PLAYING' && !GLOBALS.player.isDead && !GLOBALS.isChatFocused) {
+            if (GLOBALS.state === 'PLAYING' && GLOBALS.player && !GLOBALS.player.isDead && !GLOBALS.isChatFocused) {
                 if (!GLOBALS.player.isChargingKame && !GLOBALS.player.isChargingPower && GLOBALS.player.state !== 'attack' && GLOBALS.player.state !== 'shoot') {
-                    // Allow movement even during attack/shoot, but maybe restrict if you prefer. 
-                    // Keeping it free allows smoother combat drifting
                     if(GLOBALS.keys['KeyA']) { GLOBALS.player.vx = -GLOBALS.player.speed; GLOBALS.player.dir = -1; }
                     else if(GLOBALS.keys['KeyD']) { GLOBALS.player.vx = GLOBALS.player.speed; GLOBALS.player.dir = 1; }
                 }
             }
-            if(!GLOBALS.player.isDead && GLOBALS.player.mp < GLOBALS.player.maxMp) GLOBALS.player.mp = Math.min(GLOBALS.player.maxMp, GLOBALS.player.mp + 0.05);
+            if(GLOBALS.player && !GLOBALS.player.isDead && GLOBALS.player.mp < GLOBALS.player.maxMp) GLOBALS.player.mp = Math.min(GLOBALS.player.maxMp, GLOBALS.player.mp + 0.05);
 
             GLOBALS.entities.forEach(e => e.update(actualDt));
             GLOBALS.projectiles = GLOBALS.projectiles.filter(p => p.life>0); GLOBALS.projectiles.forEach(p => p.update(actualDt));
@@ -2641,9 +2751,11 @@ const GameCore = {
 
             EnvironmentSystem.update(actualDt, GLOBALS.camera.x);
 
-            GLOBALS.camera.x = GLOBALS.player.x - GLOBALS.width/2 + GLOBALS.player.width/2;
-            if(GLOBALS.camera.x < 0) GLOBALS.camera.x = 0;
-            if(GLOBALS.camera.x > MapManager.maps[MapManager.currentId].width - GLOBALS.width) GLOBALS.camera.x = MapManager.maps[MapManager.currentId].width - GLOBALS.width;
+            if (GLOBALS.player) {
+                GLOBALS.camera.x = GLOBALS.player.x - GLOBALS.width/2 + GLOBALS.player.width/2;
+                if(GLOBALS.camera.x < 0) GLOBALS.camera.x = 0;
+                if(GLOBALS.camera.x > MapManager.maps[MapManager.currentId].width - GLOBALS.width) GLOBALS.camera.x = MapManager.maps[MapManager.currentId].width - GLOBALS.width;
+            }
             
             if(GLOBALS.camera.shakeTime > 0) {
                 GLOBALS.camera.shakeTime -= actualDt;
